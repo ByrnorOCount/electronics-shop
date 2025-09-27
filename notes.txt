@@ -1,0 +1,131 @@
+online-shop/
+│── backend/              # Express.js backend (API, auth, DB)
+│   ├── database/
+│   │   ├── migrations/   # SQL migration files (schema changes, table creation, etc.)
+│   │   ├── seeders/      # Data seed files (test data, default users, products, etc.)
+│   │   ├── index.js
+│   │   └── knexfile.js
+│   ├── src/
+│   │   ├── config/       # DB connection, env configs
+│   │   ├── models/       # Database models (Product, User, Order)
+│   │   ├── controllers/  # Request logic (products, users, orders)
+│   │   ├── routes/       # Express routes (REST endpoints)
+│   │   ├── middlewares/  # Auth, logging, validation
+│   │   ├── services/     # Business logic (payment, email, etc.)
+│   │   ├── utils/        # Helpers (formatting, error handling)
+│   │   └── index.js      # Entry point (starts Express server)
+│   ├── tests/            # Backend unit/integration tests
+│   ├── package.json
+│   └── .env              # Environment vars for backend
+│
+│── frontend/             # React frontend (UI)
+│   ├── public/           # Static assets (logo, images, icons)
+│   ├── src/
+│   │   ├── components/   # Reusable UI components
+│   │   ├── pages/        # Page-level views (Home, Product, Cart, Checkout)
+│   │   ├── hooks/        # Custom React hooks
+│   │   ├── context/      # Global state (AuthContext, CartContext)
+│   │   ├── services/     # API calls to backend (fetch wrapper, axios)
+│   │   ├── styles/       # CSS/Tailwind/global styles
+│   │   └── main.jsx      # App entry point
+│   ├── package.json
+│   └── .env              # Environment vars for frontend (API URL, etc.)
+│
+│── .gitignore
+│── package.json          # contains "workspaces": ["backend", "frontend"]
+└── README.md
+
+Workflow
+
+Backend (Express API)
+Handles users, products, orders, cart, payments.
+Example routes:
+/api/auth
+/api/products
+/api/cart
+/api/orders
+/api/payments
+
+Frontend (React)
+Consumes backend API.
+Routes:
+/ (Home)
+/products/:id
+/cart
+/checkout
+/profile
+
+Database (PostgreSQL)
+
+Shared Config
+Keep .env separate for backend vs frontend.
+Example:
+Backend .env → DB credentials, JWT secret, Stripe keys.
+Frontend .env → API base URL, public Stripe key.
+
+
+
+Commands
+At the root folder (with workspaces):
+# Install dependencies for all workspaces
+npm run install-all
+
+For backend:
+cd backend
+npm run dev       # start dev server with nodemon
+npm run start     # production start
+npm run migrate   # run latest migrations
+npm run rollback  # rollback last migration
+npm run seed      # run seeds
+
+For frontend:
+cd frontend
+npm run dev     # Run Vite dev server
+npm run build   # Build frontend for production
+npm run preview # Preview production build
+
+For root combined dev (both frontend + backend at once):
+npm run dev
+
+
+
+Migrations
+Migrations create/update DB schema. Example:
+npx knex migrate:make create_products_table --knexfile ./database/knexfile.js
+This creates a file in database/migrations/ like:
+```
+export function up(knex) {
+  return knex.schema.createTable("products", (table) => {
+    table.increments("id").primary();
+    table.string("name").notNullable();
+    table.text("description");
+    table.decimal("price", 10, 2).notNullable();
+    table.timestamps(true, true);
+  });
+}
+
+export function down(knex) {
+  return knex.schema.dropTable("products");
+}
+```
+Run it:
+npx knex migrate:latest --knexfile ./database/knexfile.js
+
+6. Seeds
+Seeds populate initial data. Example:
+npx knex seed:make initial_products --knexfile ./database/knexfile.js
+Creates file in database/seeders/:
+```
+export async function seed(knex) {
+  // Deletes ALL existing entries
+  await knex("products").del();
+
+  // Inserts seed entries
+  await knex("products").insert([
+    { name: "T-Shirt", description: "Cotton tee", price: 19.99 },
+    { name: "Sneakers", description: "Running shoes", price: 49.99 }
+  ]);
+}
+```
+Run it:
+npx knex seed:run --knexfile ./database/knexfile.js
