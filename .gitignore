@@ -47,3 +47,5 @@ database/knexfile-local.js
 
 # Misc
 *.pid
+tree.bat
+tree.txt
