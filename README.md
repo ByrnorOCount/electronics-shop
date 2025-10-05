@@ -72,8 +72,8 @@ The application will be a web-based platform hosted on a cloud service (e.g., AW
 ### 3.4 Checkout and Order
 
 - **FR12: Checkout Process:** Users must provide shipping information to proceed with checkout.
-- **FR13: Payment Integration:** The system must integrate with a third-party payment gateway (e.g., Stripe, PayPal) to process payments securely.
-- **FR14: Order Confirmation:** After a successful payment, the user will see an order confirmation page and receive a confirmation email.
+- **FR13: Payment Method:** The system will initially support a "Cash on Delivery" payment option.
+- **FR14: Order Confirmation:** After placing an order, the user will see an order confirmation page and receive a confirmation email.
 - **FR15: Order History:** Logged-in users can view their past orders and their statuses (e.g., Processing, Shipped, Delivered).
 
 ### 3.5 Administrator Panel

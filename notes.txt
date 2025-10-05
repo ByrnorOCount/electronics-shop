@@ -129,3 +129,5 @@ export async function seed(knex) {
 ```
 Run it:
 npx knex seed:run --knexfile ./database/knexfile.js
+
+npx knex migrate:latest --knexfile ./database/knexfile.js

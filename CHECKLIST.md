@@ -2,18 +2,21 @@
 
 - [x] **Initialize Backend:** Set up the Node.js/Express project in the `backend` workspace.
 - [x] **Initialize Frontend:** Set up the React project in the `frontend` workspace (likely with Create React App or Vite).
-- [ ] **Database Setup:**
-  - [ ] Install and configure PostgreSQL.
-  - [ ] Create the initial database for the application.
-  - [ ] Set up environment variables for database connection credentials (`.env` file).
-- [ ] **API Contract:** Define a basic OpenAPI/Swagger specification for the API endpoints.
+- [x] **Database Setup:**
+  - [x] Install and configure PostgreSQL.
+  - [x] Create the initial database for the application.
+  - [x] Set up environment variables for database connection credentials (`.env` file).
+- [x] **API Contract:** Define a basic OpenAPI/Swagger specification for the API endpoints.
 
 ## Backend Development (Node.js / Express / PostgreSQL)
 
 ### **Database & Models**
 
-- [ ] **Schema Design:** Design the database tables based on the SRS.
-- [ ] **ORM/Query Builder:** Choose and set up a database library (e.g., Sequelize, Prisma, or `pg`).
+- [x] **Query Builder Setup:** Set up and configure **Knex.js**.
+  - [x] Create a `knexfile.js` with development and production database connection details.
+- [x] **Schema Migrations:** Use Knex to create migration files for the database schema.
+  - [x] Create an initial migration for the `users` and `products` tables.
+  - [ ] Create subsequent migrations for `carts`, `cart_items`, `orders`, and `order_items`.
 
 ### **User Management (FR1 - FR4)**
 
@@ -75,14 +78,14 @@
 
 ### **Core Setup**
 
-- [ ] **Routing:** Set up `react-router-dom`.
+- [x] **Routing:** Set up `react-router-dom`.
 - [ ] **State Management:** Set up a state management library (e.g., Redux Toolkit, Zustand).
-- [ ] **API Service:** Create a centralized module for API calls.
-- [ ] **Styling:** Set up Tailwind CSS.
+- [x] **API Service:** Create a centralized module for API calls.
+- [x] **Styling:** Set up Tailwind CSS.
 
 ### **Component & Page Development**
 
-- [ ] **Layout:** Create a main App layout with a Navbar and Footer.
+- [x] **Layout:** Create a main App layout with a Navbar and Footer.
 - [ ] **Pages:** `HomePage`, `ProductsPage`, `ProductDetailPage`, `LoginPage`, `RegisterPage`, `CartPage`, `CheckoutPage`, `OrderConfirmationPage`, `OrderHistoryPage`.
 - [ ] **Admin Pages:** `AdminLayout`, `AdminDashboardPage`, `AdminProductsPage`, `AdminOrdersPage`, `AdminUsersPage`.
 - [ ] **Reusable Components:** `ProductCard`, `Button`, `Input`, `Spinner`, `Modal`.
@@ -91,7 +94,7 @@
 
 - [ ] **User Auth Flow:** Connect Login/Register pages to the backend and manage JWT.
 - [ ] **Product Display:** Fetch and display products.
--- [ ] **Shopping Cart:** Implement UI for adding, viewing, updating, and removing cart items.
+- [ ] **Shopping Cart:** Implement UI for adding, viewing, updating, and removing cart items.
 - [ ] **Checkout:** Create the checkout form.
 - [ ] **Protected Routes:** Create wrappers to protect routes requiring login or admin privileges.
 - [ ] **Responsiveness (NFR6):** Ensure all pages are mobile-friendly.

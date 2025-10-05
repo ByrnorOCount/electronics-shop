@@ -1,0 +1,128 @@
+# The file already provides clarity for the /products and /users/register endpoints. As you move on to building the cart, orders, and admin features, expanding this contract first will ensure your frontend and backend development stays perfectly in sync.
+# Remember to include request and response schemas for all new endpoints you add.
+
+openapi: 3.0.0
+info:
+  title: Electronics Shop API
+  description: API for an online electronics shop.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001/api
+    description: Development server
+
+tags:
+  - name: Products
+    description: Product catalog operations
+  - name: Users
+    description: User authentication and management
+
+paths:
+  /products:
+    get:
+      summary: Get a list of products
+      description: Retrieves a paginated list of products. Can be filtered by name, category, and price.
+      tags:
+        - Products
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination.
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search term to filter products by name.
+      responses:
+        '200':
+          description: A list of products.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+
+  /users/register:
+    post:
+      summary: Register a new user
+      description: Creates a new user account.
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '201':
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input (e.g., email already exists, weak password).
+
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - id
+        - name
+        - price
+        - stock_quantity
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+        description:
+          type: string
+        category:
+          type: string
+        stock_quantity:
+          type: integer
+        image_url:
+          type: string
+          format: uri
+
+    NewUser:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - email
+        - password
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
