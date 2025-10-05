@@ -131,3 +131,13 @@ Run it:
 npx knex seed:run --knexfile ./database/knexfile.js
 
 npx knex migrate:latest --knexfile ./database/knexfile.js
+
+
+Define the Schema First (The Migration):
+Apply the Schema Immediately:
+Write Code That Obeys the Contract (Seeds, Models, etc.):
+
+Using command line to view db (DBeaver is better as it's GUI)
+psql -h localhost -p 5432 -U postgres -d electronics_shop
+SELECT * FROM products;
+exit: type \q and enter

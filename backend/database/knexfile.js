@@ -1,18 +1,34 @@
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Since we are using ES Modules, __dirname is not available. This is the workaround.
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env file from the parent 'backend' directory
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
+/**
+ * @type { Object.<string, import("knex").Knex.Config> }
+ */
 export default {
   development: {
-    client: "pg",
+    client: 'pg',
     connection: {
-      host: process.env.DB_HOST || "127.0.0.1",
+      host: process.env.DB_HOST || 'localhost',
       port: process.env.DB_PORT || 5432,
-      user: process.env.DB_USER || "postgres",
-      password: process.env.DB_PASS || "password",
-      database: process.env.DB_NAME || "online_shop"
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
     },
     migrations: {
-      directory: "./database/migrations"
+      directory: path.join(__dirname, '/migrations'),
     },
     seeds: {
-      directory: "./database/seeders"
-    }
-  }
+      directory: path.join(__dirname, '/seeds'),
+    },
+  },
+
+  // Production configuration can be added here later
 };
