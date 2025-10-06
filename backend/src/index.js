@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import routes from "./routes/index.js";
+import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 
 dotenv.config();
@@ -14,6 +15,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api", routes);
+app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 
 // Root (API health check)

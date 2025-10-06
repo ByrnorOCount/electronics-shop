@@ -31,13 +31,13 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 ### **User Management (FR1–FR4, FR15–FR17)**
 
 - [ ] **Routes:** `routes/userRoutes.js`
-- [ ] **Registration (FR1):**
+- [x] **Registration (FR1):**
   - [ ] Validate input and enforce password complexity.
-  - [ ] Hash password with `bcrypt`.
+  - [x] Hash password with `bcrypt`.
   - [ ] Send verification email upon registration.
-- [ ] **Login (FR2):**
-  - [ ] Validate credentials.
-  - [ ] Generate and return JWT.
+- [x] **Login (FR2):**
+  - [x] Validate credentials.
+  - [x] Generate and return JWT.
 - [ ] **Session Management (FR4):**
   - [ ] Middleware to verify JWT and protect routes.
 - [ ] **Password Reset (FR15):**
@@ -56,11 +56,11 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] **Routes:** `routes/productRoutes.js`
 - [x] **Get Products (`GET /api/products`):**
   - [x] Filtering by `?featured=true`.
-  - [ ] Filtering by category, price, brand.
-- [ ] **Get Product Details (`GET /api/products/:id`):**
-  - [ ] Include stock, price, and images.
-- [ ] **Search Products:**
-  - [ ] Implement keyword-based search query.
+  - [x] Filtering by category, price, brand.
+- [x] **Get Product Details (`GET /api/products/:id`):**
+  - [x] Include stock, price, and images.
+- [x] **Search Products:**
+  - [x] Implement keyword-based search query.
 
 ---
 

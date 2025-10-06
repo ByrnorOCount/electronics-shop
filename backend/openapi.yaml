@@ -5,7 +5,7 @@ openapi: 3.0.0
 info:
   title: Electronics Shop API
   description: API for an online electronics shop.
-  version: 1.0.0
+  version: 1.0.1
 servers:
   - url: http://localhost:3001/api
     description: Development server
@@ -29,12 +29,27 @@ paths:
           schema:
             type: integer
             default: 1
-          description: Page number for pagination.
+          description: Page number for pagination
         - in: query
           name: search
           schema:
             type: string
           description: Search term to filter products by name.
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Filter by category name.
+        - in: query
+          name: brand
+          schema:
+            type: string
+          description: Filter by brand name.
+        - in: query
+          name: featured
+          schema:
+            type: boolean
+          description: Filter for featured products.
       responses:
         '200':
           description: A list of products.
@@ -44,6 +59,29 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Product'
+
+  /products/{id}:
+    get:
+      summary: Get a single product by ID
+      description: Retrieves detailed information for a specific product.
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the product to retrieve.
+      responses:
+        '200':
+          description: Product details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found.
 
   /users/register:
     post:
@@ -66,6 +104,28 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           description: Invalid input (e.g., email already exists, weak password).
+
+  /users/login:
+    post:
+      summary: Log in a user
+      description: Authenticates a user and returns a JWT.
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginCredentials'
+      responses:
+        '200':
+          description: Login successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials.
 
 components:
   schemas:
@@ -126,3 +186,32 @@ components:
           format: email
         role:
           type: string
+
+    LoginCredentials:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        token:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
