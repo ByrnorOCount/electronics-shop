@@ -26,7 +26,7 @@ export default {
       directory: path.join(__dirname, '/migrations'),
     },
     seeds: {
-      directory: path.join(__dirname, '/seeds'),
+      directory: path.join(__dirname, '/seeders'),
     },
   },
 

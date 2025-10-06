@@ -53,9 +53,9 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ### **Product Catalog (FR5–FR7)**
 
-- [ ] **Routes:** `routes/productRoutes.js`
-- [ ] **Get Products (`GET /api/products`):**
-  - [ ] Pagination and sorting.
+- [x] **Routes:** `routes/productRoutes.js`
+- [x] **Get Products (`GET /api/products`):**
+  - [x] Filtering by `?featured=true`.
   - [ ] Filtering by category, price, brand.
 - [ ] **Get Product Details (`GET /api/products/:id`):**
   - [ ] Include stock, price, and images.

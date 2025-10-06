@@ -64,7 +64,6 @@ Backend .env → DB credentials, JWT secret, Stripe keys.
 Frontend .env → API base URL, public Stripe key.
 
 
-
 Commands
 At the root folder (with workspaces):
 # Install dependencies for all workspaces
@@ -88,56 +87,59 @@ For root combined dev (both frontend + backend at once):
 npm run dev
 
 
-
 Migrations
 Migrations create/update DB schema. Example:
 npx knex migrate:make create_products_table --knexfile ./database/knexfile.js
-This creates a file in database/migrations/ like:
-```
-export function up(knex) {
-  return knex.schema.createTable("products", (table) => {
-    table.increments("id").primary();
-    table.string("name").notNullable();
-    table.text("description");
-    table.decimal("price", 10, 2).notNullable();
-    table.timestamps(true, true);
-  });
-}
-
-export function down(knex) {
-  return knex.schema.dropTable("products");
-}
-```
+This creates a file in database/migrations/
 Run it:
 npx knex migrate:latest --knexfile ./database/knexfile.js
 
-6. Seeds
+Seeds
 Seeds populate initial data. Example:
 npx knex seed:make initial_products --knexfile ./database/knexfile.js
-Creates file in database/seeders/:
-```
-export async function seed(knex) {
-  // Deletes ALL existing entries
-  await knex("products").del();
-
-  // Inserts seed entries
-  await knex("products").insert([
-    { name: "T-Shirt", description: "Cotton tee", price: 19.99 },
-    { name: "Sneakers", description: "Running shoes", price: 49.99 }
-  ]);
-}
-```
-Run it:
+Creates file in database/seeders/Run it:
 npx knex seed:run --knexfile ./database/knexfile.js
-
 npx knex migrate:latest --knexfile ./database/knexfile.js
 
-
-Define the Schema First (The Migration):
-Apply the Schema Immediately:
-Write Code That Obeys the Contract (Seeds, Models, etc.):
+Define the Schema First (The Migration)
+Apply the Schema Immediately
+Write Code That Obeys the Contract (Seeds, Models, etc.)
 
 Using command line to view db (DBeaver is better as it's GUI)
 psql -h localhost -p 5432 -U postgres -d electronics_shop
 SELECT * FROM products;
 exit: type \q and enter
+
+Drop old tables
+npx knex migrate:rollback --knexfile ./database/knexfile.js
+Up new tables
+npx knex migrate:latest --knexfile ./database/knexfile.js
+Reseed
+npx knex seed:run --knexfile ./database/knexfile.js
+
+Migrations (migrate:latest, migrate:rollback): These commands change the structure (the schema) of your database. Running rollback will destroy the tables and all data in them. Running latest will create them again, empty. They don't clear data on their own if run repeatedly; they only apply structural changes that haven't been applied yet.
+Seeds (seed:run): This command populates the database with data. Yes, in your case, it does clear the old data from the products table. This is because the very first line in your 01_initial_products.js file is await knex('products').del();. This is a common practice for development seeds to ensure you start with a clean, predictable dataset every time you run the command.
+
+Workflow:
+npx knex migrate:rollback: Destroys the tables created by the last migration.
+npx knex migrate:latest: Re-creates the tables using your now-corrected migration file.
+npx knex seed:run: Repopulates the fresh tables with your test data.
+
+Adding a New Feature (The Standard Workflow)
+Create a new migration file: 
+npx knex migrate:make add_brand_to_products --cwd ./database
+Edit the new migration file to add the column:
+// In the new file: xxxx_add_brand_to_products.js
+export function up(knex) {
+  return knex.schema.alterTable('products', (table) => {
+    table.string('brand'); // Adds the new column
+  });
+}
+
+export function down(knex) {
+  return knex.schema.alterTable('products', (table) => {
+    table.dropColumn('brand'); // Reverts the change
+  });
+}
+Run the migration:
+npx knex migrate:latest --cwd ./database

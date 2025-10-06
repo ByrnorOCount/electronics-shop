@@ -1,20 +1,41 @@
 /**
- * Static demo featured grid. Replace static data with API later.
+ * Fetches and displays featured products from the API.
  */
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
 
-const demoProducts = [
-  { id: 1, name: "Raspberry Pi 4 Model B 4GB", price: 49.99, short: "Small single-board computer", img: "/images/pi4.jpg" },
-  { id: 2, name: "ESP32 Dev Module", price: 6.5, short: "Wi-Fi + BLE microcontroller", img: "/images/esp32.jpg" },
-  { id: 3, name: "18650 Li-ion Battery", price: 8.25, short: "High capacity cell", img: "/images/battery.jpg" },
-  { id: 4, name: "USB-C PD 65W Charger", price: 24.0, short: "Fast charging for laptops & phones", img: "/images/charger.jpg" },
-];
-
 export default function FeaturedGrid() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        // The API endpoint should return products where `is_featured` is true.
+        const response = await fetch("/api/products?featured=true");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (err) {
+        setError(err.message);
+        console.error("Failed to fetch featured products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
+
+  if (loading) return <p className="text-center text-gray-500">Loading featured products...</p>;
+  if (error) return <p className="text-center text-red-500">Error: {error}</p>;
+
   return (
     <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
-      {demoProducts.map((p) => (
+      {products.map((p) => (
         <ProductCard key={p.id} product={p} />
       ))}
     </div>

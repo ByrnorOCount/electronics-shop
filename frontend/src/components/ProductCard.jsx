@@ -1,33 +1,23 @@
-/**
- * Small presentational product card.
- *
- * Usage:
- * <ProductCard product={{ id:1, name: 'Raspberry Pi 4', price: 49.99, rating: 4.7 }} />
- */
-import React from "react";
+import React from 'react';
 
+/**
+ * Displays a single product in a card format.
+ * @param {object} props
+ * @param {object} props.product - The product object from the API.
+ * @param {string} props.product.name - The name of the product.
+ * @param {string} props.product.description - A short description.
+ * @param {number|string} props.product.price - The price of the product.
+ * @param {string} props.product.image_url - The URL for the product image.
+ */
 export default function ProductCard({ product }) {
   return (
-    <article className="bg-gradient-to-br from-white to-blue-50 rounded-xl shadow-md overflow-hidden flex flex-col transform transition duration-200 hover:shadow-lg hover:-translate-y-1">
-      {/* image placeholder */}
-      <div className="w-full h-40 bg-gray-200 flex items-center justify-center overflow-hidden text-gray-400 text-sm">
-          <img
-            src={product.img}
-            alt={product.name}
-            className="object-cover w-full h-full"
-            />
+    <div className="border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <img src={product.image_url} alt={product.name} className="w-full h-48 object-cover" />
+      <div className="p-4">
+        <h3 className="font-bold text-lg truncate">{product.name}</h3>
+        <p className="text-gray-600 text-sm my-2 h-10">{product.description}</p>
+        <p className="text-lg font-semibold text-gray-800">${Number(product.price).toFixed(2)}</p>
       </div>
-
-      <div className="p-4 flex flex-col flex-grow">
-        <h3 className="font-semibold text-gray-900 mb-1">{product.name}</h3>
-        <p className="text-gray-600 text-sm flex-grow">{product.short}</p>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="font-bold text-blue-700">฿{product.price.toFixed(2)}</span>
-          <button className="px-4 py-1.5 text-sm rounded-full bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600 shadow-sm">
-            Add
-          </button>
-        </div>
-      </div>
-    </article>
+    </div>
   );
 }

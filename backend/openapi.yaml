@@ -75,7 +75,7 @@ components:
         - id
         - name
         - price
-        - stock_quantity
+        - stock
       properties:
         id:
           type: integer
@@ -87,7 +87,7 @@ components:
           type: string
         category:
           type: string
-        stock_quantity:
+        stock:
           type: integer
         image_url:
           type: string
