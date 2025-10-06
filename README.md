@@ -4,15 +4,22 @@
 
 ### 1.1 Objectives
 
-The E-Commerce Web App enables online shopping by allowing users to browse, select, and purchase electronics products efficiently, while providing administrators with tools to manage electronics products and orders. The system aims to streamline the shopping experience, increase customer accessibility, ensure scalability for business growth, and lay a foundation for future enhancements like payment gateways and analytics, ultimately improving customer satisfaction and operational efficiency.
+The E-Commerce Web App enables online shopping by allowing users to browse, select, and purchase electronics products efficiently, while providing administrators and staff with tools to manage products and orders.  
+The system streamlines the shopping experience, increases customer accessibility, and ensures scalability for business growth, with a foundation for future enhancements like payment gateways and analytics.
 
 ### 1.2 Scope
 
-The application allows customers to browse electronics products, manage shopping carts, and place orders, with features for user registration, login, basic checkout using cash-on-delivery, and an admin dashboard for managing electronics products and viewing orders. It targets customers (guests and registered users), staff (for managing electronics products and orders), and administrators (for system oversight). The system is intended to be expandable in future semesters, beginning with a set of core features and supporting additional functionalities later.
+The web application allows customers to:
+
+- Browse electronics products, manage shopping carts, and place orders (cash-on-delivery).
+- Register and log in to manage personal details and order history.  
+Staff can manage products and orders, and administrators can oversee the entire system.  
+The current semester scope includes all core features except advanced or future enhancements (e.g., online payments, 2FA, coupons, reviews).
 
 ### 1.3 Overview
 
-The system enables customers to browse products by category or search, add items to a cart, and complete purchases via a checkout process with cash-on-delivery. Registered users can save details and view order history, staff manage products and orders, and admins control system settings. The workflow involves customers browsing products, adding to the cart, proceeding to checkout, selecting payment, confirming the order, and receiving confirmation and shipping details.
+Users can browse or search for products, add items to the cart, and complete purchases via a checkout process using cash-on-delivery.  
+Registered users can view order history and receive notifications, while staff manage products and orders and administrators manage users and settings.
 
 ---
 
@@ -20,69 +27,144 @@ The system enables customers to browse products by category or search, add items
 
 ### 2.1 User Personas and Characteristics
 
-#### Customer
+#### Customers
 
-| Characteristic  | Description                                           |
-| :-------------- | :---------------------------------------------------- |
-| **User Type**   | General users who browse and purchase products.       |
-| **Permissions** | View products, add to cart, checkout, view order history. |
+- **Unregistered Customers (Guests)**: Can browse and view products; must register to purchase.  
+- **Registered Customers**: Can log in, manage carts, place orders, and view order history.  
 
-#### Administrator
+#### Staff
 
-| Characteristic  | Description                                                              |
-| :-------------- | :----------------------------------------------------------------------- |
-| **User Type**   | Staff responsible for managing the platform's content and operations.    |
-| **Permissions** | Full CRUD (Create, Read, Update, Delete) access on products, orders, and users. |
+- Manage product listings and orders, assist customers, and update product details.  
+
+#### Administrators
+
+- Oversee users, staff, products, and orders, ensuring data integrity and platform security.
 
 ### 2.2 Operating Environment
 
-The application will be a web-based platform hosted on a cloud service (e.g., AWS, Google Cloud, Azure). It must be accessible via modern web browsers on both desktop and mobile devices.
+The application is a browser-based, responsive web platform, accessible from desktop and mobile browsers.
 
 ### 2.3 Design and Implementation Constraints
 
-- The backend will be built using **Node.js** with the **Express.js** framework.
-- The frontend will be a single-page application (SPA) built with **React**.
-- The database will be **PostgreSQL**.
-- The user interface must be responsive and adhere to modern web design principles.
+- **Backend:** Node.js (Express.js)
+- **Frontend:** React (SPA)
+- **Database:** PostgreSQL
+- **Compatibility:** Chrome, Firefox, Edge, Safari
+- **Security:** HTTPS encryption, XSS/SQLi/CSRF protection, encrypted credentials
 
 ---
 
 ## 3. System Features (Functional Requirements)
 
-### 3.1 User Management
+### Customer Features
 
-- **FR1: User Registration:** Users must be able to create a new account using an email and password.
-- **FR2: User Login:** Registered users must be able to log in with their credentials.
-- **FR3: Password Hashing:** User passwords must be securely hashed before being stored in the database.
-- **FR4: Session Management:** The system shall use tokens (e.g., JWT) to manage user sessions.
+#### FR1: User Registration
 
-### 3.2 Product Catalog
+Users can create accounts using name, email, password, and optional phone number. Email verification is required before activation.
 
-- **FR5: Product Display:** All available products shall be displayed in a grid or list format, showing at least the product image, name, and price.
-- **FR6: Product Details:** Clicking on a product shall navigate the user to a detailed view showing full description, specifications, and images.
-- **FR7: Product Search & Filter:** Users must be able to search for products by name and filter them by category and price range.
+#### FR2: User Login
 
-### 3.3 Shopping Cart
+Registered users can log in with email and password.
 
-- **FR8: Add to Cart:** Users can add products to their shopping cart from the product list or detail page.
-- **FR9: View Cart:** Users can view the contents of their cart, including items, quantities, and subtotal.
-- **FR10: Update Quantity:** Users can change the quantity of items in their cart.
-- **FR11: Remove from Cart:** Users can remove items from their cart.
+#### FR3: Password Hashing
 
-### 3.4 Checkout and Order
+Passwords are encrypted before being stored in the database.
 
-- **FR12: Checkout Process:** Users must provide shipping information to proceed with checkout.
-- **FR13: Payment Method:** The system will initially support a "Cash on Delivery" payment option.
-- **FR14: Order Confirmation:** After placing an order, the user will see an order confirmation page and receive a confirmation email.
-- **FR15: Order History:** Logged-in users can view their past orders and their statuses (e.g., Processing, Shipped, Delivered).
+#### FR4: Session Management
 
-### 3.5 Administrator Panel
+The system uses tokens (JWT) to manage sessions and protect user routes.
 
-- **FR16: Secure Access:** The admin panel must be accessible only to users with 'Administrator' roles.
-- **FR17: Dashboard:** The admin dashboard will display key metrics like total sales, new orders, and new user registrations.
-- **FR18: Product Management:** Admins can add, update, and delete products from the catalog.
-- **FR19: Order Management:** Admins can view all orders and update their status.
-- **FR20: User Management:** Admins can view and manage all registered users.
+#### FR5: Browse Products
+
+All electronics products are displayed in a paginated list or grid, grouped by category.
+
+#### FR6: Search and Filter
+
+Customers can search by keyword and filter products by price, category, or brand.
+
+#### FR7: View Product Details
+
+Each product displays full details including images, specifications, price, and stock status.
+
+#### FR8: Shopping Cart Management
+
+Customers can add, remove, or update quantities of items in their shopping cart.
+
+#### FR9: Checkout (Cash on Delivery)
+
+Customers provide shipping details and confirm orders via cash-on-delivery payment.
+
+#### FR10: Order Confirmation
+
+A confirmation page and email are sent after order placement.
+
+#### FR11: Order History
+
+Registered customers can view their past orders with details and statuses.
+
+#### FR12: Account Management
+
+Users can update profile information such as name, address, and contact details.
+
+#### FR13: Wishlist
+
+Customers can save products to a wishlist for future reference.
+
+#### FR14: Notifications
+
+Users receive order updates, stock alerts, or promotions via email or in-app alerts.
+
+#### FR15: Password Reset
+
+Users can reset passwords through their registered email or phone.
+
+#### FR16: Support Requests
+
+Users can access FAQs or submit customer support tickets.
+
+#### FR17: OTP Authentication (Checkout Security)
+
+Users receive one-time passwords for checkout verification to enhance security.
+
+---
+
+### Staff Features
+
+#### FR18: Staff Login / Logout
+
+Staff access the system using employee credentials.
+
+#### FR19: Product Management
+
+Staff perform CRUD (create, read, update, delete) operations on products, including prices and stock levels.
+
+#### FR20: Order Management
+
+Staff can view, process, and update order statuses (e.g., pending, shipped, delivered).
+
+#### FR21: Customer Support
+
+Staff respond to customer inquiries and resolve order-related issues.
+
+---
+
+### Administrator Features
+
+#### FR22: Admin Login / Logout
+
+Administrators log in with elevated privileges to oversee the system.
+
+#### FR23: User Management
+
+Admins can create, modify, deactivate, or delete customer and staff accounts.
+
+#### FR24: Product Catalog Management
+
+Admins oversee all product categories and featured items.
+
+#### FR25: Order Log and Dashboard
+
+Admins monitor orders and logs via a dashboard summarizing sales and activity.
 
 ---
 
@@ -90,31 +172,49 @@ The application will be a web-based platform hosted on a cloud service (e.g., AW
 
 ### 4.1 User Interface
 
-- The UI must be clean, intuitive, and responsive, providing a seamless experience on devices ranging from mobile phones to desktops.
-- All interactive elements must have clear visual feedback (e.g., hover states, loading indicators).
+The UI must be clean, intuitive, and responsive with clear navigation and feedback indicators.
 
 ### 4.2 Software Interfaces
 
-- **Payment Gateway API:** The system will interface with a secure payment gateway's API for processing transactions. All communication must be encrypted.
+Integrate an email service (e.g., Nodemailer) for notifications and confirmations.
 
 ---
 
-## 5. Non-functional Requirements
+## 5. Non-functional Requirements (NFR)
 
-### 5.1 Performance
+### NFR1: Performance
 
-- **NFR1:** All pages must have a load time of under 3 seconds on a standard broadband connection.
-- **NFR2:** API response times for critical actions (e.g., add to cart, fetch products) should be under 500ms.
+- Support 1000 concurrent users.
+- Page load ≤ 2 seconds.
+- Checkout process ≤ 4 seconds.
 
-### 5.2 Security
+### NFR2: Scalability
 
-- **NFR3:** The application must be protected against common web vulnerabilities, including Cross-Site Scripting (XSS), SQL Injection, and Cross-Site Request Forgery (CSRF).
-- **NFR4:** All data transmission between the client and server must be encrypted using HTTPS.
+Support growth in catalog size and user base without major re-architecture.
 
-### 5.3 Reliability
+### NFR3: Maintainability
 
-- **NFR5:** The application should have an uptime of 99.9%.
+Use modular, well-documented code to simplify updates and bug fixes.
 
-### 5.4 Usability
+### NFR4: Security
 
-- **NFR6:** The user journey from browsing to checkout should be completable in a minimal number of steps and be intuitive for non-technical users.
+Protect against CSRF, XSS, SQL injection; encrypt sensitive data.
+
+### NFR5: Usability
+
+Provide a user-friendly, mobile-responsive interface with intuitive navigation.
+
+### NFR6: Compatibility
+
+Ensure compatibility across modern browsers.
+
+### NFR7: Reliability
+
+Maintain stable performance and correct transaction handling.
+
+---
+
+## 6. Summary
+
+This document defines all functional and non-functional requirements for the Electronics Shop Web App in its current scope.  
+It includes all user roles (Customer, Staff, Administrator) and omits future features such as payment gateways, 2FA, reviews, and loyalty systems.
