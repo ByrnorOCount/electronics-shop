@@ -41,7 +41,7 @@ const ProductDetailPage = () => {
   if (!product) return null;
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto p-8 mb-12">
       <div className="flex flex-col md:flex-row gap-8">
         <img src={product.image_url || 'https://via.placeholder.com/400'} alt={product.name} className="w-full md:w-1/2 rounded-lg shadow-lg" />
         <div className="flex flex-col justify-center">

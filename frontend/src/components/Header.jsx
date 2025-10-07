@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 bg-amber-100 shadow-sm z-50">
+    <header className="sticky top-0 bg-amber-200 shadow-sm z-50">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
         <Link to="/" className="text-xl font-bold text-indigo-600">
           ElectroShop

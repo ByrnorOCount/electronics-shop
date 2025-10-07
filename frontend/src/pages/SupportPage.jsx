@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const SupportPage = () => {
   return (
-    <div className="container mx-auto p-8 max-w-4xl">
+    <div className="container mx-auto p-8 max-w-4xl mb-12">
       <h1 className="text-4xl font-bold mb-4">Help Center</h1>
       <p className="text-lg text-gray-700 mb-8">
         We're here to help. Find answers to common questions or get in touch with our support team.
