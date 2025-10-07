@@ -3,6 +3,7 @@
  */
 import React, { useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
+import api from "../services/api";
 
 export default function FeaturedGrid() {
   const [products, setProducts] = useState([]);
@@ -12,12 +13,8 @@ export default function FeaturedGrid() {
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
-        // The API endpoint should return products where `is_featured` is true.
-        const response = await fetch("/api/products?featured=true");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
+        const response = await api.get("/products?featured=true");
+        const data = response.data;
         setProducts(data);
       } catch (err) {
         setError(err.message);

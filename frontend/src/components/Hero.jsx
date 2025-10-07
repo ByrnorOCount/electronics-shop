@@ -2,6 +2,7 @@
  * Hero section: marketing banner + CTA
  */
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Hero() {
   return (
@@ -16,18 +17,18 @@ export default function Hero() {
             curated and tested.
           </p>
           <div className="flex gap-4">
-            <a
-              href="#"
+            <Link
+              to="/products"
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
               Shop catalog
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              to="/about"
               className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50"
             >
               Learn more
-            </a>
+            </Link>
           </div>
         </div>
         <div className="flex-1 w-full h-56 bg-white rounded-xl shadow-md">

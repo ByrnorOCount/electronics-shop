@@ -169,7 +169,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 - [ ] `HomePage`, `ProductsPage`, `ProductDetailPage`
 - [ ] `CartPage`, `WishlistPage`, `CheckoutPage`
-- [ ] `OrderHistoryPage`, `LoginPage`, `RegisterPage`
+- [x] `OrderHistoryPage`, `LoginPage`, `RegisterPage`
 - [ ] `AccountPage`, `SupportPage`
 
 #### Staff
@@ -200,8 +200,8 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ## 6. Functionality Implementation
 
-- [ ] **User Auth Flow:** Connect frontend with `/api/users` endpoints.
-- [ ] **Product Display:** Fetch and render paginated products.
+- [x] **User Auth Flow:** Connect frontend with `/api/users` endpoints.
+- [x] **Product Display:** Fetch and render paginated products.
 - [ ] **Cart Management:** Add/update/delete cart items.
 - [ ] **Wishlist Integration:** Sync wishlist UI with backend.
 - [ ] **Checkout Flow:** COD checkout with OTP verification.

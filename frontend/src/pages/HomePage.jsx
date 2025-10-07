@@ -1,15 +1,11 @@
 import React from "react";
-import Header from "../components/Header";
 import Hero from "../components/Hero";
 import FeaturedGrid from "../components/FeaturedGrid";
 import Newsletter from "../components/Newsletter";
-import Footer from "../components/Footer";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-grow">
+    <>
         <Hero />
 
         {/* Featured products */}
@@ -50,8 +46,6 @@ export default function HomePage() {
         </section>
 
         <Newsletter />
-      </main>
-      <Footer />
-    </div>
+    </>
   );
 }
