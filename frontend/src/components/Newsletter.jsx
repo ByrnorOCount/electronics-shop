@@ -15,11 +15,11 @@ export default function Newsletter() {
           type="email"
           required
           placeholder="you@example.com"
-          className="flex-1 px-3 py-2 border rounded-md focus:ring focus:ring-blue-200"
+          className="flex-1 px-3 py-2 border rounded-md focus:ring focus:ring-indigo-200"
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
         >
           Subscribe
         </button>

@@ -33,7 +33,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-yellow-50">
       <div className="p-8 bg-white rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6">Create an Account</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
@@ -54,7 +54,7 @@ const RegisterPage = () => {
             <label className="block text-gray-700">Password</label>
             <input type="password" name="password" onChange={handleChange} required className="w-full px-3 py-2 border rounded-lg" />
           </div>
-          <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:bg-blue-300">
+          <button type="submit" disabled={loading} className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300">
             {loading ? 'Registering...' : 'Register'}
           </button>
         </form>

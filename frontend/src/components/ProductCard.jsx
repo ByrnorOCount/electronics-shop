@@ -11,7 +11,7 @@ import React from 'react';
  */
 export default function ProductCard({ product }) {
   return (
-    <div className="border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <div className="border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white">
       <img src={product.image_url} alt={product.name} className="w-full h-48 object-cover" />
       <div className="p-4">
         <h3 className="font-bold text-lg truncate">{product.name}</h3>

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 export default function Hero() {
   return (
-    <section className="bg-gradient-to-b from-blue-50 to-white py-16">
+    <section className="bg-gradient-to-b from-yellow-100 to-yellow-50 py-16">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10 px-4">
         <div className="flex-1">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
@@ -19,13 +19,13 @@ export default function Hero() {
           <div className="flex gap-4">
             <Link
               to="/products"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
             >
               Shop catalog
             </Link>
             <Link
               to="/about"
-              className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50"
+              className="px-4 py-2 border border-indigo-600 text-indigo-600 rounded-md bg-white hover:bg-indigo-50"
             >
               Learn more
             </Link>

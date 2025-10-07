@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t py-6 mt-12">
+    <footer className="bg-amber-100 border-t border-amber-200 py-6 mt-12">
       <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between gap-6">
         <div>
-          <Link to="/" className="text-lg font-bold text-blue-600">
+          <Link to="/" className="text-lg font-bold text-indigo-600">
             ElectroShop
           </Link>
           <p className="text-gray-500 text-sm">
