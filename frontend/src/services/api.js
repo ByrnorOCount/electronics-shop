@@ -10,3 +10,15 @@ export async function fetchHome() {
     return { message: "Error connecting to backend" };
   }
 }
+
+export async function fetchProducts() {
+  try {
+    const response = await fetch(`${API_URL}/products`);
+    if (!response.ok) throw new Error('Network response was not ok');
+    return await response.json();
+  } catch (err) {
+    console.error('fetchProducts error:', err);
+    // fallback to empty array
+    return [];
+  }
+}
