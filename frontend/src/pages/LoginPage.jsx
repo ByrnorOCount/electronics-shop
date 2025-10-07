@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { setCredentials } from '../features/auth/authSlice';
 import api from '../services/api';
 
@@ -58,6 +58,12 @@ const LoginPage = () => {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
+        <p className="text-center text-sm text-gray-600 mt-4">
+          Don't have an account?{' '}
+          <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+            Register
+          </Link>
+        </p>
       </div>
     </div>
   );

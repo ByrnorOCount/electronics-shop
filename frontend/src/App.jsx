@@ -25,11 +25,9 @@ function App() {
           <Route path="careers" element={<CareersPage />} />
           <Route path="support" element={<SupportPage />} />
           <Route path="support/warranty" element={<WarrantyPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
         </Route>
-
-        {/* Standalone routes */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
 
         {/* Catch-all 404 route */}
         <Route path="*" element={<NotFoundPage />} />

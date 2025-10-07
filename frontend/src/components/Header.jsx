@@ -19,7 +19,7 @@ export default function Header() {
         </nav>
         <div className="flex gap-2">
           <Link to="/login" className="px-3 py-1 rounded-md border border-indigo-600 text-indigo-600 bg-white hover:bg-indigo-50">
-            Sign in
+            Sign In
           </Link>
           <Link to="/cart" className="px-3 py-1 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
             Cart (0)
