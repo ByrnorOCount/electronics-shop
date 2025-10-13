@@ -143,3 +143,13 @@ export function down(knex) {
 }
 Run the migration:
 npx knex migrate:latest --cwd ./database
+
+
+postman/curl testing
+apis for everything
+
+focus on backend first to interact with api
+then 3 weeks later match frontend with backend/database
+
+diagrams
+use case tables

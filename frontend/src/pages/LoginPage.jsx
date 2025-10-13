@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../store/hooks';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { setCredentials } from '../features/auth/authSlice';
 import api from '../services/api';
@@ -9,7 +9,7 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 

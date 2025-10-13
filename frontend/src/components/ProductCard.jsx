@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Displays a single product in a card format.
  * @param {object} props
@@ -23,7 +21,7 @@ export default function ProductCard({ product }) {
       addItem({
         id: product.id,
         name: product.name,
-        price: product.price,
+        price: Number(product.price),
         qty: 1,
         img: product.img,
       })

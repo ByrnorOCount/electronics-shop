@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../store/hooks';
 import { addItem } from '../features/cart/cartSlice';
 import api from '../services/api';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,7 +30,7 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      dispatch(addItem({ ...product, qty: 1 }));
+      dispatch(addItem({ ...product, price: Number(product.price), qty: 1 }));
       // Optionally, show a notification that the item was added
     }
   };
