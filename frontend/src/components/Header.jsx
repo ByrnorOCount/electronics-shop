@@ -3,8 +3,12 @@
  */
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAppSelector } from "../store/hooks";
 
 export default function Header() {
+  const items = useAppSelector((state) => state.cart.items || []);
+  const totalQty = items.reduce((s, it) => s + (it.qty || 0), 0);
+
   return (
     <header className="sticky top-0 bg-amber-200 shadow-sm z-50">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
