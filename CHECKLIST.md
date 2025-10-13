@@ -34,14 +34,14 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] **Registration (FR1):**
   - [ ] Validate input and enforce password complexity.
   - [x] Hash password with `bcrypt`.
-  - [ ] Send verification email upon registration.
+  - [x] Send verification email upon registration.
 - [x] **Login (FR2):**
   - [x] Validate credentials.
   - [x] Generate and return JWT.
 - [x] **Session Management (FR4):**
   - [x] Middleware to verify JWT and protect routes.
-- [ ] **Password Reset (FR15):**
-  - [ ] Implement `/api/users/reset-password` (email link or OTP).
+- [x] **Password Reset (FR15):**
+  - [x] Implement `/api/users/forgot-password` and `/api/users/reset-password/:token`.
 - [ ] **OTP Authentication (FR17):**
   - [ ] Generate OTP on checkout and verify before confirming order.
 - [x] **Profile Management (FR12):**
@@ -85,8 +85,8 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
   - [x] Accept shipping info and use “Cash on Delivery”.
   - [x] Generate order and move items from cart to order_items.
   - [x] Clear user cart afterward.
-- [ ] **Order Confirmation:**
-  - [ ] Use **Nodemailer** to send confirmation emails.
+- [x] **Order Confirmation:**
+  - [x] Use **Nodemailer** to send confirmation emails.
 - [x] **Order History (`GET /api/orders`)**
   - [x] Return all orders for the current user.
 

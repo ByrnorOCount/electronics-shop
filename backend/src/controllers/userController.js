@@ -1,5 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import { sendPasswordResetEmail, sendVerificationEmail } from '../services/emailService.js';
 import db from '../config/db.js';
 
 /**
@@ -18,13 +20,32 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: 'Email already in use.' });
     }
 
+    // Generate a verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const [newUser] = await db('users')
-      .insert({ first_name, last_name, email, password_hash: hashedPassword, role: 'customer' })
-      .returning(['id', 'first_name', 'last_name', 'email', 'role']);
+    const [user] = await db('users')
+      .insert({
+        first_name,
+        last_name,
+        email,
+        password_hash: hashedPassword,
+        role: 'customer',
+        is_verified: false,
+        email_verification_token: verificationToken,
+      })
+      .returning('*');
 
-    res.status(201).json({ message: 'User registered successfully.', user: newUser });
+    // For development convenience, log the verification token to the console.
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`\n--- EMAIL VERIFICATION --- \nUser: ${user.email}\nToken: ${verificationToken}\n--------------------------\n`);
+    }
+
+    // Send verification email
+    await sendVerificationEmail(user, verificationToken);
+
+    res.status(201).json({ message: 'Registration successful. Please check your email to verify your account.' });
   } catch (error) {
     console.error('Error during registration:', error);
     res.status(500).json({ message: 'Server error during registration.' });
@@ -45,6 +66,10 @@ export const login = async (req, res) => {
     const user = await db('users').where({ email }).first();
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials.' });
+    }
+
+    if (!user.is_verified) {
+      return res.status(401).json({ message: 'Please verify your email before logging in.' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
@@ -103,5 +128,116 @@ export const updateUserProfile = async (req, res) => {
   } catch (error) {
     console.error('Error updating profile:', error);
     res.status(500).json({ message: 'Server error during profile update.' });
+  }
+};
+
+/**
+ * Handle a forgot password request.
+ * @route POST /api/users/forgot-password
+ * @access Public
+ */
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await db('users').where({ email }).first();
+
+    if (!user) {
+      // Don't reveal if a user exists or not for security reasons
+      return res.status(200).json({ message: 'If a user with that email exists, a reset link has been sent.' });
+    }
+
+    // Generate a reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    // For development convenience, log the token to the console.
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`\n--- PASSWORD RESET --- \nUser: ${user.email}\nToken: ${resetToken}\n----------------------\n`);
+    }
+
+    // Set token and expiration on user record
+    await db('users')
+      .where({ id: user.id })
+      .update({
+        password_reset_token: hashedToken,
+        password_reset_expires: db.raw("NOW() + INTERVAL '1 hour'"),
+      });
+
+    // Send the email
+    await sendPasswordResetEmail(user, resetToken);
+
+    res.status(200).json({ message: 'If a user with that email exists, a reset link has been sent.' });
+  } catch (error) {
+    console.error('Error in forgot password:', error);
+    res.status(500).json({ message: 'Server error.' });
+  }
+};
+
+/**
+ * Verify user's email using a token.
+ * @route GET /api/users/verify-email/:token
+ * @access Public
+ */
+export const verifyEmail = async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    const user = await db('users').where({ email_verification_token: token }).first();
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired verification token.' });
+    }
+
+    await db('users').where({ id: user.id }).update({
+      is_verified: true,
+      email_verification_token: null,
+    });
+
+    // In a real frontend app, you would redirect to the login page with a success message.
+    res.status(200).send('<h1>Email verified successfully!</h1><p>You can now close this tab and log in.</p>');
+  } catch (error) {
+    console.error('Error during email verification:', error);
+    res.status(500).json({ message: 'Server error during email verification.' });
+  }
+};
+
+/**
+ * Reset password using a token.
+ * @route POST /api/users/reset-password/:token
+ * @access Public
+ */
+export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  if (!password) {
+    return res.status(400).json({ message: 'Password is required.' });
+  }
+
+  // Hash the incoming token to match the one in the DB
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  try {
+    const user = await db('users')
+      .where({ password_reset_token: hashedToken })
+      .andWhere('password_reset_expires', '>', db.raw('NOW()'))
+      .first();
+
+    if (!user) {
+      return res.status(400).json({ message: 'Password reset token is invalid or has expired.' });
+    }
+
+    // Hash new password and update user
+    const hashedPassword = await bcrypt.hash(password, 12);
+    await db('users').where({ id: user.id }).update({
+      password_hash: hashedPassword,
+      password_reset_token: null,
+      password_reset_expires: null,
+    });
+
+    res.status(200).json({ message: 'Password has been reset successfully.' });
+  } catch (error) {
+    console.error('Error in reset password:', error);
+    res.status(500).json({ message: 'Server error.' });
   }
 };

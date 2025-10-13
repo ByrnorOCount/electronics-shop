@@ -1,4 +1,5 @@
 import db from '../config/db.js';
+import { sendOrderConfirmationEmail } from '../services/emailService.js';
 
 /**
  * Create a new order from the user's cart.
@@ -52,6 +53,9 @@ export const createOrder = async (req, res) => {
 
       return order;
     });
+
+    // Send confirmation email (fire and forget, don't block the response)
+    sendOrderConfirmationEmail(req.user, newOrder);
 
     res.status(201).json({ message: 'Order created successfully', order: newOrder });
   } catch (error) {
