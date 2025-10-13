@@ -1,5 +1,6 @@
 # The file already provides clarity for the /products and /users/register endpoints. As you move on to building the cart, orders, and admin features, expanding this contract first will ensure your frontend and backend development stays perfectly in sync.
 # Remember to include request and response schemas for all new endpoints you add.
+# Be sure to both obey and update this contract as you build further features
 
 openapi: 3.0.0
 info:

@@ -26,7 +26,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 2. Backend Development (Node.js / Express / PostgreSQL)
+## 2. Backend Development (Node.js / Express / PostgreSQL) - **[PRIORITY: API First]**
 
 ### **User Management (FR1–FR4, FR15–FR17)**
 
@@ -101,7 +101,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 3. Staff Features (FR18–FR21)
+## 3. Staff Features (FR18–FR21) - **[PRIORITY: API First]**
 
 ### **Staff Authentication**
 
@@ -129,7 +129,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 4. Administrator Features (FR22–FR25)
+## 4. Administrator Features (FR22–FR25) - **[PRIORITY: API First]**
 
 ### **Authentication**
 
