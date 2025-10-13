@@ -13,7 +13,7 @@ import wishlistRoutes from './routes/wishlistRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import supportRoutes from './routes/supportRoutes.js';
 import staffRoutes from './routes/staffRoutes.js';
-// import adminRoutes from './routes/adminRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,7 +31,7 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/support', supportRoutes); // FAQ route is at /api/support/faq
 app.use('/api/staff', staffRoutes);
-// app.use('/api/admin', adminRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Root (API health check)
 app.get("/", (req, res) => {

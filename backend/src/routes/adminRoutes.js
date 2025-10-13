@@ -1,18 +1,14 @@
-const express = require('express');
+import express from 'express';
+import { getAllUsers, updateUserRole, deleteUser } from '../controllers/adminController.js';
+import { protect, isAdmin } from '../middlewares/authMiddleware.js';
+
 const router = express.Router();
-// const adminController = require('../controllers/adminController');
-// const { protect, isAdmin } = require('../middlewares/authMiddleware');
 
-// Admin authentication
-router.post('/login', /* adminController.login */);
+// All routes in this file are protected and require admin privileges.
+router.use(protect, isAdmin);
 
-// User Management (FR23)
-router.get('/users', /* protect, isAdmin, adminController.getAllUsers */);
-router.put('/users/:id', /* protect, isAdmin, adminController.updateUser */);
-router.delete('/users/:id', /* protect, isAdmin, adminController.deleteUser */);
+router.route('/users').get(getAllUsers);
 
-// Dashboard & Logs (FR25)
-router.get('/dashboard', /* protect, isAdmin, adminController.getDashboardStats */);
-router.get('/logs', /* protect, isAdmin, adminController.getActivityLogs */);
+router.route('/users/:id').put(updateUserRole).delete(deleteUser);
 
-module.exports = router;
+export default router;

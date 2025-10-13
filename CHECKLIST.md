@@ -133,14 +133,14 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ### **Authentication**
 
-- [ ] Admin login (`POST /api/admin/login`)
-- [ ] Middleware for role-based protection
+- [x] Admin login (handled by `POST /api/users/login` with role check)
+- [x] Middleware for role-based protection (`isAdmin`)
 
 ### **User Management (FR23)**
 
-- [ ] `GET /api/admin/users` (view all)
-- [ ] `PUT /api/admin/users/:id` (update/deactivate)
-- [ ] `DELETE /api/admin/users/:id` (remove)
+- [x] `GET /api/admin/users` (view all)
+- [x] `PUT /api/admin/users/:id` (update role)
+- [x] `DELETE /api/admin/users/:id` (remove)
 
 ### **Product Catalog Management (FR24)**
 
