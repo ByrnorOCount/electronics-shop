@@ -21,7 +21,7 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const [newUser] = await db('users')
-      .insert({ first_name, last_name, email, password_hash: hashedPassword })
+      .insert({ first_name, last_name, email, password_hash: hashedPassword, role: 'customer' })
       .returning(['id', 'first_name', 'last_name', 'email', 'role']);
 
     res.status(201).json({ message: 'User registered successfully.', user: newUser });

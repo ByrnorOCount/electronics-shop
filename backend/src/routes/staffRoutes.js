@@ -1,18 +1,32 @@
-const express = require('express');
-const router = express.Router();
-// const staffController = require('../controllers/staffController');
-// const { protect, isStaff } = require('../middlewares/authMiddleware');
+import express from 'express';
+import {
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getAllOrders,
+  updateOrderStatus,
+  getAllSupportTickets,
+} from '../controllers/staffController.js';
+import { protect, isStaff } from '../middlewares/authMiddleware.js';
 
-// Staff authentication
-router.post('/login', /* staffController.login */);
+const router = express.Router();
+
+// Note: Staff login is handled by the main /api/users/login endpoint.
+// These routes are protected and require a valid token with a 'staff' or 'admin' role.
 
 // Product Management (FR19)
-router.post('/products', /* protect, isStaff, staffController.createProduct */);
-router.put('/products/:id', /* protect, isStaff, staffController.updateProduct */);
-router.delete('/products/:id', /* protect, isStaff, staffController.deleteProduct */);
+router.route('/products')
+  .post(protect, isStaff, createProduct);
+
+router.route('/products/:id')
+  .put(protect, isStaff, updateProduct)
+  .delete(protect, isStaff, deleteProduct);
 
 // Order Management (FR20)
-router.get('/orders', /* protect, isStaff, staffController.getAllOrders */);
-router.put('/orders/:id', /* protect, isStaff, staffController.updateOrderStatus */);
+router.route('/orders').get(protect, isStaff, getAllOrders);
+router.route('/orders/:id').put(protect, isStaff, updateOrderStatus);
 
-module.exports = router;
+// Customer Support Ticket Management (FR21)
+router.route('/support-tickets').get(protect, isStaff, getAllSupportTickets);
+
+export default router;

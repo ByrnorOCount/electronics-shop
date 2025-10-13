@@ -106,25 +106,25 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 ### **Staff Authentication**
 
 - [ ] **Routes:** `routes/staffRoutes.js`
-- [ ] **Staff Login (FR18):** Use JWT-based role authentication.
+- [x] **Staff Login (FR18):** Use JWT-based role authentication.
 
 ### **Product Management (FR19)**
 
-- [ ] CRUD operations for products:
-  - [ ] `POST /api/staff/products`
-  - [ ] `PUT /api/staff/products/:id`
-  - [ ] `DELETE /api/staff/products/:id`
+- [x] CRUD operations for products:
+  - [x] `POST /api/staff/products`
+  - [x] `PUT /api/staff/products/:id`
+  - [x] `DELETE /api/staff/products/:id`
   - [ ] `GET /api/staff/products` (for verification)
 
 ### **Order Management (FR20)**
 
-- [ ] View orders (`GET /api/staff/orders`)
-- [ ] Update status (`PUT /api/staff/orders/:id`)
+- [x] View orders (`GET /api/staff/orders`)
+- [x] Update status (`PUT /api/staff/orders/:id`)
 - [ ] Assign delivery / mark as completed
 
 ### **Customer Support (FR21)**
 
-- [ ] View support tickets (`GET /api/staff/support`)
+- [x] View support tickets (`GET /api/staff/support-tickets`)
 - [ ] Reply to tickets (`POST /api/staff/support/reply`)
 
 ---

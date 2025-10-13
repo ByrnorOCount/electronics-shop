@@ -4,6 +4,9 @@ import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
+// Route for FAQs (public)
+router.route('/faq').get(getFaqs);
+
 // Routes for support tickets (protected)
 router.route('/')
   .post(protect, submitTicket)
@@ -12,8 +15,5 @@ router.route('/')
 // Route for a single support ticket
 router.route('/:ticketId')
   .get(protect, getTicketById);
-
-// Route for FAQs (public)
-router.route('/faq').get(getFaqs);
 
 export default router;

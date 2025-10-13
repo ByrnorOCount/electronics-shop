@@ -24,6 +24,8 @@ tags:
     description: Order management and history
   - name: Support
     description: Customer support tickets and FAQs
+  - name: Staff
+    description: Operations for staff members
 
 paths:
   /products:
@@ -420,6 +422,122 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/FAQItem'
+
+  /staff/products:
+    post:
+      summary: Create a new product
+      description: (Staff Only) Adds a new product to the catalog.
+      tags:
+        - Staff
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product' # Re-use the product schema
+      responses:
+        '201':
+          description: Product created successfully.
+
+  /staff/products/{id}:
+    put:
+      summary: Update a product
+      description: (Staff Only) Updates details for an existing product.
+      tags:
+        - Staff
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product updated successfully.
+
+    delete:
+      summary: Delete a product
+      description: (Staff Only) Deletes a product from the catalog.
+      tags:
+        - Staff
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Product deleted successfully.
+
+  /staff/orders:
+    get:
+      summary: Get all orders
+      description: (Staff Only) Retrieves a list of all customer orders.
+      tags:
+        - Staff
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of all orders.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+
+  /staff/orders/{id}:
+    put:
+      summary: Update order status
+      description: (Staff Only) Updates the status of an order (e.g., 'Shipped', 'Delivered').
+      tags:
+        - Staff
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Order status updated.
+
+  /staff/support-tickets:
+    get:
+      summary: Get all support tickets
+      description: (Staff Only) Retrieves all support tickets from all users.
+      tags:
+        - Staff
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of all support tickets.
 
 components:
   schemas:
