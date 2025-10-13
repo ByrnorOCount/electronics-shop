@@ -1,11 +1,19 @@
+import dotenv from "dotenv";
+// It's crucial to call dotenv.config() at the very top
+// so that environment variables are available in all imported modules.
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-import routes from "./routes/index.js";
+// Import all your route files
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+// import cartRoutes from './routes/cartRoutes.js';
+// import wishlistRoutes from './routes/wishlistRoutes.js';
+// import orderRoutes from './routes/orderRoutes.js';
+// import staffRoutes from './routes/staffRoutes.js';
+// import adminRoutes from './routes/adminRoutes.js';
 
-dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -13,10 +21,15 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use("/api", routes);
+// --- API Routes ---
+// This is now the single source of truth for routing
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
+// app.use('/api/cart', cartRoutes);
+// app.use('/api/wishlist', wishlistRoutes);
+// app.use('/api/orders', orderRoutes);
+// app.use('/api/staff', staffRoutes);
+// app.use('/api/admin', adminRoutes);
 
 // Root (API health check)
 app.get("/", (req, res) => {

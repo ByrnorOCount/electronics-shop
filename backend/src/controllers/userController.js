@@ -63,3 +63,45 @@ export const login = async (req, res) => {
     res.status(500).json({ message: 'Server error during login.' });
   }
 };
+
+/**
+ * Get user profile.
+ * @route GET /api/users/me
+ * @access Private
+ */
+export const getUserProfile = async (req, res) => {
+  // The user object is attached to the request by the `protect` middleware
+  res.status(200).json(req.user);
+};
+
+/**
+ * Update user profile.
+ * @route PUT /api/users/me
+ * @access Private
+ */
+export const updateUserProfile = async (req, res) => {
+  const { first_name, last_name, email } = req.body;
+
+  // Build an object with only the fields that were actually provided in the request.
+  const updateData = {};
+  if (first_name) updateData.first_name = first_name;
+  if (last_name) updateData.last_name = last_name;
+  if (email) updateData.email = email;
+
+  // If no valid fields were provided, return a bad request error.
+  if (Object.keys(updateData).length === 0) {
+    return res.status(400).json({ message: 'No fields provided to update.' });
+  }
+
+  try {
+    const [updatedUser] = await db('users')
+      .where({ id: req.user.id })
+      .update(updateData)
+      .returning(['id', 'first_name', 'last_name', 'email', 'role']);
+
+    res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Server error during profile update.' });
+  }
+};

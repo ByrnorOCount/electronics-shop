@@ -1,17 +1,16 @@
 import express from 'express';
-import { register, login } from '../controllers/userController.js';
+import { register, login, getUserProfile, updateUserProfile } from '../controllers/userController.js';
+import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
-// const userController = require('../controllers/userController');
-// const { protect } = require('../middlewares/authMiddleware');
 
 // Public routes
-router.post('/register', /* userController.registerUser */);
-router.post('/login', /* userController.loginUser */);
+router.post('/register', register);
+router.post('/login', login);
 router.post('/reset-password', /* userController.requestPasswordReset */);
 
 // Protected routes
-router.get('/me', /* protect, userController.getUserProfile */);
-router.put('/me', /* protect, userController.updateUserProfile */);
+router.get('/me', protect, getUserProfile);
+router.put('/me', protect, updateUserProfile);
 
-module.exports = router;
+export default router;
