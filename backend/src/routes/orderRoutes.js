@@ -1,10 +1,11 @@
-const express = require('express');
+import express from 'express';
+import { createOrder, getOrders } from '../controllers/orderController.js';
+import { protect } from '../middlewares/authMiddleware.js';
+
 const router = express.Router();
-// const orderController = require('../controllers/orderController');
-// const { protect } = require('../middlewares/authMiddleware');
 
-// All order routes should be protected
-router.post('/', /* protect, orderController.createOrder */);
-router.get('/', /* protect, orderController.getOrderHistory */);
+router.route('/')
+  .post(protect, createOrder)
+  .get(protect, getOrders);
 
-module.exports = router;
+export default router;

@@ -8,9 +8,10 @@ import cors from "cors";
 // Import all your route files
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
-// import cartRoutes from './routes/cartRoutes.js';
-// import wishlistRoutes from './routes/wishlistRoutes.js';
-// import orderRoutes from './routes/orderRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
+import wishlistRoutes from './routes/wishlistRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
+import supportRoutes from './routes/supportRoutes.js';
 // import staffRoutes from './routes/staffRoutes.js';
 // import adminRoutes from './routes/adminRoutes.js';
 
@@ -25,9 +26,10 @@ app.use(express.json());
 // This is now the single source of truth for routing
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
-// app.use('/api/cart', cartRoutes);
-// app.use('/api/wishlist', wishlistRoutes);
-// app.use('/api/orders', orderRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/support', supportRoutes); // FAQ route is at /api/support/faq
 // app.use('/api/staff', staffRoutes);
 // app.use('/api/admin', adminRoutes);
 

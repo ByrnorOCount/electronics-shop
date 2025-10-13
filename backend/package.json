@@ -6,9 +6,14 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "migrate": "knex migrate:latest --cwd ./database",
-    "rollback": "knex migrate:rollback --cwd ./database",
-    "seed": "knex seed:run --cwd ./database"
+    "migrate": "knex migrate:latest --knexfile ./database/knexfile.js",
+    "rollback": "knex migrate:rollback --knexfile ./database/knexfile.js",
+    "seed": "knex seed:run --knexfile ./database/knexfile.js",
+    "make:migration": "knex migrate:make --knexfile ./database/knexfile.js",
+    "make:seed": "knex seed:make --knexfile ./database/knexfile.js"
+  },
+  "knex": {
+    "knexfile": "./database/knexfile.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

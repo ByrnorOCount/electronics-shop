@@ -1,10 +1,19 @@
-const express = require('express');
+import express from 'express';
+import { submitTicket, getUserTickets, getTicketById, getFaqs } from '../controllers/supportController.js';
+import { protect } from '../middlewares/authMiddleware.js';
+
 const router = express.Router();
-// const supportController = require('../controllers/supportController');
-// const { protect } = require('../middlewares/authMiddleware');
 
-// All support routes should be protected
-router.post('/', /* protect, supportController.createTicket */);
-router.get('/:id', /* protect, supportController.getTicketById */);
+// Routes for support tickets (protected)
+router.route('/')
+  .post(protect, submitTicket)
+  .get(protect, getUserTickets);
 
-module.exports = router;
+// Route for a single support ticket
+router.route('/:ticketId')
+  .get(protect, getTicketById);
+
+// Route for FAQs (public)
+router.route('/faq').get(getFaqs);
+
+export default router;

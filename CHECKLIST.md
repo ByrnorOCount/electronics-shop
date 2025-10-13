@@ -30,7 +30,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ### **User Management (FR1–FR4, FR15–FR17)**
 
-- [ ] **Routes:** `routes/userRoutes.js`
+- [x] **Routes:** `routes/userRoutes.js`
 - [x] **Registration (FR1):**
   - [ ] Validate input and enforce password complexity.
   - [x] Hash password with `bcrypt`.
@@ -38,14 +38,14 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] **Login (FR2):**
   - [x] Validate credentials.
   - [x] Generate and return JWT.
-- [ ] **Session Management (FR4):**
-  - [ ] Middleware to verify JWT and protect routes.
+- [x] **Session Management (FR4):**
+  - [x] Middleware to verify JWT and protect routes.
 - [ ] **Password Reset (FR15):**
   - [ ] Implement `/api/users/reset-password` (email link or OTP).
 - [ ] **OTP Authentication (FR17):**
   - [ ] Generate OTP on checkout and verify before confirming order.
-- [ ] **Profile Management (FR12):**
-  - [ ] Implement `/api/users/me` for updating user info.
+- [x] **Profile Management (FR12):**
+  - [x] Implement `/api/users/me` for updating user info.
 - [ ] **Notifications (FR14):**
   - [ ] Send notifications via email and store them in DB.
 
@@ -66,38 +66,38 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ### **Shopping Cart & Wishlist (FR8–FR13)**
 
-- [ ] **Routes:** `routes/cartRoutes.js`, `routes/wishlistRoutes.js`
-- [ ] **Get Cart (`GET /api/cart`)**
-- [ ] **Add to Cart (`POST /api/cart`)**
-- [ ] **Update Quantity (`PUT /api/cart/items/:id`)**
-- [ ] **Remove from Cart (`DELETE /api/cart/items/:id`)**
-- [ ] **Wishlist API (FR13):**
-  - [ ] Add to wishlist (`POST /api/wishlist`)
-  - [ ] View wishlist (`GET /api/wishlist`)
-  - [ ] Remove from wishlist (`DELETE /api/wishlist/:id`)
+- [x] **Routes:** `routes/cartRoutes.js`, `routes/wishlistRoutes.js`
+- [x] **Get Cart (`GET /api/cart`)**
+- [x] **Add to Cart (`POST /api/cart`)**
+- [x] **Update Quantity (`PUT /api/cart/items/:id`)**
+- [x] **Remove from Cart (`DELETE /api/cart/items/:id`)**
+- [x] **Wishlist API (FR13):**
+  - [x] Add to wishlist (`POST /api/wishlist`)
+  - [x] View wishlist (`GET /api/wishlist`)
+  - [x] Remove from wishlist (`DELETE /api/wishlist/:id`)
 
 ---
 
 ### **Checkout & Orders (FR9–FR11, FR10)**
 
-- [ ] **Routes:** `routes/orderRoutes.js`
-- [ ] **Checkout (`POST /api/orders`):**
-  - [ ] Accept shipping info and use “Cash on Delivery”.
-  - [ ] Generate order and move items from cart to order_items.
-  - [ ] Clear user cart afterward.
+- [x] **Routes:** `routes/orderRoutes.js`
+- [x] **Checkout (`POST /api/orders`):**
+  - [x] Accept shipping info and use “Cash on Delivery”.
+  - [x] Generate order and move items from cart to order_items.
+  - [x] Clear user cart afterward.
 - [ ] **Order Confirmation:**
   - [ ] Use **Nodemailer** to send confirmation emails.
-- [ ] **Order History (`GET /api/orders`)**
-  - [ ] Return all orders for the current user.
+- [x] **Order History (`GET /api/orders`)**
+  - [x] Return all orders for the current user.
 
 ---
 
 ### **Customer Support (FR16)**
 
-- [ ] **Routes:** `routes/supportRoutes.js`
-- [ ] **Submit Ticket:** `POST /api/support`
-- [ ] **View Ticket:** `GET /api/support/:id`
-- [ ] **FAQ Endpoint (optional)**
+- [x] **Routes:** `routes/supportRoutes.js`
+- [x] **Submit Ticket:** `POST /api/support`
+- [x] **View Tickets:** `GET /api/support`
+- [x] **FAQ Endpoint:** `GET /api/support/faq`
 
 ---
 
@@ -202,7 +202,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 - [x] **User Auth Flow:** Connect frontend with `/api/users` endpoints.
 - [x] **Product Display:** Fetch and render paginated products.
-- [ ] **Cart Management:** Add/update/delete cart items.
+- [x] **Cart Management:** Add/update/delete cart items.
 - [ ] **Wishlist Integration:** Sync wishlist UI with backend.
 - [ ] **Checkout Flow:** COD checkout with OTP verification.
 - [ ] **Order History:** Fetch and render past orders.

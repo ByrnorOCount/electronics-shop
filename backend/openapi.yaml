@@ -16,6 +16,14 @@ tags:
     description: Product catalog operations
   - name: Users
     description: User authentication and management
+  - name: Cart
+    description: Shopping cart operations
+  - name: Wishlist
+    description: User wishlist operations
+  - name: Orders
+    description: Order management and history
+  - name: Support
+    description: Customer support tickets and FAQs
 
 paths:
   /products:
@@ -128,6 +136,291 @@ paths:
         '401':
           description: Invalid credentials.
 
+  /cart:
+    get:
+      summary: Get the user's shopping cart
+      description: Retrieves all items currently in the logged-in user's shopping cart.
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: The user's cart items.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartItem'
+        '401':
+          description: Unauthorized.
+
+    post:
+      summary: Add an item to the cart
+      description: Adds a product to the user's cart. If the item already exists, its quantity is updated.
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddToCartRequest'
+      responses:
+        '200':
+          description: Item updated in cart.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+        '201':
+          description: Item added to cart.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+        '401':
+          description: Unauthorized.
+
+  /cart/items/{itemId}:
+    put:
+      summary: Update item quantity in cart
+      description: Updates the quantity of a specific item in the cart.
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the cart item to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  minimum: 1
+      responses:
+        '200':
+          description: Quantity updated successfully.
+        '404':
+          description: Cart item not found.
+
+    delete:
+      summary: Remove an item from the cart
+      description: Deletes a specific item from the user's shopping cart.
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the cart item to delete.
+      responses:
+        '204':
+          description: Item successfully removed from cart. No content returned.
+        '404':
+          description: Cart item not found or does not belong to the user.
+
+  /wishlist:
+    get:
+      summary: Get the user's wishlist
+      description: Retrieves all products currently in the logged-in user's wishlist.
+      tags:
+        - Wishlist
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: An array of products in the user's wishlist.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '401':
+          description: Unauthorized.
+
+    post:
+      summary: Add a product to the wishlist
+      description: Adds a product to the user's wishlist.
+      tags:
+        - Wishlist
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddToWishlistRequest'
+      responses:
+        '201':
+          description: Product added to wishlist.
+        '400':
+          description: Product already in wishlist.
+        '401':
+          description: Unauthorized.
+
+  /wishlist/{productId}:
+    delete:
+      summary: Remove a product from the wishlist
+      description: Deletes a product from the user's wishlist.
+      tags:
+        - Wishlist
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the product to remove from the wishlist.
+      responses:
+        '204':
+          description: Product successfully removed from wishlist.
+
+  /orders:
+    get:
+      summary: Get user's order history
+      description: Retrieves a list of all past orders for the logged-in user.
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: An array of the user's orders.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '401':
+          description: Unauthorized.
+
+    post:
+      summary: Create a new order (Checkout)
+      description: Creates a new order from the user's current cart. This action will clear the cart.
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Order created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad request (e.g., empty cart).
+
+  /support:
+    get:
+      summary: Get user's support tickets
+      description: Retrieves a list of all support tickets submitted by the logged-in user.
+      tags:
+        - Support
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: An array of the user's support tickets.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SupportTicket'
+        '401':
+          description: Unauthorized.
+
+    post:
+      summary: Submit a new support ticket
+      description: Creates a new support ticket for the logged-in user.
+      tags:
+        - Support
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSupportTicketRequest'
+      responses:
+        '201':
+          description: Support ticket created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportTicket'
+
+  /support/{ticketId}:
+    get:
+      summary: Get a single support ticket
+      description: Retrieves the details of a specific support ticket, if it belongs to the user.
+      tags:
+        - Support
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: ticketId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the support ticket to retrieve.
+      responses:
+        '200':
+          description: The support ticket details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportTicket'
+        '404':
+          description: Ticket not found or does not belong to the user.
+
+  /faq:
+    get:
+      summary: Get Frequently Asked Questions
+      description: Retrieves a list of common questions and answers.
+      tags:
+        - Support
+      responses:
+        '200':
+          description: A list of FAQs.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FAQItem'
+
 components:
   schemas:
     Product:
@@ -210,9 +503,126 @@ components:
         user:
           $ref: '#/components/schemas/User'
 
+    CartItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique ID of the cart item.
+        user_id:
+          type: integer
+        product_id:
+          type: integer
+        quantity:
+          type: integer
+        name:
+          type: string
+          description: Product name (joined from products table).
+        price:
+          type: number
+          description: Product price (joined from products table).
+        image_url:
+          type: string
+          format: uri
+          description: Product image URL (joined from products table).
+
+    AddToCartRequest:
+      type: object
+      required: [productId, quantity]
+      properties:
+        productId:
+          type: integer
+        quantity:
+          type: integer
+
+    AddToWishlistRequest:
+      type: object
+      required: [productId]
+      properties:
+        productId:
+          type: integer
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        product_id:
+          type: integer
+        quantity:
+          type: integer
+        price:
+          type: number
+          description: The price of the product at the time of purchase.
+        name:
+          type: string
+          description: Product name.
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        total_amount:
+          type: number
+        status:
+          type: string
+        shipping_address:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+
+    CreateOrderRequest:
+      type: object
+      required: [shippingAddress]
+      properties:
+        shippingAddress:
+          type: string
+          description: The full shipping address for the order.
+
+    SupportTicket:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        subject:
+          type: string
+        message:
+          type: string
+        status:
+          type: string
+          enum: [open, in_progress, closed]
+        created_at:
+          type: string
+          format: date-time
+
+    NewSupportTicketRequest:
+      type: object
+      required: [subject, message]
+      properties:
+        subject:
+          type: string
+        message:
+          type: string
+
+    FAQItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        question:
+          type: string
+        answer:
+          type: string
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-
