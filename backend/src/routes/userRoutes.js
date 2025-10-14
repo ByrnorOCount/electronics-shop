@@ -7,6 +7,7 @@ import {
   forgotPassword,
   resetPassword,
   verifyEmail,
+  getNotifications,
 } from '../controllers/userController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
@@ -19,5 +20,6 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
 
 router.route('/me').get(protect, getUserProfile).put(protect, updateUserProfile);
+router.get('/me/notifications', protect, getNotifications);
 
 export default router;

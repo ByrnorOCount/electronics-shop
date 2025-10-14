@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { sendPasswordResetEmail, sendVerificationEmail } from '../services/emailService.js';
+import { sendPasswordResetEmail, sendVerificationEmail, sendOtpEmail } from '../services/emailService.js';
 import db from '../config/db.js';
 
 /**
@@ -12,6 +12,14 @@ export const register = async (req, res) => {
 
   if (!first_name || !last_name || !email || !password) {
     return res.status(400).json({ message: 'Please provide all required fields.' });
+  }
+
+  // Enforce password complexity
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!passwordRegex.test(password)) {
+    return res.status(400).json({
+      message: 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.',
+    });
   }
 
   try {
@@ -170,6 +178,21 @@ export const forgotPassword = async (req, res) => {
   } catch (error) {
     console.error('Error in forgot password:', error);
     res.status(500).json({ message: 'Server error.' });
+  }
+};
+
+/**
+ * Get all notifications for the logged-in user.
+ * @route GET /api/users/me/notifications
+ * @access Private
+ */
+export const getNotifications = async (req, res) => {
+  try {
+    const notifications = await db('notifications').where({ user_id: req.user.id }).orderBy('created_at', 'desc');
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ message: 'Server error while fetching notifications.' });
   }
 };
 

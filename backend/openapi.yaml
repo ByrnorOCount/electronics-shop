@@ -99,7 +99,7 @@ paths:
   /users/register:
     post:
       summary: Register a new user
-      description: Creates a new user account. An email will be sent to the user to verify their address before they can log in.
+      description: Creates a new user account. Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character. An email will be sent to the user to verify their address before they can log in.
       tags:
         - Users
       requestBody:
@@ -203,6 +203,22 @@ paths:
           description: Password has been successfully reset.
         '400':
           description: Token is invalid or expired, or password not provided.
+
+  /users/me/notifications:
+    get:
+      summary: Get user's notifications
+      description: Retrieves a list of all notifications for the logged-in user.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: An array of the user's notifications.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
 
   /cart:
     get:
@@ -386,7 +402,7 @@ paths:
 
     post:
       summary: Create a new order (Checkout)
-      description: Creates a new order from the user's current cart. This action will clear the cart.
+      description: Creates a new order from the user's current cart after verifying a One-Time Password (OTP). This action will clear the cart.
       tags:
         - Orders
       security:
@@ -406,6 +422,20 @@ paths:
                 $ref: '#/components/schemas/Order'
         '400':
           description: Bad request (e.g., empty cart).
+
+  /orders/generate-otp:
+    post:
+      summary: Generate OTP for checkout
+      description: Generates a One-Time Password (OTP) and sends it to the user's email for checkout verification. The OTP is valid for 10 minutes.
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OTP sent successfully.
+        '500':
+          description: Server error while generating OTP.
 
   /support:
     get:
@@ -826,11 +856,14 @@ components:
 
     CreateOrderRequest:
       type: object
-      required: [shippingAddress]
+      required: [shippingAddress, otp]
       properties:
         shippingAddress:
           type: string
           description: The full shipping address for the order.
+        otp:
+          type: string
+          description: The 6-digit One-Time Password sent to the user's email.
 
     SupportTicket:
       type: object

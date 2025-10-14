@@ -32,7 +32,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 - [x] **Routes:** `routes/userRoutes.js`
 - [x] **Registration (FR1):**
-  - [ ] Validate input and enforce password complexity.
+  - [x] Validate input and enforce password complexity.
   - [x] Hash password with `bcrypt`.
   - [x] Send verification email upon registration.
 - [x] **Login (FR2):**
@@ -42,12 +42,12 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
   - [x] Middleware to verify JWT and protect routes.
 - [x] **Password Reset (FR15):**
   - [x] Implement `/api/users/forgot-password` and `/api/users/reset-password/:token`.
-- [ ] **OTP Authentication (FR17):**
-  - [ ] Generate OTP on checkout and verify before confirming order.
+- [x] **OTP Authentication (FR17):**
+  - [x] Generate OTP on checkout and verify before confirming order.
 - [x] **Profile Management (FR12):**
   - [x] Implement `/api/users/me` for updating user info.
-- [ ] **Notifications (FR14):**
-  - [ ] Send notifications via email and store them in DB.
+- [x] **Notifications (FR14):**
+  - [x] Send notifications via email and store them in DB.
 
 ---
 
@@ -167,7 +167,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 #### Customer
 
-- [ ] `HomePage`, `ProductsPage`, `ProductDetailPage`
+- [X] `HomePage`, `ProductsPage`, `ProductDetailPage`
 - [ ] `CartPage`, `WishlistPage`, `CheckoutPage`
 - [x] `OrderHistoryPage`, `LoginPage`, `RegisterPage`
 - [ ] `AccountPage`, `SupportPage`
@@ -190,7 +190,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 ### **Reusable Components**
 
 - [x] `ProductCard`
-- [x] `Navbar`, `Footer`
+- [x] `Header`, `Footer`
 - [ ] `WishlistButton`
 - [ ] `CartSummary`
 - [ ] `NotificationDropdown`
@@ -228,8 +228,8 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ### **Maintainability**
 
-- [ ] Organize code by feature folders.
-- [ ] Document API endpoints (Swagger/OpenAPI).
+- [x] Organize code by feature folders.
+- [x] Document API endpoints (Swagger/OpenAPI).
 
 ### **Security**
 

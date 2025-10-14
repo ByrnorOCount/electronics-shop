@@ -1,5 +1,39 @@
+import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 import db from '../config/db.js';
-import { sendOrderConfirmationEmail } from '../services/emailService.js';
+import { sendOrderConfirmationEmail, sendOtpEmail } from '../services/emailService.js';
+import { createNotification } from '../services/notificationService.js';
+
+/**
+ * Generate and send an OTP for checkout verification.
+ * @route POST /api/orders/generate-otp
+ * @access Private
+ */
+export const generateCheckoutOtp = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    // Generate a 6-digit OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const otpHash = await bcrypt.hash(otp, 10);
+
+    // Set OTP and its expiration (10 minutes) on the user record
+    await db('users')
+      .where({ id: userId })
+      .update({
+        otp_hash: otpHash,
+        otp_expires: db.raw("NOW() + INTERVAL '10 minutes'"),
+      });
+
+    // Send the OTP via email
+    await sendOtpEmail(req.user, otp);
+
+    res.status(200).json({ message: 'An OTP has been sent to your email.' });
+  } catch (error) {
+    console.error('Error generating OTP:', error);
+    res.status(500).json({ message: 'Server error while generating OTP.' });
+  }
+};
 
 /**
  * Create a new order from the user's cart.
@@ -7,11 +41,20 @@ import { sendOrderConfirmationEmail } from '../services/emailService.js';
  * @access Private
  */
 export const createOrder = async (req, res) => {
-  const { shippingAddress } = req.body;
+  const { shippingAddress, otp } = req.body;
   const userId = req.user.id;
 
-  if (!shippingAddress) {
-    return res.status(400).json({ message: 'Shipping address is required.' });
+  if (!shippingAddress || !otp) {
+    return res.status(400).json({ message: 'Shipping address and OTP are required.' });
+  }
+
+  // Find user and check OTP
+  const user = await db('users').where({ id: userId }).first();
+  const isOtpValid = user.otp_hash && (await bcrypt.compare(otp, user.otp_hash));
+  const isOtpExpired = new Date() > new Date(user.otp_expires);
+
+  if (!isOtpValid || isOtpExpired) {
+    return res.status(400).json({ message: 'Invalid or expired OTP.' });
   }
 
   try {
@@ -50,6 +93,12 @@ export const createOrder = async (req, res) => {
 
       // 4. Clear the user's cart
       await trx('cart_items').where('user_id', userId).del();
+
+      // 5. Create a notification for the user
+      await createNotification(userId, `Your order #${order.id} has been placed successfully.`, trx);
+
+      // 6. Clear the OTP from the user record
+      await trx('users').where({ id: userId }).update({ otp_hash: null, otp_expires: null });
 
       return order;
     });

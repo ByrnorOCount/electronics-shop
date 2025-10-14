@@ -53,7 +53,10 @@ export const sendOrderConfirmationEmail = async (user, order) => {
     html: `<h1>Hi ${user.first_name},</h1><p>Thank you for your order! Your order #${order.id} for a total of $${order.total_amount} has been placed successfully.</p>`,
   });
 
-  console.log('Order confirmation email sent. Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`\n--- ORDER CONFIRMATION --- \nUser: ${user.email}\nOrder ID: ${order.id}\nTotal: $${order.total_amount}\n--------------------------\n`);
+    console.log('Order confirmation email sent. Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  }
 };
 
 /**
@@ -95,5 +98,25 @@ export const sendVerificationEmail = async (user, token) => {
 
   if (process.env.NODE_ENV !== 'production') {
     console.log('Verification email sent. Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  }
+};
+
+/**
+ * Sends a One-Time Password (OTP) for checkout verification.
+ * @param {object} user - The user object (with email, first_name).
+ * @param {string} otp - The One-Time Password.
+ */
+export const sendOtpEmail = async (user, otp) => {
+  const mailer = await getTransporter();
+  const info = await mailer.sendMail({
+    from: '"Electronics Shop" <noreply@electronics-shop.com>',
+    to: user.email,
+    subject: 'Your Checkout Verification Code',
+    html: `<h1>Hi ${user.first_name},</h1><p>Your One-Time Password (OTP) for checkout is:</p><h2>${otp}</h2><p>This code will expire in 10 minutes.</p>`,
+  });
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`\n--- CHECKOUT OTP --- \nUser: ${user.email}\nOTP: ${otp}\n--------------------\n`);
+    console.log('OTP email sent. Preview URL: %s', nodemailer.getTestMessageUrl(info));
   }
 };
