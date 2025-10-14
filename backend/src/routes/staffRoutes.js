@@ -3,9 +3,11 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getAllProducts,
   getAllOrders,
   updateOrderStatus,
   getAllSupportTickets,
+  replyToTicket,
 } from '../controllers/staffController.js';
 import { protect, isStaff } from '../middlewares/authMiddleware.js';
 
@@ -16,7 +18,8 @@ const router = express.Router();
 
 // Product Management (FR19)
 router.route('/products')
-  .post(protect, isStaff, createProduct);
+  .post(protect, isStaff, createProduct)
+  .get(protect, isStaff, getAllProducts);
 
 router.route('/products/:id')
   .put(protect, isStaff, updateProduct)
@@ -28,5 +31,6 @@ router.route('/orders/:id').put(protect, isStaff, updateOrderStatus);
 
 // Customer Support Ticket Management (FR21)
 router.route('/support-tickets').get(protect, isStaff, getAllSupportTickets);
+router.route('/support-tickets/:ticketId/reply').post(protect, isStaff, replyToTicket);
 
 export default router;

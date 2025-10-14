@@ -10,7 +10,8 @@ export const getWishlist = async (req, res) => {
     const wishlistItems = await db('wishlists')
       .join('products', 'wishlists.product_id', 'products.id')
       .where('wishlists.user_id', req.user.id)
-      .select('products.*');
+      .select('products.*')
+      .orderBy('wishlists.id', 'asc');
 
     res.status(200).json(wishlistItems);
   } catch (error) {

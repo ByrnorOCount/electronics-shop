@@ -537,6 +537,23 @@ paths:
         '201':
           description: Product created successfully.
 
+    get:
+      summary: Get all products
+      description: (Staff Only) Retrieves a complete list of all products in the catalog.
+      tags:
+        - Staff
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of all products.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+
   /staff/products/{id}:
     put:
       summary: Update a product
@@ -619,6 +636,7 @@ paths:
               properties:
                 status:
                   type: string
+                  enum: [Pending, Processing, Shipped, Delivered, Canceled, Completed]
       responses:
         '200':
           description: Order status updated.
@@ -634,6 +652,119 @@ paths:
       responses:
         '200':
           description: A list of all support tickets.
+
+  /staff/support-tickets/{ticketId}/reply:
+    post:
+      summary: Reply to a support ticket
+      description: (Staff Only) Adds a reply to a specific support ticket and notifies the user.
+      tags:
+        - Staff
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: ticketId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      responses:
+        '201':
+          description: Reply posted successfully.
+
+  /admin/dashboard:
+    get:
+      summary: Get dashboard metrics
+      description: (Admin Only) Retrieves key metrics for the admin dashboard, such as total sales, user count, and recent orders.
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A summary of dashboard metrics.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardMetrics'
+
+  /admin/categories:
+    get:
+      summary: Get all categories
+      description: (Admin Only) Retrieves a list of all product categories.
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of all categories.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+    post:
+      summary: Create a new category
+      description: (Admin Only) Adds a new product category to the system.
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCategory'
+      responses:
+        '201':
+          description: Category created successfully.
+
+  /admin/categories/{id}:
+    put:
+      summary: Update a category
+      description: (Admin Only) Updates the name or description of a category.
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: '#/components/requestBodies/CategoryUpdate'
+      responses:
+        '200':
+          description: Category updated successfully.
+    delete:
+      summary: Delete a category
+      description: (Admin Only) Deletes a category. Products in this category will have their category set to null.
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Category deleted successfully.
 
   /admin/users:
     get:
@@ -716,8 +847,8 @@ components:
           type: number
         description:
           type: string
-        category:
-          type: string
+        category_id:
+          type: integer
         stock:
           type: integer
         image_url:
@@ -901,6 +1032,54 @@ components:
           type: string
         answer:
           type: string
+
+    DashboardMetrics:
+      type: object
+      properties:
+        totalSales:
+          type: number
+        totalUsers:
+          type: integer
+        totalOrders:
+          type: integer
+        recentOrders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+
+    NewCategory:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+  requestBodies:
+    CategoryUpdate:
+      description: Category object that needs to be updated.
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+
   securitySchemes:
     bearerAuth:
       type: http

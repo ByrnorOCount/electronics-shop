@@ -26,7 +26,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 2. Backend Development (Node.js / Express / PostgreSQL) - **[PRIORITY: API First]**
+## 2. Backend Development (Node.js / Express / PostgreSQL)
 
 ### **User Management (FR1–FR4, FR15–FR17)**
 
@@ -82,7 +82,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 - [x] **Routes:** `routes/orderRoutes.js`
 - [x] **Checkout (`POST /api/orders`):**
-  - [x] Accept shipping info and use “Cash on Delivery”.
+  - [] Accept shipping info and use “Cash on Delivery”.
   - [x] Generate order and move items from cart to order_items.
   - [x] Clear user cart afterward.
 - [x] **Order Confirmation:**
@@ -101,11 +101,11 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 3. Staff Features (FR18–FR21) - **[PRIORITY: API First]**
+## 3. Staff Features (FR18–FR21)
 
 ### **Staff Authentication**
 
-- [ ] **Routes:** `routes/staffRoutes.js`
+- [x] **Routes:** `routes/staffRoutes.js`
 - [x] **Staff Login (FR18):** Use JWT-based role authentication.
 
 ### **Product Management (FR19)**
@@ -114,22 +114,22 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
   - [x] `POST /api/staff/products`
   - [x] `PUT /api/staff/products/:id`
   - [x] `DELETE /api/staff/products/:id`
-  - [ ] `GET /api/staff/products` (for verification)
+  - [x] `GET /api/staff/products` (for verification)
 
 ### **Order Management (FR20)**
 
 - [x] View orders (`GET /api/staff/orders`)
 - [x] Update status (`PUT /api/staff/orders/:id`)
-- [ ] Assign delivery / mark as completed
+- [x] Assign delivery / mark as completed
 
 ### **Customer Support (FR21)**
 
 - [x] View support tickets (`GET /api/staff/support-tickets`)
-- [ ] Reply to tickets (`POST /api/staff/support/reply`)
+- [x] Reply to tickets (`POST /api/staff/support-tickets/:ticketId/reply`)
 
 ---
 
-## 4. Administrator Features (FR22–FR25) - **[PRIORITY: API First]**
+## 4. Administrator Features (FR22–FR25)
 
 ### **Authentication**
 
@@ -144,12 +144,12 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ### **Product Catalog Management (FR24)**
 
-- [ ] Create / Edit categories, featured items
-- [ ] Oversee all product data (CRUD with permissions)
+- [x] Create / Edit categories, featured items
+- [x] Oversee all product data (CRUD with permissions)
 
 ### **Order Logs & Dashboard (FR25)**
 
-- [ ] `GET /api/admin/dashboard` — key metrics
+- [x] `GET /api/admin/dashboard` — key metrics
 - [ ] `GET /api/admin/logs` — activity and order logs
 
 ---

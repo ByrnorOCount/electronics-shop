@@ -17,7 +17,8 @@ export const getCart = async (req, res) => {
         'products.price',
         'products.image_url',
         'cart_items.quantity'
-      );
+      )
+      .orderBy('cart_items.id', 'asc');
     res.status(200).json(cartItems);
   } catch (error) {
     console.error('Error getting cart:', error);
