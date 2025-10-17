@@ -87,20 +87,6 @@ For root combined dev (both frontend + backend at once):
 npm run dev
 
 
-Migrations
-Migrations create/update DB schema. Example:
-npx knex migrate:make create_products_table --knexfile ./database/knexfile.js
-This creates a file in database/migrations/
-Run it:
-npx knex migrate:latest --knexfile ./database/knexfile.js
-
-Seeds
-Seeds populate initial data. Example:
-npx knex seed:make initial_products --knexfile ./database/knexfile.js
-Creates file in database/seeders/Run it:
-npx knex seed:run --knexfile ./database/knexfile.js
-npx knex migrate:latest --knexfile ./database/knexfile.js
-
 Define the Schema First (The Migration)
 Apply the Schema Immediately
 Write Code That Obeys the Contract (Seeds, Models, etc.)
@@ -153,3 +139,27 @@ then 3 weeks later match frontend with backend/database
 
 diagrams
 use case tables
+
+
+
+làm thêm một bảng chức năng (các chức năng làm thì để bth còn để phát triển lên đồ án thì đánh màu)
+
+tích hợp api:
+	ship(giao hàng nhanh)
+	payment (vnpay)
+tham khảo 
+
+admin ->CRD(products,.., dashboard (thống kê theo products, order, theo lượng user user nào mua nhiều mua ít tăng hạng cho user (premium,..))
+không đề cao phải tích hợp AI
+
+log in using facebook, gg 
+
+table phân công công việc (process, requirment (tiến độ công việc, 
+
+kết nối front và back để xử lý xung đột nếu có
+
+STORE PRODUCT IMAGES IN CLOUD
+Storage: AWS S3
+Frontend (React): Vercel (prob this) / Netlify
+Backend (Node.js): AWS Elastic Beanstalk (prob this) / Heroku / Render
+Database (PostgreSQL): Amazon RDS / Heroku Postgres (prob this) / Render Postgres

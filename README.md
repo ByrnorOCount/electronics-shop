@@ -11,10 +11,11 @@ The system streamlines the shopping experience, increases customer accessibility
 
 The web application allows customers to:
 
-- Browse electronics products, manage shopping carts, and place orders (cash-on-delivery).
-- Register and log in to manage personal details and order history.  
-Staff can manage products and orders, and administrators can oversee the entire system.  
-The current semester scope includes all core features except advanced or future enhancements (e.g., online payments, 2FA, coupons, reviews).
+- Browse and search for electronics products.
+- Manage a shopping cart, wishlist, and personal account.
+- Place orders and view order history.
+- Staff and Administrators have dedicated portals to manage products, orders, and users.
+The project is under continuous development, with a roadmap for future enhancements outlined at the end of this document.
 
 ### 1.3 Overview
 
@@ -216,5 +217,24 @@ Maintain stable performance and correct transaction handling.
 
 ## 6. Summary
 
-This document defines all functional and non-functional requirements for the Electronics Shop Web App in its current scope.  
-It includes all user roles (Customer, Staff, Administrator) and omits future features such as payment gateways, 2FA, reviews, and loyalty systems.
+This document serves as a living specification for the Electronics Shop Web App, outlining its features, architecture, and user roles. The project's development is ongoing, with a roadmap for planned enhancements detailed below.
+
+---
+
+## 7. Development Roadmap
+
+The following features are identified for future development cycles to enhance the platform's capabilities:
+
+### 7.1 Enhanced Authentication
+
+- **Social Login:** Allow users to register and log in using third-party accounts like Google and Facebook.
+
+### 7.2 Advanced E-Commerce Features
+
+- **Payment Gateway Integration:** Integrate with payment APIs (e.g., VNPay, Stripe) to enable online payments.
+- **Shipping API Integration:** Connect with shipping providers (e.g., Giao Hàng Nhanh) for real-time shipping quotes and tracking.
+
+### 7.3 Advanced Administrator Dashboard
+
+- **Detailed Analytics:** Enhance the admin dashboard with advanced statistics on sales by product, user activity, and order trends.
+- **User Loyalty System:** Implement a tier-based system (e.g., premium status) to reward frequent customers.

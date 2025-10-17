@@ -223,8 +223,8 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ### **Scalability**
 
-- [ ] Modularize routes and services.
-- [ ] Use environment variables for scalable DB config.
+- [x] Modularize routes and services.
+- [x] Use environment variables for scalable DB config.
 
 ### **Maintainability**
 
@@ -236,7 +236,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [ ] Use HTTPS in production.
 - [ ] Sanitize all inputs.
 - [ ] Prevent CSRF, XSS, and SQL injection.
-- [ ] Encrypt sensitive user data.
+- [x] Encrypt sensitive user data.
 
 ### **Compatibility**
 
@@ -260,3 +260,33 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 ---
 
 ✅ **Goal:** When all tasks above are complete, the system will fully satisfy the SRS (excluding future scope features).
+
+---
+
+## 8. Future Scope / Advanced Features
+
+This section lists tasks for future development cycles, based on the expanded requirements.
+
+### **Enhanced Authentication**
+
+- [ ] **Social Login:**
+  - [ ] Implement backend routes for Google & Facebook OAuth.
+  - [ ] Add social login buttons to the frontend `LoginPage`.
+
+### **Advanced E-Commerce Features**
+
+- [ ] **Payment Gateway Integration:**
+  - [ ] Backend service to handle VNPay/Stripe API calls.
+  - [ ] Frontend UI to select and process online payments at checkout.
+- [ ] **Shipping API Integration:**
+  - [ ] Backend service to get shipping rates from a provider like Giao Hàng Nhanh.
+  - [ ] Display shipping options and costs in the frontend checkout flow.
+
+### **Advanced Admin Dashboard**
+
+- [ ] **Enhanced Analytics:** Add new dashboard components for:
+  - [ ] Sales reports by product/category.
+  - [ ] User purchase history and segmentation (e.g., top customers).
+- [ ] **User Loyalty System:**
+  - [ ] Backend logic to assign user tiers (e.g., 'premium') based on purchase history.
+  - [ ] Display user status in the frontend account page and admin user list.
