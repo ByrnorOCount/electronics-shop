@@ -280,6 +280,7 @@ This section lists tasks for future development cycles, based on the expanded re
   - [ ] Add social login buttons to the frontend `LoginPage`.
 
 ### **Advanced E-Commerce Features**
+
 - [ ] **Shipping API Integration:**
   - [ ] Backend service to get shipping rates from a provider like Giao Hàng Nhanh.
   - [ ] Display shipping options and costs in the frontend checkout flow.
