@@ -402,7 +402,7 @@ paths:
 
     post:
       summary: Create a new order (Checkout)
-      description: Creates a new order from the user's current cart after verifying a One-Time Password (OTP). This action will clear the cart.
+      description: Creates a new **Cash on Delivery (COD)** order from the user's current cart after verifying a One-Time Password (OTP). This action will clear the cart. For online payments, use the `/orders/create-payment-session` endpoint first.
       tags:
         - Orders
       security:
@@ -436,6 +436,34 @@ paths:
           description: OTP sent successfully.
         '500':
           description: Server error while generating OTP.
+
+  /orders/create-payment-session:
+    post:
+      summary: Create a payment session for online payments
+      description: Initiates a payment session with an online provider like Stripe or VNPay. Returns a URL for the user to complete the payment. An order is created via webhook upon successful payment.
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentSessionRequest'
+      responses:
+        '200':
+          description: Payment session created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: uri
+        '400':
+          description: Bad request (e.g., empty cart, invalid payment method).
 
   /support:
     get:
@@ -987,14 +1015,37 @@ components:
 
     CreateOrderRequest:
       type: object
-      required: [shippingAddress, otp]
+      required: [shippingAddress, paymentMethod, otp]
       properties:
         shippingAddress:
           type: string
           description: The full shipping address for the order.
+        paymentMethod:
+          type: string
+          description: The chosen payment method.
+          enum: [cod]
+          example: cod
         otp:
           type: string
           description: The 6-digit One-Time Password sent to the user's email.
+
+    SupportTicket:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+
+    CreatePaymentSessionRequest:
+      type: object
+      required: [paymentMethod]
+      properties:
+        paymentMethod:
+          type: string
+          description: The online payment provider to use.
+          enum: [stripe, vnpay]
+          example: stripe
 
     SupportTicket:
       type: object

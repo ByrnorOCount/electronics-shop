@@ -82,13 +82,19 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 - [x] **Routes:** `routes/orderRoutes.js`
 - [x] **Checkout (`POST /api/orders`):**
-  - [] Accept shipping info and use “Cash on Delivery”.
+  - [x] Accept shipping info and payment method (e.g., "Cash on Delivery").
   - [x] Generate order and move items from cart to order_items.
   - [x] Clear user cart afterward.
 - [x] **Order Confirmation:**
   - [x] Use **Nodemailer** to send confirmation emails.
 - [x] **Order History (`GET /api/orders`)**
   - [x] Return all orders for the current user.
+- [ ] **Online Payments:**
+  - [x] Add `payment_method` and `payment_details` to `orders` table.
+  - [x] Create `/api/orders/create-payment-session` endpoint for Stripe and VNPay.
+  - [x] Create `/api/orders/webhook` endpoint to handle payment success notifications.
+  - [ ] Implement VNPay IPN verification in webhook.
+  - [ ] Test webhook locally using Stripe CLI.
 
 ---
 
@@ -274,10 +280,6 @@ This section lists tasks for future development cycles, based on the expanded re
   - [ ] Add social login buttons to the frontend `LoginPage`.
 
 ### **Advanced E-Commerce Features**
-
-- [ ] **Payment Gateway Integration:**
-  - [ ] Backend service to handle VNPay/Stripe API calls.
-  - [ ] Frontend UI to select and process online payments at checkout.
 - [ ] **Shipping API Integration:**
   - [ ] Backend service to get shipping rates from a provider like Giao Hàng Nhanh.
   - [ ] Display shipping options and costs in the frontend checkout flow.
