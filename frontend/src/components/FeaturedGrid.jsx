@@ -1,38 +1,29 @@
 /**
  * Fetches and displays featured products from the API.
  */
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import ProductCard from "./ProductCard";
-import api from "../services/api";
+import productService from "../services/productService";
+import { useApi } from "../hooks/useApi";
 
 export default function FeaturedGrid() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data: products, loading, error, request: fetchFeaturedProducts } = useApi(productService.getFeaturedProducts);
 
   useEffect(() => {
-    const fetchFeaturedProducts = async () => {
-      try {
-        const response = await api.get("/products?featured=true");
-        const data = response.data;
-        setProducts(data);
-      } catch (err) {
-        setError(err.message);
-        console.error("Failed to fetch featured products:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchFeaturedProducts();
+    // We only want this to run once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) return <p className="text-center text-gray-500">Loading featured products...</p>;
-  if (error) return <p className="text-center text-red-500">Error: {error}</p>;
+  if (error) return <p className="text-center text-red-500">Error: Could not load featured products.</p>;
+  if (!products || products.length === 0) {
+    return <p className="text-center text-gray-500">No featured products available at the moment.</p>;
+  }
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
-      {products.map((p) => (
+      {products?.map((p) => (
         <ProductCard key={p.id} product={p} />
       ))}
     </div>
