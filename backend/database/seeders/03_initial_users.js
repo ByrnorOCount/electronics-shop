@@ -20,6 +20,7 @@ export async function seed(knex) {
       email: 'admin@example.com',
       password_hash: hashedPassword,
       role: 'admin',
+      is_verified: true,
     },
     {
       id: 2,
@@ -28,6 +29,7 @@ export async function seed(knex) {
       email: 'staff@example.com',
       password_hash: hashedPassword,
       role: 'staff',
+      is_verified: true,
     },
     {
       id: 3,
@@ -36,6 +38,7 @@ export async function seed(knex) {
       email: 'john.doe@example.com',
       password_hash: hashedPassword,
       role: 'customer',
+      is_verified: true,
     },
   ]);
 

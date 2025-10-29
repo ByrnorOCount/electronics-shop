@@ -20,6 +20,7 @@ import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminProductsPage from "./pages/admin/AdminProductsPage";
 import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -30,10 +31,20 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="products/:id" element={<ProductDetailPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
-          <Route path="/orders" element={<OrderHistoryPage />} />
+          <Route path="cart" element={<CartPage />} />
+          {/* Checkout and order pages are protected */}
+          <Route path="/checkout" element={
+            <ProtectedRoute>
+              <CheckoutPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/order-confirmation" element={
+            <ProtectedRoute>
+              <OrderConfirmationPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/orders" element={<ProtectedRoute><OrderHistoryPage /></ProtectedRoute>} />
+
           <Route path="about" element={<AboutPage />} />
           <Route path="careers" element={<CareersPage />} />
           <Route path="support" element={<SupportPage />} />

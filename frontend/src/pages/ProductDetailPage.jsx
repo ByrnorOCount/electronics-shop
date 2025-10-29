@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAppDispatch } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { addItem } from '../features/cart/cartSlice';
 import { useApi } from '../hooks/useApi';
 import productService from '../services/productService';
+import cartService from '../services/cartService';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -20,10 +21,14 @@ const ProductDetailPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const handleAddToCart = () => {
+  const { token } = useAppSelector((state) => state.auth);
+
+  const handleAddToCart = async () => {
     if (product) {
       dispatch(addItem({ ...product, price: Number(product.price), qty: 1 }));
-      // Optionally, show a notification that the item was added
+      if (token) {
+        await cartService.addItemToCart(product.id, 1);
+      }
     }
   };
 

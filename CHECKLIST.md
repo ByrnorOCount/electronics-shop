@@ -166,7 +166,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 - [x] **Routing:** `react-router-dom`
 - [x] **Styling:** Tailwind CSS
-- [ ] **State Management:** Redux Toolkit or Zustand
+- [x] **State Management:** Redux Toolkit or Zustand
 - [x] **API Service:** Centralized Axios instance
 
 ### **Pages**
