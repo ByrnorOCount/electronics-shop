@@ -1,33 +1,40 @@
-import React from 'react';
-import ProductCard from './ProductCard';
+/**
+ * Fetches and displays featured products from the API.
+ */
+import React, { useState, useEffect } from "react";
+import ProductCard from "./ProductCard";
+import api from "../services/api";
 
-const FeaturedGrid = ({ products, status, error }) => {
-  let content;
+export default function FeaturedGrid() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (status === 'loading') {
-    // Hiển thị skeleton loading trong khi chờ dữ liệu
-    content = Array.from({ length: 4 }).map((_, index) => (
-      <div key={index} className="border border-gray-200 rounded-lg p-4 animate-pulse">
-        <div className="bg-gray-300 h-48 w-full rounded-md mb-4"></div>
-        <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-        <div className="h-6 bg-gray-300 rounded w-1/2"></div>
-      </div>
-    ));
-  } else if (status === 'succeeded') {
-    // Hiển thị danh sách sản phẩm khi có dữ liệu
-    content = products.map((product) => (
-      <ProductCard key={product.id} product={product} />
-    ));
-  } else if (status === 'failed') {
-    // Hiển thị lỗi nếu gọi API thất bại
-    content = <p className="text-red-500 col-span-full">Error: {error}</p>;
-  }
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await api.get("/products?featured=true");
+        const data = response.data;
+        setProducts(data);
+      } catch (err) {
+        setError(err.message);
+        console.error("Failed to fetch featured products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
+
+  if (loading) return <p className="text-center text-gray-500">Loading featured products...</p>;
+  if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {content}
+    <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+      {products.map((p) => (
+        <ProductCard key={p.id} product={p} />
+      ))}
     </div>
   );
-};
-
-export default FeaturedGrid;
+}
