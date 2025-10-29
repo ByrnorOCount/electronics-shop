@@ -1,13 +1,24 @@
 /**
  * Simple header with logo and primary nav.
  */
-import React from "react";
+import React from 'react';
 import { Link } from "react-router-dom";
-import { useAppSelector } from "../store/hooks";
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { logout } from '../features/auth/authSlice';
 
 export default function Header() {
+  const dispatch = useAppDispatch();
   const items = useAppSelector((state) => state.cart.items || []);
+  const { user, token } = useAppSelector((state) => state.auth);
   const totalQty = items.reduce((s, it) => s + (it.qty || 0), 0);
+
+  const handleSignOut = () => {
+    dispatch(logout());
+    // Optionally, redirect to home or login page
+  };
+
+  // Fallback for user name if first_name is not available
+  const userName = user?.first_name || user?.email || 'Account';
 
   return (
     <header className="sticky top-0 bg-amber-200 shadow-sm z-50">
@@ -22,11 +33,20 @@ export default function Header() {
           <Link to="/support" className="hover:text-indigo-600">Support</Link>
         </nav>
         <div className="flex gap-2">
-          <Link to="/login" className="px-3 py-1 rounded-md border border-indigo-600 text-indigo-600 bg-white hover:bg-indigo-50">
-            Sign In
-          </Link>
+          {token ? (
+            <>
+              <span className="px-3 py-1 text-gray-700">Hi, {userName}</span>
+              <button onClick={handleSignOut} className="px-3 py-1 rounded-md border border-indigo-600 text-indigo-600 bg-white hover:bg-indigo-50">
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="px-3 py-1 rounded-md border border-indigo-600 text-indigo-600 bg-white hover:bg-indigo-50">
+              Sign In
+            </Link>
+          )}
           <Link to="/cart" className="px-3 py-1 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
-            Cart (0)
+            Cart ({totalQty})
           </Link>
         </div>
       </div>

@@ -1,31 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch } from '../store/hooks';
 import { addItem } from '../features/cart/cartSlice';
-import api from '../services/api';
+import { useApi } from '../hooks/useApi';
+import productService from '../services/productService';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data: product, loading, error, request: fetchProduct } = useApi(productService.getProductById);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        setLoading(true);
-        const response = await api.get(`/products/${id}`);
-        setProduct(response.data);
-      } catch (err) {
-        setError('Product not found.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProduct();
+    if (id) {
+      fetchProduct(id).catch(() => {
+        // The useApi hook already logs the error, so we can just let it fail silently here
+        // from the component's perspective, or add more specific UI feedback if needed.
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleAddToCart = () => {
@@ -36,7 +28,7 @@ const ProductDetailPage = () => {
   };
 
   if (loading) return <div className="text-center p-8">Loading...</div>;
-  if (error) return <div className="text-center p-8 text-red-500">{error}</div>;
+  if (error) return <div className="text-center p-8 text-red-500">Product not found.</div>;
   // Don't render the component until the product has been fetched.
   if (!product) return null;
 
