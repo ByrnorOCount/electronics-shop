@@ -1,5 +1,5 @@
 import express from 'express';
-import { getCart, addItemToCart, updateCartItem, removeCartItem } from '../controllers/cartController.js';
+import { getCart, addItemToCart, updateCartItem, removeCartItem, syncCart } from '../controllers/cartController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -8,6 +8,8 @@ const router = express.Router();
 router.route('/')
   .get(protect, getCart)
   .post(protect, addItemToCart);
+
+router.post('/sync', protect, syncCart);
 
 router.route('/items/:itemId')
   .put(protect, updateCartItem)

@@ -46,21 +46,97 @@ export const addItemToCart = async (req, res) => {
 
     if (existingItem) {
       // Item exists, update quantity
-      const [updatedItem] = await db('cart_items')
+      await db('cart_items')
         .where({ id: existingItem.id })
-        .update({ quantity: existingItem.quantity + quantity })
-        .returning('*');
-      res.status(200).json(updatedItem);
+        .increment('quantity', quantity);
+
+      // Fetch the updated item with product details to return to the client
+      const itemToReturn = await db('cart_items')
+        .join('products', 'cart_items.product_id', 'products.id')
+        .where('cart_items.id', existingItem.id)
+        .select('cart_items.id', 'products.id as product_id', 'products.name', 'products.price', 'products.image_url', 'cart_items.quantity')
+        .first();
+
+      res.status(200).json(itemToReturn);
     } else {
       // Item does not exist, insert new
       const [newItem] = await db('cart_items')
         .insert({ user_id: userId, product_id: productId, quantity })
         .returning('*');
-      res.status(201).json(newItem);
+
+      // Fetch the new item with product details
+      const itemToReturn = await db('cart_items')
+        .join('products', 'cart_items.product_id', 'products.id')
+        .where('cart_items.id', newItem.id)
+        .select('cart_items.id', 'products.id as product_id', 'products.name', 'products.price', 'products.image_url', 'cart_items.quantity')
+        .first();
+
+      res.status(201).json(itemToReturn);
     }
   } catch (error) {
     console.error('Error adding item to cart:', error);
     res.status(500).json({ message: 'Server error while adding to cart.' });
+  }
+};
+
+/**
+ * Synchronizes a local (guest) cart with the user's database cart.
+ * @route POST /api/cart/sync
+ * @access Private
+ */
+export const syncCart = async (req, res) => {
+  const itemsToSync = req.body.items || req.body; // Accept {items: []} or []
+  const userId = req.user.id;
+
+  if (!Array.isArray(itemsToSync)) {
+    return res.status(400).json({ message: 'Request body must be an array of cart items.' });
+  }
+
+  try {
+    // Use a transaction to ensure all items are processed or none are.
+    await db.transaction(async (trx) => {
+      for (const item of itemsToSync) {
+        const { productId, quantity } = item;
+
+        if (!productId || !quantity || quantity < 1) {
+          // In a transaction, throwing an error will automatically trigger a rollback.
+          throw new Error('Invalid item data in sync request.');
+        }
+
+        const existingItem = await trx('cart_items')
+          .where({ user_id: userId, product_id: productId })
+          .first();
+
+        if (existingItem) {
+          // Item exists, update its quantity.
+          await trx('cart_items')
+            .where({ id: existingItem.id })
+            .increment('quantity', quantity);
+        } else {
+          // Item does not exist, insert it.
+          await trx('cart_items').insert({ user_id: userId, product_id: productId, quantity });
+        }
+      }
+    });
+
+    // After sync, fetch the entire updated cart to return to the client.
+    const updatedCart = await db('cart_items')
+      .join('products', 'cart_items.product_id', 'products.id')
+      .where('cart_items.user_id', userId)
+      .select(
+        'cart_items.id',
+        'products.id as product_id',
+        'products.name',
+        'products.price',
+        'products.image_url',
+        'cart_items.quantity'
+      )
+      .orderBy('cart_items.id', 'asc');
+
+    res.status(200).json(updatedCart);
+  } catch (error) {
+    console.error('Error syncing cart:', error);
+    res.status(500).json({ message: error.message || 'Server error while syncing cart.' });
   }
 };
 

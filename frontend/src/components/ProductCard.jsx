@@ -9,11 +9,12 @@
  */
 
 import React from "react";
-import { Link } from "react-router-dom";
-import { useAppDispatch } from "../store/hooks";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { addItem } from "../features/cart/cartSlice";
 import Button from './Button';
 import cartService from "../services/cartService";
+import { selectToken } from "../features/auth/authSlice";
 
 export default function ProductCard({ product }) {
   const dispatch = useAppDispatch();
@@ -22,6 +23,7 @@ export default function ProductCard({ product }) {
     // Prevent the click from propagating to the parent Link component
     e.preventDefault();
     e.stopPropagation();
+    const token = store.getState().auth.token; // Directly access token for immediate use
 
     const itemToAdd = {
       id: product.id,

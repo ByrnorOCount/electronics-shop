@@ -21,10 +21,12 @@ import AdminProductsPage from "./pages/admin/AdminProductsPage";
 import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import ProtectedRoute from './components/ProtectedRoute';
+import CartSyncManager from './components/CartSyncManager';
 
 function App() {
   return (
     <Router>
+      <CartSyncManager />
       <Routes>
         {/* Routes with Header and Footer */}
         <Route path="/" element={<Layout />}>

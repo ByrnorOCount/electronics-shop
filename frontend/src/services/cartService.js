@@ -42,12 +42,13 @@ const removeCartItem = async (itemId) => {
 
 /**
  * Synchronizes a local cart with the backend.
- * @param {Array<{id: number, qty: number}>} localCartItems An array of items from the local cart.
- * @returns {Promise<void>}
+ * @param {Array<{productId: number, quantity: number}>} itemsToSync An array of items from the local cart.
+ * @returns {Promise<Array<object>>} A promise that resolves to the fully merged cart from the backend.
  */
-const syncCart = async (localCartItems) => {
+const syncCart = async (itemsToSync) => {
   // This sends the local cart to a new endpoint for the backend to merge.
-  await api.post('/cart/sync', { items: localCartItems });
+  const response = await api.post('/cart/sync', { items: itemsToSync });
+  return response.data;
 };
 
 const cartService = {

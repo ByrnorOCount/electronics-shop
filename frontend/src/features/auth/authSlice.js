@@ -34,3 +34,5 @@ const authSlice = createSlice({
 
 export const { setCredentials, logout } = authSlice.actions;
 export default authSlice.reducer;
+export const selectUser = (state) => state.auth.user;
+export const selectToken = (state) => state.auth.token;

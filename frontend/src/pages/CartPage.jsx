@@ -87,7 +87,7 @@ export default function CartPage() {
           <div className="lg:col-span-2 space-y-4">
             {items.map((it) => (
               <div key={it.id} className="flex items-center gap-4 bg-white p-4 rounded-lg shadow-sm">
-                <img src={`/images/${it.img}`} className="w-24 h-24 object-cover rounded" alt={it.name} />
+                <img src={`${it.img}`} className="w-24 h-24 object-cover rounded" alt={it.name} />
                 <div className="flex-1">
                   <h3 className="font-semibold">{it.name}</h3>
                   <p className="text-sm text-gray-600">${Number(it.price).toFixed(2)}</p>
