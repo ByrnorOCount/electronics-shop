@@ -145,6 +145,11 @@ export const createOrder = async (req, res) => {
     return res.status(400).json({ message: 'Invalid or expired OTP.' });
   }
 
+  const cartItems = await db('cart_items').where({ user_id: userId });
+  if (cartItems.length === 0) {
+    return res.status(400).json({ message: 'Cannot create an order with an empty cart.' });
+  }
+
   // This endpoint is now only for Cash on Delivery (COD)
   if (paymentMethod === 'online') {
     return res.status(400).json({ message: 'For online payments, please use the /api/orders/create-payment-session endpoint.' });
