@@ -1,12 +1,17 @@
 import api from './api'; // Import a pre-configured axios instance
 
 /**
- * Fetches a list of all products from the backend.
- * @returns {Promise<Array<object>>} A promise that resolves to an array of product objects.
+ * Fetches a list of products, with optional filtering.
+ * @param {object} [filters] - An object containing filter criteria.
+ * @returns {Promise<Array<object>>} A promise that resolves to an array of products.
  */
-const getProducts = async () => {
-    const response = await api.get('/products');
-    return response.data;
+const getProducts = async (filters) => {
+  // Clean up filters to remove empty values before sending to the API
+  const cleanFilters = Object.fromEntries(
+    Object.entries(filters || {}).filter(([, value]) => value !== '' && value !== null)
+  );
+  const response = await api.get('/products', { params: cleanFilters });
+  return response.data;
 };
 
 /**
@@ -31,10 +36,21 @@ const getFeaturedProducts = async () => {
     return response.data;
 };
 
+/**
+ * Fetches a list of all product categories.
+ * This is a public endpoint.
+ * @returns {Promise<Array<object>>} A promise that resolves to an array of category objects.
+ */
+const getProductCategories = async () => {
+  const response = await api.get('/products/categories');
+  return response.data;
+};
+
 const productService = {
     getProducts,
     getProductById,
     getFeaturedProducts,
+    getProductCategories,
 };
 
 export default productService;

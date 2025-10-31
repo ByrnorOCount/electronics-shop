@@ -1,4 +1,5 @@
 import * as Product from '../models/productModel.js';
+import db from '../config/db.js';
 
 /**
  * Gets a list of products with filtering and searching.
@@ -10,9 +11,20 @@ export const getProducts = async (req, res) => {
     // Extract filters from query parameters
     const { search, category, brand, featured, min_price, max_price } = req.query;
 
+    let categoryId;
+    if (category) {
+      const categoryRecord = await db('categories').where({ name: category }).first();
+      if (categoryRecord) {
+        categoryId = categoryRecord.id;
+      } else {
+        // If an invalid category name is provided, return no products.
+        return res.status(200).json([]);
+      }
+    }
+
     const filters = {
       search,
-      category,
+      category_id: categoryId, // Use the resolved category ID for filtering
       brand,
       is_featured: featured === 'true',
       min_price: min_price ? parseFloat(min_price) : undefined,
@@ -50,5 +62,20 @@ export const getProductById = async (req, res) => {
   } catch (error) {
     console.error(`Error fetching product with ID ${req.params.id}:`, error);
     res.status(500).json({ message: 'Error fetching product' });
+  }
+};
+
+/**
+ * Gets a list of all product categories.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ */
+export const getProductCategories = async (req, res) => {
+  try {
+    const categories = await db('categories').orderBy('name', 'asc');
+    res.status(200).json(categories);
+  } catch (error) {
+    console.error('Error fetching product categories:', error);
+    res.status(500).json({ message: 'Error fetching categories' });
   }
 };

@@ -19,8 +19,8 @@ export const find = async (filters = {}) => {
     query.where('name', 'ilike', `%${filters.search}%`);
   }
 
-  if (filters.category) {
-    query.where({ category: filters.category });
+  if (filters.category_id) {
+    query.where({ category_id: filters.category_id });
   }
 
   if (filters.brand) {
