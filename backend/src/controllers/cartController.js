@@ -48,7 +48,10 @@ export const addItemToCart = async (req, res) => {
       // Item exists, update quantity
       await db('cart_items')
         .where({ id: existingItem.id })
-        .increment('quantity', quantity);
+        .update({
+          quantity: db.raw('quantity + ?', [quantity]), // Use db.raw for safe increment
+          updated_at: db.fn.now(), // Explicitly update the timestamp
+        });
 
       // Fetch the updated item with product details to return to the client
       const itemToReturn = await db('cart_items')
@@ -96,22 +99,29 @@ export const syncCart = async (req, res) => {
     // Use a transaction to ensure all items are processed or none are.
     await db.transaction(async (trx) => {
       for (const item of itemsToSync) {
-        const { productId, quantity } = item;
+        const { productId, quantity, modifiedAt } = item;
 
-        if (!productId || !quantity || quantity < 1) {
+        if (!productId || !quantity || quantity < 1 || !modifiedAt) {
           // In a transaction, throwing an error will automatically trigger a rollback.
           throw new Error('Invalid item data in sync request.');
         }
 
         const existingItem = await trx('cart_items')
           .where({ user_id: userId, product_id: productId })
+          // We need the updated_at field to compare timestamps
+          .select('*')
           .first();
 
         if (existingItem) {
-          // Item exists, update its quantity.
-          await trx('cart_items')
-            .where({ id: existingItem.id })
-            .increment('quantity', quantity);
+          // Item exists. Update it only if the guest's version is newer.
+          if (new Date(modifiedAt) > new Date(existingItem.updated_at)) {
+            await trx('cart_items')
+              .where({ id: existingItem.id })
+              .update({
+                quantity: quantity,
+                updated_at: trx.fn.now(), // Update timestamp on sync
+              });
+          }
         } else {
           // Item does not exist, insert it.
           await trx('cart_items').insert({ user_id: userId, product_id: productId, quantity });
@@ -156,7 +166,10 @@ export const updateCartItem = async (req, res) => {
   try {
     const [updatedItem] = await db('cart_items')
       .where({ id: itemId, user_id: req.user.id })
-      .update({ quantity })
+      .update({
+        quantity,
+        updated_at: db.fn.now(), // Explicitly update the timestamp
+      })
       .returning('*');
 
     if (!updatedItem) {

@@ -198,7 +198,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] `ProductCard`
 - [x] `Header`, `Footer`
 - [ ] `WishlistButton`
-- [ ] `CartSummary`
+- [x] `CartSummary`
 - [ ] `NotificationDropdown`
 - [ ] `SupportModal`
 
@@ -208,9 +208,9 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 - [x] **User Auth Flow:** Connect frontend with `/api/users` endpoints.
 - [x] **Product Display:** Fetch and render paginated products.
-- [x] **Cart Management:** Add/update/delete cart items.
+- [x] **Cart Management:** Add/update/delete cart items. (Now includes robust guest-to-user sync)
 - [ ] **Wishlist Integration:** Sync wishlist UI with backend.
-- [ ] **Checkout Flow:** COD checkout with OTP verification.
+- [x] **Checkout Flow:** COD checkout with OTP verification.
 - [ ] **Order History:** Fetch and render past orders.
 - [ ] **Notifications:** Display new alerts in real-time or via polling.
 - [ ] **Support System:** Allow message submission and viewing.
@@ -224,8 +224,8 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 ### **Performance**
 
 - [ ] Optimize queries and add indexes.
-- [ ] Lazy load product images.
-- [ ] Target: page load ≤ 2s, checkout ≤ 4s.
+- [x] Lazy load product images.
+- [x] Target: page load ≤ 2s, checkout ≤ 4s.
 
 ### **Scalability**
 
@@ -251,7 +251,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 ### **Usability**
 
 - [ ] Ensure accessible UI (ARIA, tab order).
-- [ ] Keep checkout within 3–4 steps.
+- [x] Keep checkout within 3–4 steps.
 
 ### **Reliability**
 

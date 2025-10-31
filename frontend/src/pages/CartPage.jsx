@@ -9,56 +9,50 @@ import { Link } from 'react-router-dom';
 
 export default function CartPage() {
   const dispatch = useAppDispatch();
-  const { items } = useAppSelector((state) => state.cart); // Local cart state
+  const { items, status: cartStatus } = useAppSelector((state) => state.cart); // Get cart items and status
   const { token } = useAppSelector((state) => state.auth); // Auth state
-  const { loading, error, request: fetchCart } = useApi(cartService.getCartItems);
-  const isSyncing = useRef(false); // Ref to prevent multiple sync operations
+  const { loading, error, request: fetchCartItems } = useApi(cartService.getCartItems); // This is for subsequent fetches, not the initial one.
 
   useEffect(() => {
-    // This effect handles fetching and synchronizing the cart.
-    if (!token || isSyncing.current) {
-      return; // Do nothing if logged out or a sync is already in progress.
-    }
+    // This effect should only run to get the initial cart state if the user is already logged in
+    // when they land on the page. The CartSyncManager handles the sync-on-login case.
+    // We check for 'idle' status to ensure we only fetch if no sync/fetch has happened yet.
+    const canFetch = token && cartStatus === 'idle';
 
-    const syncAndFetchCart = async () => {
-      isSyncing.current = true;
-      try {
-        // If there are items in the local/guest cart, sync them with the backend first.
-        if (items.length > 0) {
-          const localItemsToSync = items.map(item => ({ productId: item.id, quantity: item.qty }));
-          await cartService.syncCart(localItemsToSync);
-          // Clear the local cart immediately after starting the sync to prevent duplicates.
-          // The backend is now the source of truth.
-          dispatch(clearCart());
+    if (canFetch) {
+      const getCart = async () => {
+        try {
+          const backendCartItems = await fetchCartItems();
+          const adaptedItems = backendCartItems.map(item => ({
+            id: item.product_id,
+            cartItemId: item.id,
+            name: item.name,
+            price: item.price,
+            qty: item.quantity,
+            img: item.image_url,
+          }));
+          dispatch(setCart(adaptedItems));
+        } catch (err) {
+          console.error("Failed to fetch cart:", err);
         }
-
-        // Now, fetch the authoritative cart from the backend.
-        const backendCartItems = await fetchCart();
-        const adaptedItems = backendCartItems.map(item => ({
-          id: item.product_id,
-          cartItemId: item.id, // This is the actual ID of the row in cart_items table
-          name: item.name,
-          price: item.price,
-          qty: item.quantity,
-          img: item.image_url,
-        }));
-        dispatch(setCart(adaptedItems));
-      } catch (syncError) {
-        console.error("Failed to sync or fetch cart:", syncError);
-        // The useApi hook will set the 'error' state if fetchCart fails.
-      } finally {
-        isSyncing.current = false;
-      }
-    };
-
-    syncAndFetchCart();
+      };
+      getCart();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]); // This effect should run only when the user's login status changes.
+  }, [token, cartStatus, dispatch]);
 
   const handleQuantityChange = async (item, newQuantity) => {
-    dispatch(updateQuantity({ id: item.id, qty: newQuantity }));
     if (token && item.cartItemId) {
-      await cartService.updateCartItemQuantity(item.cartItemId, newQuantity);
+      try {
+        // Wait for the backend to confirm, then update Redux state.
+        await cartService.updateCartItemQuantity(item.cartItemId, newQuantity);
+        dispatch(updateQuantity({ id: item.id, qty: newQuantity }));
+      } catch (err) {
+        console.error("Failed to update quantity:", err);
+      }
+    } else {
+      // For guests, just update Redux state.
+      dispatch(updateQuantity({ id: item.id, qty: newQuantity }));
     }
   };
 
@@ -69,8 +63,8 @@ export default function CartPage() {
     }
   };
 
-  // Show loading state only for logged-in users.
-  if (loading && token) return <p className="text-center py-12">Loading your cart...</p>;
+  // Show a loading indicator if the initial sync is happening or if we are fetching.
+  if ((loading || cartStatus === 'syncing') && token) return <p className="text-center py-12">Loading your cart...</p>;
   // Show error state only for logged-in users.
   if (error && token) return <p className="text-center py-12 text-red-500">Could not load your cart.</p>;
 
