@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../store/hooks';
-import CartSummary from '../components/CartSummary';
+import CartSummary from '../components/OrderSummary';
 import orderService from '../services/orderService';
 import Button from '../components/Button';
 import { clearCart } from '../features/cart/cartSlice';

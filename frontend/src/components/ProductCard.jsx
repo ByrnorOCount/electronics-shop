@@ -35,6 +35,7 @@ export default function ProductCard({ product }) {
       price: Number(product.price),
       qty: 1,
       img: product.image_url,
+      stock: product.stock,
     };
 
     // If the user is logged in, persist the change to the backend.

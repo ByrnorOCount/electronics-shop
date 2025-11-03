@@ -34,10 +34,20 @@ const createPaymentSession = async (paymentMethod) => {
   return response.data;
 };
 
+/**
+ * Fetches the order history for the logged-in user.
+ * @returns {Promise<Array<object>>} A promise that resolves to an array of orders.
+ */
+const getOrderHistory = async () => {
+  const response = await api.get('/orders');
+  return response.data;
+};
+
 const orderService = {
   generateOtp,
   createCodOrder,
   createPaymentSession,
+  getOrderHistory,
 };
 
 export default orderService;

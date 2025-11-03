@@ -161,10 +161,22 @@ export const createOrder = async (req, res) => {
     // Use the centralized order creation service
     const newOrder = await createOrderFromCart(userId, shippingAddress, 'cod');
 
+    // After creating the order, fetch it again with its items to return to the frontend.
+    const finalOrder = await db('orders')
+      .where('orders.id', newOrder.id)
+      .first();
+
+    const orderItems = await db('order_items')
+      .join('products', 'order_items.product_id', 'products.id')
+      .where('order_items.order_id', newOrder.id)
+      .select('order_items.*', 'products.name', 'products.image_url');
+
+    finalOrder.items = orderItems;
+
     // Clear the OTP from the user record after successful order creation
     await db('users').where({ id: userId }).update({ otp_hash: null, otp_expires: null });
 
-    res.status(201).json({ message: 'Order created successfully', order: newOrder });
+    res.status(201).json({ message: 'Order created successfully', order: finalOrder });
   } catch (error) {
     console.error('Error creating order:', error);
     res.status(500).json({ message: 'Server error while creating order.' });
@@ -191,7 +203,7 @@ export const getOrders = async (req, res) => {
     const items = await db('order_items')
       .join('products', 'order_items.product_id', 'products.id')
       .whereIn('order_items.order_id', orderIds)
-      .select('order_items.*', 'products.name');
+      .select('order_items.*', 'products.name', 'products.image_url');
 
     // Map items to their respective orders
     const ordersWithItems = orders.map((order) => ({

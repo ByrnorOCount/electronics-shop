@@ -1,11 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import OrderSummary from '../components/OrderSummary';
+import { useApi } from '../hooks/useApi';
+import orderService from '../services/orderService';
 
 export default function OrderConfirmationPage() {
   const location = useLocation();
-  const { order } = location.state || {}; // Safely destructure state
+  const initialOrder = location.state?.order;
 
-  if (!order) {
+  const { data: orders, loading, error, request: fetchOrders } = useApi(orderService.getOrderHistory);
+
+  useEffect(() => {
+    // If we don't have an order from the navigation state (e.g., on page refresh),
+    // fetch the user's order history to get the latest one.
+    if (!initialOrder) {
+      fetchOrders();
+    }
+  }, [initialOrder, fetchOrders]);
+
+  // Determine which order to display: the one from state, or the most recent from the fetch.
+  const order = initialOrder || (orders && orders[0]);
+
+  if (loading) {
+    return <main className="flex-grow max-w-2xl mx-auto px-4 py-12 text-center"><p>Loading your order details...</p></main>;
+  } else if (error || !order) {
     return (
       <main className="flex-grow max-w-2xl mx-auto px-4 py-12 text-center">
         <h1 className="text-2xl font-bold mb-4">No Order Information</h1>
@@ -26,31 +44,8 @@ export default function OrderConfirmationPage() {
           <p className="text-sm text-gray-500 mt-1">Order ID: #{order.id}</p>
         </div>
 
-        <div className="space-y-6">
-          {/* Order Items */}
-          <div>
-            <h2 className="text-xl font-semibold mb-4 border-b pb-2">Order Summary</h2>
-            <div className="space-y-4">
-              {order.items?.map((item) => (
-                <div key={item.product_id} className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">{item.name}</p>
-                    <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
-                  </div>
-                  <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Totals and Shipping */}
-          <div className="border-t pt-4 space-y-2">
-            <div className="flex justify-between font-semibold text-lg">
-              <span>Total</span>
-              <span>${Number(order.total_amount).toFixed(2)}</span>
-            </div>
-            <div className="text-sm text-gray-600"><strong>Shipping to:</strong> {order.shipping_address}</div>
-          </div>
+        <div className="border-t pt-6">
+          <OrderSummary order={order} />
         </div>
       </div>
     </main>

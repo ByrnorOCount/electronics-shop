@@ -4,7 +4,7 @@ import { removeItem, updateQuantity, clearCart, setCart } from '../features/cart
 import { useApi } from '../hooks/useApi';
 import cartService from '../services/cartService';
 import QuantityInput from '../components/QuantityInput';
-import CartSummary from '../components/CartSummary';
+import CartSummary from '../components/OrderSummary';
 import { Link } from 'react-router-dom';
 
 export default function CartPage() {
@@ -85,6 +85,7 @@ export default function CartPage() {
                 <div className="flex-1">
                   <h3 className="font-semibold">{it.name}</h3>
                   <p className="text-sm text-gray-600">${Number(it.price).toFixed(2)}</p>
+                  {it.stock !== undefined && <p className="text-xs text-gray-500 mt-1">In Stock: {it.stock}</p>}
                   <button onClick={() => handleRemoveItem(it)} className="text-xs text-red-600 hover:underline mt-1">Remove</button>
                 </div>
                 <QuantityInput value={it.qty} onChange={(newQty) => handleQuantityChange(it, newQty)} />
