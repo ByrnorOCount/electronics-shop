@@ -9,16 +9,20 @@
  */
 
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks"; // Corrected import
 import { addItem } from "../features/cart/cartSlice";
+import { addToWishlistLocal, removeFromWishlistLocal } from "../features/wishlist/wishlistSlice";
 import Button from './Button';
 import cartService from "../services/cartService";
+import wishlistService from "../services/wishlistService";
 import { selectToken } from "../features/auth/authSlice";
 
 export default function ProductCard({ product }) {
   const dispatch = useAppDispatch();
   const token = useAppSelector(selectToken); // Get the token to check if user is logged in
+  const wishlistItems = useAppSelector((state) => state.wishlist.items);
+  const isWishlisted = wishlistItems.some(item => item.id === product.id);
 
   const handleAdd = async (e) => {
     // Prevent the click from propagating to the parent Link component
@@ -49,14 +53,46 @@ export default function ProductCard({ product }) {
     }
   };
 
+  const handleWishlistToggle = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!token) {
+      // Optionally, navigate to login or show a toast message
+      console.log("Please log in to use the wishlist.");
+      return;
+    }
+
+    try {
+      if (isWishlisted) {
+        await wishlistService.removeFromWishlist(product.id);
+        dispatch(removeFromWishlistLocal(product.id));
+      } else {
+        await wishlistService.addToWishlist(product.id);
+        dispatch(addToWishlistLocal(product));
+      }
+    } catch (error) {
+      console.error("Failed to update wishlist:", error);
+    }
+  };
+
   return (
     <Link to={`/products/${product.id}`} className="block border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white">
+      <div className="relative">
         <img src={product.image_url} alt={product.name} className="w-full h-48 object-cover" loading="lazy" />
+        {token && (
+          <button onClick={handleWishlistToggle} className="absolute top-2 right-2 p-2 bg-white/70 rounded-full hover:bg-white focus:outline-none transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 ${isWishlisted ? 'text-red-500' : 'text-gray-500'}`} fill={isWishlisted ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 20.25l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+            </svg>
+          </button>
+        )}
+      </div>
         <div className="p-4">
           <h3 className="font-bold text-lg truncate">{product.name}</h3>
-          <p className="text-gray-600 text-sm my-2 h-10">{product.description}</p>
-          <p className="text-lg font-semibold text-gray-800">${Number(product.price).toFixed(2)}</p>
-          <Button onClick={handleAdd} size="sm" className="rounded-full">Add</Button>
+          <p className="text-gray-600 text-sm mt-1 mb-1 h-10">{product.description}</p>
+          <p className="text-lg font-semibold text-gray-800 mb-1">${Number(product.price).toFixed(2)}</p>
+          <Button onClick={handleAdd} size="sm" className="rounded-full bg-green-600 hover:bg-green-700 text-white">Add to Cart</Button>
         </div>
     </Link>
   );

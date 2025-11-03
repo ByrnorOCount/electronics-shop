@@ -174,7 +174,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 #### Customer
 
 - [X] `HomePage`, `ProductsPage`, `ProductDetailPage`
-- [ ] `CartPage`, `WishlistPage`, `CheckoutPage`
+- [x] `CartPage`, `WishlistPage`, `CheckoutPage`
 - [x] `OrderHistoryPage`, `LoginPage`, `RegisterPage`
 - [ ] `AccountPage`, `SupportPage`
 
@@ -197,7 +197,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 - [x] `ProductCard`
 - [x] `Header`, `Footer`
-- [ ] `WishlistButton`
+- [x] `WishlistButton` (Functionality integrated directly into `ProductCard`)
 - [x] `CartSummary`
 - [ ] `NotificationDropdown`
 - [ ] `SupportModal`

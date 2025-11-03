@@ -163,3 +163,15 @@ Storage: AWS S3
 Frontend (React): Vercel (prob this) / Netlify
 Backend (Node.js): AWS Elastic Beanstalk (prob this) / Heroku / Render
 Database (PostgreSQL): Amazon RDS / Heroku Postgres (prob this) / Render Postgres
+
+cart:
+thêm số lượng tồn kho vào, để trừ thêm sản phẩm vào số lượng 
+
++case mua sp a hết hàng ->sẽ có thông báo rằng nếu hết hàng sẽ đưa về trang products có gợi ý các sản phẩm tương tự còn sản phẩm,
+
++case mua sp a hết hàng b còn hàng-> thông báo khác: thông báo rằng sản phẩm a đã hết hàng rồi, nhưng b còn hàng bạn có muốn tiếp tục thanh toán không
+-> trường hợp ko thanh toán thì trở về và đưa sp a vào whilists, cũng đưa về gợi ý sản phẩm tương tự nhưng sản phẩm b vẫn còn ở trong giỏ hàng
+
+*tính năng bổ sung: api vnpay bị trục trặc (vì quá tải chẳng hạn token bị hạn chế,...) có thể sử dụng zalopay dùng qr code
+
+snackbar/toast notifications for user actions (e.g., "Product added to cart", "Profile updated successfully", etc.)
