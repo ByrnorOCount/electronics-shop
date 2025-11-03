@@ -26,9 +26,7 @@ const CartSyncManager = () => {
     // It should not re-run if the cart state changes for any other reason.
     const state = store.getState();
     const guestCartItems = state.cart.items;
-    if (!token || hasSynced.current || guestCartItems.length === 0) {
-      return;
-    }
+    if (!token || hasSynced.current) return;
 
     const syncAndFetchCart = async () => {
       // Mark as synced immediately to prevent re-runs if the component re-renders.
@@ -36,20 +34,22 @@ const CartSyncManager = () => {
       dispatch(setCartSyncStatus('syncing'));
 
       try {
-        // 1. Prepare local cart items for the sync endpoint.
-        // We use the state directly from the store at the moment of firing,
-        // avoiding a dependency on the selector that causes re-runs.
-        const itemsToSync = guestCartItems.map(item => ({
-          productId: item.id,
-          quantity: item.qty,
-          modifiedAt: item.modifiedAt, // <-- Send the timestamp
-        }));
+        let mergedCart;
 
-        // 2. Send the local cart to the backend to be merged.
-        // The backend will now return the fully merged cart.
-        const mergedCart = await cartService.syncCart(itemsToSync);
+        if (guestCartItems.length > 0) {
+          // 1. If there's a guest cart, sync it. The backend returns the merged cart.
+          const itemsToSync = guestCartItems.map(item => ({
+            productId: item.id,
+            quantity: item.qty,
+            modifiedAt: item.modifiedAt,
+          }));
+          mergedCart = await cartService.syncCart(itemsToSync);
+        } else {
+          // 2. If there's no guest cart, just fetch the user's existing cart from the DB.
+          mergedCart = await cartService.getCartItems();
+        }
 
-        // 3. Clear the old local cart and set the new, authoritative cart from the backend.
+        // 3. Clear the old local cart (if any) and set the new, authoritative cart from the backend.
         dispatch(clearCart());
         const normalizedMergedCart = mergedCart.map(item => ({
           id: item.product_id,

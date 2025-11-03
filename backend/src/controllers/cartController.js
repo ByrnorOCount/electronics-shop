@@ -96,36 +96,20 @@ export const syncCart = async (req, res) => {
   }
 
   try {
-    // Use a transaction to ensure all items are processed or none are.
+    // Use a transaction to treat the sync as a single atomic operation.
     await db.transaction(async (trx) => {
-      for (const item of itemsToSync) {
-        const { productId, quantity, modifiedAt } = item;
+      // 1. Clear the user's existing cart completely.
+      await trx('cart_items').where({ user_id: userId }).del();
 
-        if (!productId || !quantity || quantity < 1 || !modifiedAt) {
-          // In a transaction, throwing an error will automatically trigger a rollback.
-          throw new Error('Invalid item data in sync request.');
-        }
-
-        const existingItem = await trx('cart_items')
-          .where({ user_id: userId, product_id: productId })
-          // We need the updated_at field to compare timestamps
-          .select('*')
-          .first();
-
-        if (existingItem) {
-          // Item exists. Update it only if the guest's version is newer.
-          if (new Date(modifiedAt) > new Date(existingItem.updated_at)) {
-            await trx('cart_items')
-              .where({ id: existingItem.id })
-              .update({
-                quantity: quantity,
-                updated_at: trx.fn.now(), // Update timestamp on sync
-              });
-          }
-        } else {
-          // Item does not exist, insert it.
-          await trx('cart_items').insert({ user_id: userId, product_id: productId, quantity });
-        }
+      // 2. If there are items in the guest cart, insert them as the new cart.
+      if (itemsToSync.length > 0) {
+        const itemsToInsert = itemsToSync.map(item => ({
+          user_id: userId,
+          product_id: item.productId,
+          quantity: item.quantity,
+        }));
+        // Insert the new items from the guest cart.
+        await trx('cart_items').insert(itemsToInsert);
       }
     });
 
