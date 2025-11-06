@@ -9,7 +9,7 @@ export async function seed(knex) {
   await knex('users').del();
 
   // Hash a common password
-  const hashedPassword = await bcrypt.hash('password123', 12);
+  const hashedPassword = await bcrypt.hash('Password123!', 12);
 
   // Inserts seed entries for users with different roles
   await knex('users').insert([

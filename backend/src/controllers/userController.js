@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { sendPasswordResetEmail, sendVerificationEmail } from '../services/emailService.js';
+import generateToken from '../utils/generateToken.js';
 import db from '../config/db.js';
 
 /**
@@ -23,15 +23,18 @@ export const register = async (req, res) => {
   }
 
   try {
+    // Hash the password before any database checks to mitigate timing attacks.
+    const hashedPassword = await bcrypt.hash(password, 12);
+
     const existingUser = await db('users').where({ email }).first();
     if (existingUser) {
       return res.status(400).json({ message: 'Email already in use.' });
     }
 
     // Generate a verification token
-    const verificationToken = crypto.randomBytes(32).toString('hex');
-
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const rawVerificationToken = crypto.randomBytes(32).toString('hex');
+    // Hash the token before storing it in the database.
+    const hashedVerificationToken = crypto.createHash('sha256').update(rawVerificationToken).digest('hex');
 
     const [user] = await db('users')
       .insert({
@@ -41,17 +44,17 @@ export const register = async (req, res) => {
         password_hash: hashedPassword,
         role: 'customer',
         is_verified: false,
-        email_verification_token: verificationToken,
+        email_verification_token: hashedVerificationToken,
       })
       .returning('*');
 
     // For development convenience, log the verification token to the console.
     if (process.env.NODE_ENV !== 'production') {
-      console.log(`\n--- EMAIL VERIFICATION --- \nUser: ${user.email}\nToken: ${verificationToken}\n--------------------------\n`);
+      console.log(`\n--- EMAIL VERIFICATION --- \nUser: ${user.email}\nToken: ${rawVerificationToken}\n--------------------------\n`);
     }
 
     // Send verification email
-    await sendVerificationEmail(user, verificationToken);
+    await sendVerificationEmail(user, rawVerificationToken);
 
     res.status(201).json({ message: 'Registration successful. Please check your email to verify your account.' });
   } catch (error) {
@@ -72,21 +75,25 @@ export const login = async (req, res) => {
 
   try {
     const user = await db('users').where({ email }).first();
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials.' });
+
+    // To mitigate timing attacks, we perform the password comparison even if the user is not found.
+    // If no user, we use a dummy hash. This ensures the bcrypt.compare function always runs,
+    // making the response time consistent for valid and invalid emails.
+    const dummyHash = '$2b$12$invalidsaltandhashextralongtobevalidbcrypt';
+    const passwordHash = user ? user.password_hash : dummyHash;
+
+    const isMatch = await bcrypt.compare(password, passwordHash);
+
+    // Now we can safely check the conditions and return.
+    if (!user || !isMatch) {
+      return res.status(401).json({ message: 'Invalid credentials.' }); // Generic error message
     }
 
-    if (!user.is_verified) {
+    if (!user.is_verified) { // This check is safe to do after authentication
       return res.status(401).json({ message: 'Please verify your email before logging in.' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password_hash);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials.' });
-    }
-
-    const payload = { id: user.id, role: user.role };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+    const token = generateToken(user.id, user.role);
 
     delete user.password_hash;
 
@@ -136,6 +143,45 @@ export const updateUserProfile = async (req, res) => {
   } catch (error) {
     console.error('Error updating profile:', error);
     res.status(500).json({ message: 'Server error during profile update.' });
+  }
+};
+
+/**
+ * Change user password.
+ * @route PUT /api/users/me/password
+ * @access Private
+ */
+export const changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const userId = req.user.id;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'Both current and new passwords are required.' });
+  }
+
+  // Enforce password complexity for the new password
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!passwordRegex.test(newPassword)) {
+    return res.status(400).json({
+      message: 'New password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.',
+    });
+  }
+
+  try {
+    const user = await db('users').where({ id: userId }).first();
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'The current password you entered is incorrect.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    await db('users').where({ id: userId }).update({ password_hash: hashedPassword });
+
+    res.status(200).json({ message: 'Password changed successfully.' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ message: 'Server error while changing password.' });
   }
 };
 
@@ -202,7 +248,10 @@ export const getNotifications = async (req, res) => {
  * @access Public
  */
 export const verifyEmail = async (req, res) => {
-  const { token } = req.params;
+  const { token: rawToken } = req.params;
+
+  // Hash the incoming token to match the one stored in the database.
+  const token = crypto.createHash('sha256').update(rawToken).digest('hex');
 
   try {
     const user = await db('users').where({ email_verification_token: token }).first();

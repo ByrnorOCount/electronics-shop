@@ -22,6 +22,8 @@ tags:
     description: User wishlist operations
   - name: Orders
     description: Order management and history
+  - name: User Profile
+    description: Operations related to the authenticated user's profile.
   - name: Support
     description: Customer support tickets and FAQs
   - name: Staff
@@ -203,6 +205,54 @@ paths:
           description: Password has been successfully reset.
         '400':
           description: Token is invalid or expired, or password not provided.
+
+  /users/me:
+    get:
+      summary: Get current user's profile
+      description: Retrieves the profile information for the currently authenticated user.
+      tags:
+        - User Profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: The user's profile data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      summary: Update current user's profile
+      description: Updates the first name, last name, or email for the currently authenticated user.
+      tags:
+        - User Profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/UserProfileUpdate'
+      responses:
+        '200':
+          description: Profile updated successfully.
+
+  /users/me/password:
+    put:
+      summary: Change current user's password
+      description: Updates the password for the currently authenticated user. The new password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.
+      tags:
+        - User Profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '200':
+          description: Password changed successfully.
+        '400':
+          description: Bad request (e.g., missing fields, weak new password).
 
   /users/me/notifications:
     get:

@@ -175,3 +175,4 @@ thêm số lượng tồn kho vào, để trừ thêm sản phẩm vào số lư
 *tính năng bổ sung: api vnpay bị trục trặc (vì quá tải chẳng hạn token bị hạn chế,...) có thể sử dụng zalopay dùng qr code
 
 snackbar/toast notifications for user actions (e.g., "Product added to cart", "Profile updated successfully", etc.)
+profile page should have settings like default shipping address, payment methods, password change, etc.
