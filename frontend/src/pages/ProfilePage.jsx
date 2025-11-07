@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../features/auth/authSlice';
+import toast from 'react-hot-toast';
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
@@ -10,6 +11,7 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     dispatch(logout());
+    toast.success('You have been logged out.');
     navigate('/'); // Redirect to home after logout
   };
 

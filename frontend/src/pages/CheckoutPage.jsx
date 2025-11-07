@@ -5,6 +5,7 @@ import CartSummary from '../components/OrderSummary';
 import orderService from '../services/orderService';
 import Button from '../components/Button';
 import { clearCart } from '../features/cart/cartSlice';
+import toast from 'react-hot-toast';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -14,17 +15,15 @@ export default function CheckoutPage() {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [notification, setNotification] = useState('');
 
   const handleGenerateOtp = async () => {
     setLoading(true);
     setError('');
-    setNotification('');
     try {
       await orderService.generateOtp();
-      setNotification('An OTP has been sent to your email.');
+      toast.success('An OTP has been sent to your email.');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send OTP. Please try again.');
+      toast.error(err.response?.data?.message || 'Failed to send OTP. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -33,19 +32,18 @@ export default function CheckoutPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!shippingAddress) {
-      setError('Shipping address is required.');
+      toast.error('Shipping address is required.');
       return;
     }
 
     setLoading(true);
     setError('');
-    setNotification('');
 
     try {
       if (paymentMethod === 'cod') {
         if (!otp) {
-          setError('Please enter the OTP sent to your email.');
           setLoading(false);
+          toast.error('Please enter the OTP sent to your email.');
           return;
         }
         const { order } = await orderService.createCodOrder(shippingAddress, otp);
@@ -58,7 +56,7 @@ export default function CheckoutPage() {
         window.location.href = url;
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'An unexpected error occurred.');
+      toast.error(err.response?.data?.message || 'An unexpected error occurred.');
     } finally {
       setLoading(false);
     }
@@ -107,8 +105,7 @@ export default function CheckoutPage() {
           )}
 
           {/* Error and Notification Messages */}
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          {notification && <p className="text-green-600 text-sm">{notification}</p>}
+          {error && !toast.isActive('error-toast') && <p className="text-red-500 text-sm">{error}</p>}
 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Processing...' : (paymentMethod === 'cod' ? 'Place Order' : 'Proceed to Payment')}

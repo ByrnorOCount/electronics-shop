@@ -17,6 +17,7 @@ import Button from './Button';
 import cartService from "../services/cartService";
 import wishlistService from "../services/wishlistService";
 import { selectToken } from "../features/auth/authSlice";
+import toast from "react-hot-toast";
 
 export default function ProductCard({ product }) {
   const dispatch = useAppDispatch();
@@ -45,12 +46,15 @@ export default function ProductCard({ product }) {
         const backendItem = await cartService.addItemToCart(product.id, 1);
         // Add the backend's cartItemId to our Redux action.
         dispatch(addItem({ ...itemToAdd, cartItemId: backendItem.id }));
+        toast.success(`'${product.name}' added to cart!`);
       } catch (error) {
         console.error("Failed to add item to backend cart:", error);
+        toast.error("Failed to add item to cart.");
       }
     } else {
       // If guest, dispatch without a cartItemId.
       dispatch(addItem(itemToAdd));
+      toast.success(`'${product.name}' added to cart!`);
     }
   };
 
@@ -60,7 +64,7 @@ export default function ProductCard({ product }) {
 
     if (!token) {
       // Optionally, navigate to login or show a toast message
-      console.log("Please log in to use the wishlist.");
+      toast.error("Please log in to use the wishlist.");
       return;
     }
 
@@ -68,12 +72,15 @@ export default function ProductCard({ product }) {
       if (isWishlisted) {
         await wishlistService.removeFromWishlist(product.id);
         dispatch(removeFromWishlistLocal(product.id));
+        toast.success(`'${product.name}' removed from wishlist.`);
       } else {
         await wishlistService.addToWishlist(product.id);
         dispatch(addToWishlistLocal(product));
+        toast.success(`'${product.name}' added to wishlist!`);
       }
     } catch (error) {
       console.error("Failed to update wishlist:", error);
+      toast.error("Failed to update wishlist.");
     }
   };
 

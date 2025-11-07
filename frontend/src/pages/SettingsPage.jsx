@@ -4,7 +4,8 @@ import { useApi } from '../hooks/useApi';
 import userService from '../services/userService';
 import { setUser } from '../features/auth/authSlice';
 import { useForm } from 'react-hook-form';
-
+import toast from 'react-hot-toast';
+ 
 export default function SettingsPage() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
@@ -16,12 +17,10 @@ export default function SettingsPage() {
     last_name: '',
     email: '',
   });
-  const [successMessage, setSuccessMessage] = useState('');
 
   // --- Password Change State & Logic ---
   const { register, handleSubmit: handlePasswordSubmit, formState: { errors: passwordErrors }, reset: resetPasswordForm, watch } = useForm();
   const { loading: passwordLoading, error: passwordError, request: changePassword } = useApi(userService.changePassword);
-  const [passwordSuccess, setPasswordSuccess] = useState('');
 
   // State for password visibility toggles
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -45,25 +44,24 @@ export default function SettingsPage() {
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
-    setSuccessMessage('');
 
     try {
       const response = await updateProfile(formData);
       dispatch(setUser(response.user));
-      setSuccessMessage('Profile updated successfully!');
+      toast.success('Profile updated successfully!');
     } catch (err) {
       console.error('Failed to update profile:', err);
+      toast.error(err.message || 'Failed to update profile.');
     }
   };
 
   const onPasswordFormSubmit = async (data) => {
-    setPasswordSuccess('');
     try {
       await changePassword({
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       });
-      setPasswordSuccess('Password changed successfully!');
+      toast.success('Password changed successfully!');
       resetPasswordForm();
     } catch (err) {
       console.error('Failed to change password:', err);
@@ -101,8 +99,7 @@ export default function SettingsPage() {
           </div>
           <div className="flex items-center justify-between">
             <div className="flex-grow">
-              {profileError && <p className="text-sm text-red-600">{profileError.message || 'An unexpected error occurred.'}</p>}
-              {successMessage && <p className="text-sm text-green-600">{successMessage}</p>}
+              {profileError && <p className="text-sm text-red-600">{profileError.message}</p>}
             </div>
             <button type="submit" disabled={profileLoading} className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed">
               {profileLoading ? 'Saving...' : 'Save Changes'}
@@ -176,8 +173,7 @@ export default function SettingsPage() {
           </div>
           <div className="flex items-center justify-between">
             <div className="flex-grow">
-              {passwordError && <p className="text-sm text-red-600">{passwordError.message || 'An unexpected error occurred.'}</p>}
-              {passwordSuccess && <p className="text-sm text-green-600">{passwordSuccess}</p>}
+              {passwordError && <p className="text-sm text-red-600">{passwordError.message}</p>}
             </div>
             <button type="submit" disabled={passwordLoading} className="px-6 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed">
               {passwordLoading ? 'Saving...' : 'Change Password'}

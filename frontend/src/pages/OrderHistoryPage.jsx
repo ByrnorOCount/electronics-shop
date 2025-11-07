@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useApi } from '../hooks/useApi';
 import orderService from '../services/orderService';
 import OrderSummary from '../components/OrderSummary';
+import toast from 'react-hot-toast';
 
 const OrderItem = ({ order }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,7 +52,8 @@ export default function OrderHistoryPage() {
     content = <p>Loading your order history...</p>;
   } else if (error) {
     console.error("Failed to load order history:", error);
-    content = <p className="text-red-500">Could not load your order history. Please try again later.</p>;
+    toast.error('Could not load your order history.');
+    content = <p className="text-gray-600">Failed to load order history. Please try again later.</p>;
   } else if (orders && orders.length > 0) {
     content = (
       <div className="space-y-4">

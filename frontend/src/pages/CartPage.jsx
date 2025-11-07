@@ -6,6 +6,7 @@ import cartService from '../services/cartService';
 import QuantityInput from '../components/QuantityInput';
 import CartSummary from '../components/OrderSummary';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 export default function CartPage() {
   const dispatch = useAppDispatch();
@@ -47,8 +48,10 @@ export default function CartPage() {
         // Wait for the backend to confirm, then update Redux state.
         await cartService.updateCartItemQuantity(item.cartItemId, newQuantity);
         dispatch(updateQuantity({ id: item.id, qty: newQuantity }));
+        toast.success('Quantity updated.');
       } catch (err) {
         console.error("Failed to update quantity:", err);
+        toast.error('Failed to update quantity.');
       }
     } else {
       // For guests, just update Redux state.
@@ -58,6 +61,7 @@ export default function CartPage() {
 
   const handleRemoveItem = async (item) => {
     dispatch(removeItem(item.id));
+    toast.success(`'${item.name}' removed from cart.`);
     if (token && item.cartItemId) {
       await cartService.removeCartItem(item.cartItemId);
     }

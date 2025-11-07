@@ -7,6 +7,7 @@ import { useApi } from '../hooks/useApi';
 import productService from '../services/productService';
 import cartService from '../services/cartService';
 import wishlistService from '../services/wishlistService';
+import toast from 'react-hot-toast';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -46,13 +47,15 @@ const ProductDetailPage = () => {
           const backendItem = await cartService.addItemToCart(product.id, 1);
           // Dispatch again with the backend's cartItemId to keep Redux state in sync
           dispatch(addItem({ ...itemToAdd, cartItemId: backendItem.id }));
+          toast.success('Added to cart!');
         } catch (error) {
           console.error("Failed to add item to backend cart:", error);
-          // Here you could dispatch an action to show an error to the user
+          toast.error('Failed to add to cart.');
         }
       } else {
         // For guests, dispatch optimistically as before.
         dispatch(addItem(itemToAdd));
+        toast.success('Added to cart!');
       }
     }
   };
@@ -62,6 +65,7 @@ const ProductDetailPage = () => {
 
     if (!token) {
       // Redirect to login if a guest tries to use the wishlist
+      toast.error('Please log in to use the wishlist.');
       navigate('/login', { state: { from: `/products/${product.id}` } });
       return;
     }
@@ -70,14 +74,17 @@ const ProductDetailPage = () => {
       if (isWishlisted) {
         await wishlistService.removeFromWishlist(product.id);
         dispatch(removeFromWishlistLocal(product.id));
+        toast.success('Removed from wishlist.');
       } else {
         // The local action needs the full product object to display it in the wishlist
         await wishlistService.addToWishlist(product.id);
         dispatch(addToWishlistLocal(product));
+        toast.success('Added to wishlist!');
       }
     }
     catch (error) {
       console.error("Failed to update wishlist:", error);
+      toast.error('Failed to update wishlist.');
     }
   };
 

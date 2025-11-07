@@ -3,6 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 import OrderSummary from '../components/OrderSummary';
 import { useApi } from '../hooks/useApi';
 import orderService from '../services/orderService';
+import toast from 'react-hot-toast';
 
 export default function OrderConfirmationPage() {
   const location = useLocation();
@@ -15,6 +16,10 @@ export default function OrderConfirmationPage() {
     // fetch the user's order history to get the latest one.
     if (!initialOrder) {
       fetchOrders();
+    }
+
+    if (error) {
+      toast.error("Could not retrieve order details.");
     }
   }, [initialOrder, fetchOrders]);
 

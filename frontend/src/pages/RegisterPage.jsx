@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../services/api';
 
 const RegisterPage = () => {
@@ -26,7 +27,7 @@ const RegisterPage = () => {
       // On success, redirect to the login page with a success message
       navigate('/login?status=registered');
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      toast.error(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -36,7 +37,7 @@ const RegisterPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-yellow-50">
       <div className="p-8 bg-white rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6">Create an Account</h2>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {/* The error state is now handled by react-hot-toast */}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700">First Name</label>
