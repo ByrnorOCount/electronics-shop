@@ -113,6 +113,8 @@ export default function SettingsPage() {
         {/* Change Password Form */}
         <form onSubmit={handlePasswordSubmit(onPasswordFormSubmit)} className="space-y-6">
           <h3 className="text-lg font-medium text-gray-900">Change Password</h3>
+          <input type="hidden" autoComplete="username" value={user?.email || ''} readOnly />
+
           <div>
             <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">Current Password</label>
             <div className="relative mt-1">
@@ -121,6 +123,7 @@ export default function SettingsPage() {
                 id="currentPassword"
                 {...register('currentPassword', { required: 'Current password is required' })}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                autoComplete="current-password"
               />
               <button type="button" onClick={() => setShowCurrentPassword(!showCurrentPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
                 {showCurrentPassword ? <EyeIcon /> : <EyeOffIcon />}
@@ -143,6 +146,7 @@ export default function SettingsPage() {
                   }
                 })}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                autoComplete="new-password"
               />
               <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
                 {showNewPassword ? <EyeIcon /> : <EyeOffIcon />}
@@ -156,11 +160,13 @@ export default function SettingsPage() {
               <input
                 type={showConfirmPassword ? 'text' : 'password'}
                 id="confirmPassword"
+
                 {...register('confirmPassword', {
                   required: 'Please confirm your new password',
                   validate: value => value === watch('newPassword') || 'The passwords do not match'
                 })}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                autoComplete="new-password"
               />
               <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
                 {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}

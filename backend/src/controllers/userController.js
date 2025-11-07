@@ -243,6 +243,52 @@ export const getNotifications = async (req, res) => {
 };
 
 /**
+ * Mark a single notification as read.
+ * @route PUT /api/users/me/notifications/:id
+ * @access Private
+ */
+export const markNotificationAsRead = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const [notification] = await db('notifications')
+      .where({ id, user_id: userId })
+      .update({ is_read: true })
+      .returning('*');
+
+    if (!notification) {
+      return res.status(404).json({ message: 'Notification not found or you do not have permission to view it.' });
+    }
+
+    res.status(200).json(notification);
+  } catch (error) {
+    console.error('Error marking notification as read:', error);
+    res.status(500).json({ message: 'Server error while updating notification.' });
+  }
+};
+
+/**
+ * Mark all notifications as read for the current user.
+ * @route POST /api/users/me/notifications/mark-all-read
+ * @access Private
+ */
+export const markAllNotificationsAsRead = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    await db('notifications')
+      .where({ user_id: userId, is_read: false })
+      .update({ is_read: true });
+
+    res.status(200).json({ message: 'All notifications marked as read.' });
+  } catch (error) {
+    console.error('Error marking all notifications as read:', error);
+    res.status(500).json({ message: 'Server error while updating notifications.' });
+  }
+};
+
+/**
  * Verify user's email using a token.
  * @route GET /api/users/verify-email/:token
  * @access Public

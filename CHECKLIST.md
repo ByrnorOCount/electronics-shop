@@ -176,7 +176,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [X] `HomePage`, `ProductsPage`, `ProductDetailPage`
 - [x] `CartPage`, `WishlistPage`, `CheckoutPage`
 - [x] `OrderHistoryPage`, `LoginPage`, `RegisterPage`
-- [ ] `AccountPage`, `SupportPage`
+- [ ] `AccountPage`, `SettingsPage`, `SupportPage`
 
 #### Staff
 
@@ -199,7 +199,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] `Header`, `Footer`
 - [x] `WishlistButton` (Functionality integrated directly into `ProductCard` and `ProductDetailPage`)
 - [x] `CartSummary`
-- [ ] `NotificationDropdown`
+- [x] `NotificationDropdown`
 - [ ] `Toast/Snackbar System` (for user feedback like "Profile updated successfully")
 - [ ] `SupportModal`
 
