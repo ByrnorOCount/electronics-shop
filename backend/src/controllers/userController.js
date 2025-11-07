@@ -234,7 +234,15 @@ export const forgotPassword = async (req, res) => {
  */
 export const getNotifications = async (req, res) => {
   try {
-    const notifications = await db('notifications').where({ user_id: req.user.id }).orderBy('created_at', 'desc');
+    const { limit } = req.query;
+
+    let query = db('notifications').where({ user_id: req.user.id }).orderBy('created_at', 'desc');
+
+    if (limit && !isNaN(parseInt(limit, 10))) {
+      query = query.limit(parseInt(limit, 10));
+    }
+
+    const notifications = await query;
     res.status(200).json(notifications);
   } catch (error) {
     console.error('Error fetching notifications:', error);

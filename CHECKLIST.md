@@ -200,7 +200,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] `WishlistButton` (Functionality integrated directly into `ProductCard` and `ProductDetailPage`)
 - [x] `CartSummary`
 - [x] `NotificationDropdown`
-- [ ] `Toast/Snackbar System` (for user feedback like "Profile updated successfully")
+- [x] `Toast/Snackbar System` (for user feedback like "Profile updated successfully")
 - [ ] `SupportModal`
 
 ---

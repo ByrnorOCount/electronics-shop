@@ -17,7 +17,7 @@ export default function NotificationDropdown() {
   const handleToggle = () => {
     setIsOpen(!isOpen);
     if (!isOpen) {
-      fetchNotifications();
+      fetchNotifications(7); // Fetch only the 7 most recent notifications
     }
   };
 
@@ -94,6 +94,11 @@ export default function NotificationDropdown() {
                 )}
               </div>
             ))}
+            <div className="p-2 text-center border-t">
+              <Link to="/notifications" onClick={() => setIsOpen(false)} className="text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                View all notifications
+              </Link>
+            </div>
           </div>
         </div>
       )}
