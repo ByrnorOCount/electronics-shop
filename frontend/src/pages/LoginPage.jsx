@@ -1,5 +1,5 @@
 // frontend/src/pages/LoginPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppDispatch } from '../store/hooks';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { setCredentials } from '../features/auth/authSlice';
@@ -16,7 +16,35 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const registrationSuccess = new URLSearchParams(location.search).get('status') === 'registered';
+  const searchParams = new URLSearchParams(location.search);
+  const registrationSuccess = searchParams.get('status') === 'registered';
+  const socialLoginSuccess = searchParams.get('status') === 'success';
+
+  useEffect(() => {
+    // This effect runs when the component mounts. If the URL contains
+    // `?status=success`, it means we've returned from a social login.
+    if (socialLoginSuccess) {
+      const fetchUser = async () => {
+        try {
+          // The browser automatically sends the 'jwt' cookie with this request.
+          const response = await api.get('/users/me');
+          const user = response.data;
+          // The token is in an httpOnly cookie, so we don't have it here.
+          // We pass a placeholder string to satisfy the Redux state.
+          dispatch(setCredentials({ token: 'social_login', user }));
+          toast.success(`Welcome back, ${user.first_name}!`);
+          navigate('/profile');
+        } catch (err) {
+          toast.error('Failed to fetch user profile after social login.');
+        }
+      };
+
+      fetchUser();
+    }
+    // The dependency array is empty to ensure this runs only once on mount.
+    // We read `socialLoginSuccess` inside the effect to avoid re-running on location change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,7 +58,7 @@ const LoginPage = () => {
       const response = await api.post('/users/login', formData);
       const { token, user } = response.data;
       dispatch(setCredentials({ token, user }));
-      navigate('/');
+      navigate('/profile');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {

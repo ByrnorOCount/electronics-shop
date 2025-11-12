@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { removeItem, updateQuantity, clearCart, setCart } from '../features/cart/cartSlice';
-import { useApi } from '../hooks/useApi';
 import cartService from '../services/cartService';
 import QuantityInput from '../components/QuantityInput';
 import CartSummary from '../components/OrderSummary';
@@ -11,36 +10,7 @@ import toast from 'react-hot-toast';
 export default function CartPage() {
   const dispatch = useAppDispatch();
   const { items, status: cartStatus } = useAppSelector((state) => state.cart); // Get cart items and status
-  const { token } = useAppSelector((state) => state.auth); // Auth state
-  const { loading, error, request: fetchCartItems } = useApi(cartService.getCartItems); // This is for subsequent fetches, not the initial one.
-
-  useEffect(() => {
-    // This effect should only run to get the initial cart state if the user is already logged in
-    // when they land on the page. The CartSyncManager handles the sync-on-login case.
-    // We check for 'idle' status to ensure we only fetch if no sync/fetch has happened yet.
-    const canFetch = token && cartStatus === 'idle';
-
-    if (canFetch) {
-      const getCart = async () => {
-        try {
-          const backendCartItems = await fetchCartItems();
-          const adaptedItems = backendCartItems.map(item => ({
-            id: item.product_id,
-            cartItemId: item.id,
-            name: item.name,
-            price: item.price,
-            qty: item.quantity,
-            img: item.image_url,
-          }));
-          dispatch(setCart(adaptedItems));
-        } catch (err) {
-          console.error("Failed to fetch cart:", err);
-        }
-      };
-      getCart();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, cartStatus, dispatch]);
+  const { token } = useAppSelector((state) => state.auth);
 
   const handleQuantityChange = async (item, newQuantity) => {
     if (token && item.cartItemId) {
@@ -68,9 +38,9 @@ export default function CartPage() {
   };
 
   // Show a loading indicator if the initial sync is happening or if we are fetching.
-  if ((loading || cartStatus === 'syncing') && token) return <p className="text-center py-12">Loading your cart...</p>;
+  if (cartStatus === 'syncing' && token) return <p className="text-center py-12">Loading your cart...</p>;
   // Show error state only for logged-in users.
-  if (error && token) return <p className="text-center py-12 text-red-500">Could not load your cart.</p>;
+  if (cartStatus === 'failed' && token) return <p className="text-center py-12 text-red-500">Could not load your cart.</p>;
 
   return (
     <main className="flex-grow max-w-screen-xl mx-auto px-4 py-12 w-full">

@@ -6,6 +6,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Include cookies in requests
 });
 
 /**
@@ -16,7 +17,10 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = store.getState().auth.token;
-    if (token) {
+    // Only add the Authorization header if the token is a valid string.
+    // This prevents sending "Bearer null" or the placeholder "Bearer social_login"
+    // when using cookie-based auth.
+    if (token && token !== 'social_login') {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;

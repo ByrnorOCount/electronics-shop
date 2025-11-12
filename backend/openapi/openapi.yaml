@@ -431,37 +431,8 @@ paths:
         '404':
           description: Cart item not found or does not belong to the user.
 
-  /wishlist:
-    get:
-      summary: Get the user's wishlist
-      description: Retrieves all products currently in the logged-in user's wishlist.
-      tags:
-        - Wishlist
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: An array of products in the user's wishlist.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Product'
-        '401':
-          description: Unauthorized.
-
-    post:
-      summary: Add a product to the wishlist
-      description: Adds a product to the user's wishlist.
-      tags:
-        - Wishlist
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
+  /content:
+      application/json:
             schema:
               $ref: '#/components/schemas/AddToWishlistRequest'
       responses:

@@ -1,5 +1,6 @@
 import express from 'express';
 import passport from 'passport';
+import cookieParser from 'cookie-parser';
 // 1. Import the token generation function you already have
 import generateToken from '../utils/generateToken.js';
 
@@ -7,26 +8,32 @@ const router = express.Router();
 
 /**
  * A shared callback handler for all social authentication strategies.
- * This function runs after Passport successfully authenticates a user.
- * It generates a JWT and redirects the user back to the frontend.
+ * This function runs after Passport successfully authenticates a user. It sets
+ * the JWT in a secure, httpOnly cookie and redirects the user to their profile.
  */
 const socialAuthCallbackHandler = (req, res) => {
   // 'req.user' is now the user object that passport.js found or created
   if (!req.user) {
-    return res.redirect('http://localhost:5173/login?error=true');
+    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/login?error=social`);
   }
 
   // Create a JWT for this user (identical to the regular login logic)
   const token = generateToken(req.user.id, req.user.role);
-
-  // Get the frontend URL from .env, with a fallback
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
-  // Remove password_hash before sending to the frontend (very important)
-  delete req.user.password_hash;
-  const userJson = encodeURIComponent(JSON.stringify(req.user));
+  // Set the token in a secure, httpOnly cookie.
+  // This is the secure way to handle auth tokens.
+  res.cookie('jwt', token, {
+    httpOnly: true, // Prevents client-side JS from accessing the cookie
+    secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
+    sameSite: 'lax', // Provides reasonable CSRF protection
+    maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
+  });
 
-  res.redirect(`${frontendUrl}/auth/callback?token=${token}&user=${userJson}`);
+  // Instead of redirecting to a callback page with the token,
+  // we redirect directly to the profile page. The frontend will
+  // then need to fetch the user's data.
+  res.redirect(`${frontendUrl}/login?status=success`);
 };
 
 /**
@@ -49,7 +56,7 @@ router.get(
   '/google/callback',
   // 3. Have Passport handle the callback, without using sessions
   passport.authenticate('google', {
-    failureRedirect: 'http://localhost:3000/login?error=true', // Redirect to login page on failure
+    failureRedirect: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/login?error=social`, // Redirect to login page on failure
     session: false
   }),
   socialAuthCallbackHandler // Use the shared handler
@@ -73,7 +80,7 @@ router.get(
 router.get(
   '/facebook/callback',
   passport.authenticate('facebook', {
-    failureRedirect: 'http://localhost:3000/login?error=true',
+    failureRedirect: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/login?error=social`,
     session: false
   }),
   socialAuthCallbackHandler // Use the shared handler

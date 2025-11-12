@@ -6,6 +6,7 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import session from "express-session";
+import cookieParser from "cookie-parser";
 import passport from "passport";
 
 // Import all your route files
@@ -20,13 +21,18 @@ import adminRoutes from './routes/adminRoutes.js';
 import './config/passport.js';
 import authRoutes from './routes/authRoutes.js';
 
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  // Explicitly allow your frontend origin
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  // Allow cookies and other credentials to be sent
+  credentials: true,
+}));
 app.use(express.json());
+app.use(cookieParser()); // Add cookie-parser middleware
 
 app.use(
   session({
