@@ -26,7 +26,9 @@ export const register = async (req, res) => {
     // Hash the password before any database checks to mitigate timing attacks.
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const existingUser = await db('users').where({ email }).first();
+    // Check if a user with this email already exists (regardless of provider)
+    const existingUser = await db('users').where({ email: email }).first();
+
     if (existingUser) {
       return res.status(400).json({ message: 'Email already in use.' });
     }
@@ -42,6 +44,7 @@ export const register = async (req, res) => {
         last_name,
         email,
         password_hash: hashedPassword,
+        provider: 'local', // Explicitly set provider for local registration
         role: 'customer',
         is_verified: false,
         email_verification_token: hashedVerificationToken,
@@ -74,7 +77,10 @@ export const login = async (req, res) => {
   }
 
   try {
-    const user = await db('users').where({ email }).first();
+    // Find a user who has this email AND registered locally
+    const user = await db('users')
+      .where({ email: email, provider: 'local' })
+      .first();
 
     // To mitigate timing attacks, we perform the password comparison even if the user is not found.
     // If no user, we use a dummy hash. This ensures the bcrypt.compare function always runs,

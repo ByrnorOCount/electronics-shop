@@ -27,6 +27,7 @@ import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import ProtectedRoute from './components/ProtectedRoute';
 import CartSyncManager from './components/CartSyncManager';
+import GoogleAuthCallback from './pages/GoogleAuthCallback';
 
 function App() {
   return (
@@ -65,12 +66,15 @@ function App() {
           <Route path="register" element={<RegisterPage />} />
         </Route>
 
+        {/* Google OAuth callback route */}
+        <Route path="/auth/callback" element={<GoogleAuthCallback />} />
+
         {/* Admin routes */}
         <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboardPage />} />
-            <Route path="products" element={<AdminProductsPage />} />
-            <Route path="orders" element={<AdminOrdersPage />} />
-            <Route path="users" element={<AdminUsersPage />} />
+          <Route index element={<AdminDashboardPage />} />
+          <Route path="products" element={<AdminProductsPage />} />
+          <Route path="orders" element={<AdminOrdersPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
         </Route>
 
         {/* Catch-all 404 route */}

@@ -1,13 +1,14 @@
+// frontend/src/pages/LoginPage.jsx
 import React, { useState } from 'react';
 import { useAppDispatch } from '../store/hooks';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { setCredentials } from '../features/auth/authSlice';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import GoogleLoginButton from '../components/auth/GoogleLoginButton';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -20,15 +21,15 @@ const LoginPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Form đăng nhập bằng EMAIL/PASSWORD (giữ nguyên)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
     try {
       const response = await api.post('/users/login', formData);
       const { token, user } = response.data;
       dispatch(setCredentials({ token, user }));
-      navigate('/'); // Redirect to home page on successful login
+      navigate('/');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
@@ -40,12 +41,13 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-yellow-50">
       <div className="p-8 bg-white rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
-        {/* The error state is now handled by react-hot-toast */}
         {registrationSuccess && (
           <p className="text-green-600 bg-green-100 p-3 rounded-md text-center mb-4">
             Registration successful! Please log in.
           </p>
         )}
+
+        {/* Form đăng nhập EMAIL/PASS cũ */}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700">Email</label>
@@ -59,6 +61,17 @@ const LoginPage = () => {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
+
+        {/* 2. THÊM NÚT GOOGLE VÀO ĐÂY */}
+        <div className="relative flex py-5 items-center">
+          <div className="flex-grow border-t border-gray-300"></div>
+          <span className="flex-shrink mx-4 text-gray-500 text-sm">HOẶC</span>
+          <div className="flex-grow border-t border-gray-300"></div>
+        </div>
+
+        <GoogleLoginButton />
+        {/* --------------------------- */}
+
         <p className="text-center text-sm text-gray-600 mt-4">
           Don't have an account?{' '}
           <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
