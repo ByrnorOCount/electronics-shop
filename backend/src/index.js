@@ -30,18 +30,18 @@ app.use(express.json());
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, // Lấy từ file .env
+    secret: process.env.SESSION_SECRET, // Get from .env file
     resave: false,
     saveUninitialized: false,
     cookie: {
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24, // 1 ngày
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
 );
 
-// Khởi tạo Passport và sử dụng session
+// Initialize Passport and use session
 app.use(passport.initialize());
 app.use(passport.session());
 //

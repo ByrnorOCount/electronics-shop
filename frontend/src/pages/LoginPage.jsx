@@ -6,6 +6,7 @@ import { setCredentials } from '../features/auth/authSlice';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import GoogleLoginButton from '../components/auth/GoogleLoginButton';
+import FacebookLoginButton from '../components/auth/FacebookLoginButton';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -21,7 +22,7 @@ const LoginPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Form đăng nhập bằng EMAIL/PASSWORD (giữ nguyên)
+  // Login form using EMAIL/PASSWORD (remains the same)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -47,7 +48,7 @@ const LoginPage = () => {
           </p>
         )}
 
-        {/* Form đăng nhập EMAIL/PASS cũ */}
+        {/* Original EMAIL/PASS login form */}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700">Email</label>
@@ -62,15 +63,15 @@ const LoginPage = () => {
           </button>
         </form>
 
-        {/* 2. THÊM NÚT GOOGLE VÀO ĐÂY */}
+        {/* 2. ADD THE GOOGLE BUTTON HERE */}
         <div className="relative flex py-5 items-center">
           <div className="flex-grow border-t border-gray-300"></div>
-          <span className="flex-shrink mx-4 text-gray-500 text-sm">HOẶC</span>
+          <span className="flex-shrink mx-4 text-gray-500 text-sm">OR</span>
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
 
         <GoogleLoginButton />
-        {/* --------------------------- */}
+        <FacebookLoginButton />
 
         <p className="text-center text-sm text-gray-600 mt-4">
           Don't have an account?{' '}

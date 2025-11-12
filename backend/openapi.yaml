@@ -16,6 +16,8 @@ tags:
     description: Product catalog operations
   - name: Users
     description: User authentication and management
+  - name: Authentication
+    description: Social login and external authentication providers.
   - name: Cart
     description: Shopping cart operations
   - name: Wishlist
@@ -206,6 +208,63 @@ paths:
         '400':
           description: Token is invalid or expired, or password not provided.
 
+  /auth/google:
+    get:
+      summary: Initiate Google OAuth2 login
+      description: Redirects the user to Google's authentication page. After successful authentication, Google redirects the user back to the `/api/auth/google/callback` endpoint, which in turn redirects to the frontend application with a JWT. This endpoint is not meant to be called via AJAX/fetch; it should be used as the `href` for a link or button.
+      tags:
+        - Authentication
+      responses:
+        '302':
+          description: Found. Redirecting to Google for authentication.
+
+  /auth/google/callback:
+    get:
+      summary: Google OAuth2 callback URL
+      description: This endpoint is called by Google's servers after a user authenticates and should not be called directly by the client application. On success, it exchanges the code from Google for user profile information, creates or logs in the user, and redirects to the frontend application with a JWT. On failure, it redirects to the frontend login page.
+      tags:
+        - Authentication
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+          description: The authorization code provided by Google.
+        - in: query
+          name: scope
+          schema:
+            type: string
+          description: The scopes granted by the user.
+      responses:
+        '302':
+          description: Found. Redirecting to the frontend application.
+
+  /auth/facebook:
+    get:
+      summary: Initiate Facebook OAuth2 login
+      description: Redirects the user to Facebook's authentication page. After successful authentication, Facebook redirects the user back to the `/api/auth/facebook/callback` endpoint.
+      tags:
+        - Authentication
+      responses:
+        '302':
+          description: Found. Redirecting to Facebook for authentication.
+
+  /auth/facebook/callback:
+    get:
+      summary: Facebook OAuth2 callback URL
+      description: This endpoint is called by Facebook's servers after a user authenticates. It handles user creation/login and redirects to the frontend with a JWT.
+      tags:
+        - Authentication
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+          description: The authorization code provided by Facebook.
+      responses:
+        '302':
+          description: Found. Redirecting to the frontend application.
+
   /users/me:
     get:
       summary: Get current user's profile
@@ -268,7 +327,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Notification'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
 
   /cart:
     get:
@@ -952,6 +1013,20 @@ components:
           type: string
           format: password
 
+    ChangePasswordRequest:
+      type: object
+      required:
+        - currentPassword
+        - newPassword
+      properties:
+        currentPassword:
+          type: string
+          description: The user's current password.
+        newPassword:
+          type: string
+          format: password
+          description: The new password.
+
     User:
       type: object
       properties:
@@ -1079,14 +1154,6 @@ components:
           type: string
           description: The 6-digit One-Time Password sent to the user's email.
 
-    SupportTicket:
-      type: object
-      properties:
-        id:
-          type: integer
-        user_id:
-          type: integer
-
     CreatePaymentSessionRequest:
       type: object
       required: [paymentMethod]
@@ -1180,6 +1247,26 @@ components:
                 type: string
               description:
                 type: string
+
+    UserProfileUpdate:
+      description: Fields to update for the user profile.
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A human-readable error message.
 
   securitySchemes:
     bearerAuth:

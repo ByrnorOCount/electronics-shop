@@ -91,10 +91,9 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
   - [x] Return all orders for the current user.
 - [ ] **Online Payments:**
   - [x] Add `payment_method` and `payment_details` to `orders` table.
-  - [x] Create `/api/orders/create-payment-session` endpoint for Stripe and VNPay.
+  - [x] Create `/api/orders/create-payment-session` endpoint for Stripe.
   - [x] Create `/api/orders/webhook` endpoint to handle payment success notifications.
-  - [ ] Implement VNPay IPN verification in webhook.
-  - [ ] Test webhook locally using Stripe CLI.
+  - [x] Test webhook locally using Stripe CLI.
 
 ---
 
@@ -210,10 +209,10 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] **User Auth Flow:** Connect frontend with `/api/users` endpoints.
 - [x] **Product Display:** Fetch and render paginated products.
 - [x] **Cart Management:** Add/update/delete cart items. (Now includes robust guest-to-user sync)
-- [ ] **Wishlist Integration:** Sync wishlist UI with backend.
+- [x] **Wishlist Integration:** Sync wishlist UI with backend.
 - [x] **Checkout Flow:** COD checkout with OTP verification.
-- [ ] **Order History:** Fetch and render past orders.
-- [ ] **Notifications:** Display new alerts in real-time or via polling.
+- [x] **Order History:** Fetch and render past orders.
+- [x] **Notifications:** Display new alerts in real-time or via polling.
 - [ ] **Support System:** Allow message submission and viewing.
 - [ ] **Role-based Access:** Protect pages by role (user, staff, admin).
 - [ ] **Responsiveness (NFR5):** Ensure full mobile and tablet support.
@@ -251,7 +250,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ### **Usability**
 
-- [ ] Ensure accessible UI (ARIA, tab order).
+- [x] Ensure accessible UI (ARIA, tab order).
 - [x] Keep checkout within 3–4 steps.
 
 ### **Reliability**
@@ -276,9 +275,11 @@ This section lists tasks for future development cycles, based on the expanded re
 
 ### **Enhanced Authentication**
 
-- [ ] **Social Login:**
-  - [ ] Implement backend routes for Google & Facebook OAuth.
-  - [ ] Add social login buttons to the frontend `LoginPage`.
+- [x] **Social Login:**
+  - [x] Implement backend routes for Google OAuth (`/api/auth/google`).
+  - [x] Add Google login button to the frontend `LoginPage`.
+  - [x] Implement backend routes for Facebook OAuth (`/api/auth/facebook`).
+  - [x] Add Facebook login button to the frontend `LoginPage`.
 
 ### **Advanced E-Commerce Features**
 

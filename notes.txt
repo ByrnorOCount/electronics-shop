@@ -176,3 +176,5 @@ thêm số lượng tồn kho vào, để trừ thêm sản phẩm vào số lư
 
 snackbar/toast notifications for user actions (e.g., "Product added to cart", "Profile updated successfully", etc.)
 profile page should have settings like default shipping address, payment methods, password change, etc.
+
+zalo/github/twitter login

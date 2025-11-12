@@ -1,65 +1,86 @@
 import express from 'express';
 import passport from 'passport';
-// 1. IMPORT HÀM TẠO TOKEN MÀ BẠN ĐÃ CÓ
+// 1. Import the token generation function you already have
 import generateToken from '../utils/generateToken.js';
 
 const router = express.Router();
 
 /**
+ * A shared callback handler for all social authentication strategies.
+ * This function runs after Passport successfully authenticates a user.
+ * It generates a JWT and redirects the user back to the frontend.
+ */
+const socialAuthCallbackHandler = (req, res) => {
+  // 'req.user' is now the user object that passport.js found or created
+  if (!req.user) {
+    return res.redirect('http://localhost:5173/login?error=true');
+  }
+
+  // Create a JWT for this user (identical to the regular login logic)
+  const token = generateToken(req.user.id, req.user.role);
+
+  // Get the frontend URL from .env, with a fallback
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+  // Remove password_hash before sending to the frontend (very important)
+  delete req.user.password_hash;
+  const userJson = encodeURIComponent(JSON.stringify(req.user));
+
+  res.redirect(`${frontendUrl}/auth/callback?token=${token}&user=${userJson}`);
+};
+
+/**
  * @route   GET /api/auth/google
- * @desc    Bắt đầu luồng xác thực Google.
+ * @desc    Initiates the Google authentication flow.
  */
 router.get(
   '/google',
   passport.authenticate('google', {
     scope: ['profile', 'email'],
-    session: false // 2. Chúng ta không dùng session, chúng ta dùng token
+    session: false // 2. We are not using sessions; we are using tokens.
   })
 );
 
 /**
  * @route   GET /api/auth/google/callback
- * @desc    Đường dẫn Google gọi lại.
+ * @desc    The callback URL that Google redirects to.
  */
 router.get(
   '/google/callback',
-  // 3. Yêu cầu Passport xử lý, không dùng session
+  // 3. Have Passport handle the callback, without using sessions
   passport.authenticate('google', {
-    failureRedirect: 'http://localhost:3000/login?error=true', // Về trang login nếu lỗi
+    failureRedirect: 'http://localhost:3000/login?error=true', // Redirect to login page on failure
     session: false
   }),
-
-  // 4. NẾU THÀNH CÔNG, HÀM NÀY SẼ CHẠY:
-  (req, res) => {
-    // 'req.user' lúc này là user mà file passport.js đã tìm thấy/tạo ra
-    if (!req.user) {
-      return res.redirect('http://localhost:5173/login?error=true');
-    }
-
-    // 5. Tạo một JWT Token cho user này (giống hệt logic login)
-    const token = generateToken(req.user.id, req.user.role);
-
-    // 6. Chuyển hướng người dùng về một trang "trung gian"
-    // trên frontend, đính kèm token và user data trên URL
-
-    // Lấy URL frontend từ .env (bạn đã thêm ở bước 7)
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-
-    // Loại bỏ password_hash trước khi gửi về frontend (rất quan trọng)
-    delete req.user.password_hash;
-
-    // Mã hóa user data để gửi qua URL an toàn
-    const userJson = encodeURIComponent(JSON.stringify(req.user));
-
-    res.redirect(
-      // Chúng ta sẽ tạo trang /auth/callback này ở frontend (Bước 9)
-      `${frontendUrl}/auth/callback?token=${token}&user=${userJson}`
-    );
-  }
+  socialAuthCallbackHandler // Use the shared handler
 );
 
-// Chúng ta không cần /me hoặc /logout ở đây
-// vì chúng đã được xử lý bằng JWT (file userRoutes.js)
-// và phía client (xóa token)
+/**
+ * @route   GET /api/auth/facebook
+ * @desc    Initiates the Facebook authentication flow.
+ */
+router.get(
+  '/facebook',
+  passport.authenticate('facebook', {
+    session: false
+  })
+);
+
+/**
+ * @route   GET /api/auth/facebook/callback
+ * @desc    The callback URL that Facebook redirects to.
+ */
+router.get(
+  '/facebook/callback',
+  passport.authenticate('facebook', {
+    failureRedirect: 'http://localhost:3000/login?error=true',
+    session: false
+  }),
+  socialAuthCallbackHandler // Use the shared handler
+);
+
+// We don't need /me or /logout here
+// because they are already handled by JWT (in userRoutes.js)
+// and on the client-side (by deleting the token).
 
 export default router;
