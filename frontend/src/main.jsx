@@ -5,13 +5,16 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './store';
 import App from './App';
 import './styles/global.css';
+import ErrorBoundary from './components/ErrorBoundary';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <App />
-      </PersistGate>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <App />
+        </PersistGate>
+      </Provider>
+    </ErrorBoundary>
   </React.StrictMode>
 );

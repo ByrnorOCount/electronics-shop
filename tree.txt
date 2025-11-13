@@ -76,9 +76,6 @@
 |   |   |   `-- api.js
 |   |   |-- components
 |   |   |   |-- ErrorBoundary.jsx
-|   |   |   |-- Hero.jsx
-|   |   |   |-- Newsletter.jsx
-|   |   |   |-- ProtectedRoute.jsx
 |   |   |   |-- layout
 |   |   |   |   |-- Footer.jsx
 |   |   |   |   |-- Header.jsx
@@ -102,10 +99,12 @@
 |   |   |   |-- auth
 |   |   |   |   |-- LoginPage.jsx
 |   |   |   |   |-- RegisterPage.jsx
+|   |   |   |   |-- authService.js
 |   |   |   |   |-- authSlice.js
 |   |   |   |   `-- components
 |   |   |   |       |-- FacebookLoginButton.jsx
-|   |   |   |       `-- GoogleLoginButton.jsx
+|   |   |   |       |-- GoogleLoginButton.jsx
+|   |   |   |       `-- ProtectedRoute.jsx
 |   |   |   |-- cart
 |   |   |   |   |-- CartPage.jsx
 |   |   |   |   |-- cartService.js
@@ -145,16 +144,13 @@
 |   |   |-- pages
 |   |   |   |-- AboutPage.jsx
 |   |   |   |-- CareersPage.jsx
-|   |   |   |-- HomePage.jsx
 |   |   |   |-- NotFoundPage.jsx
 |   |   |   |-- SupportPage.jsx
 |   |   |   |-- WarrantyPage.jsx
-|   |   |   `-- admin
-|   |   |       |-- AdminDashboardPage.jsx
-|   |   |       |-- AdminLayout.jsx
-|   |   |       |-- AdminOrdersPage.jsx
-|   |   |       |-- AdminProductsPage.jsx
-|   |   |       `-- AdminUsersPage.jsx
+|   |   |   `-- home
+|   |   |       |-- Hero.jsx
+|   |   |       |-- HomePage.jsx
+|   |   |       `-- Newsletter.jsx
 |   |   |-- store
 |   |   |   |-- hooks.js
 |   |   |   `-- index.js
@@ -162,7 +158,6 @@
 |   |       `-- global.css
 |   `-- vite.config.js
 |-- package-lock.json
-|-- package.json
-`-- plantuml_use_case_diagram.puml
+`-- package.json
 
-41 directories, 124 files
+41 directories, 119 files

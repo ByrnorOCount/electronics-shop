@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/layout/Layout';
-import HomePage from './pages/HomePage';
+import HomePage from './pages/home/HomePage';
 import ProductsPage from './features/products/ProductsPage';
 import ProductDetailPage from './features/products/ProductDetailPage';
 import LoginPage from './features/auth/LoginPage';
@@ -25,7 +25,7 @@ import ProfilePage from './features/user/ProfilePage';
 // import AdminProductsPage from "./features/admin/AdminProductsPage";
 // import AdminOrdersPage from "./features/admin/AdminOrdersPage";
 // import AdminUsersPage from "./features/admin/AdminUsersPage";
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './features/auth/components/ProtectedRoute';
 import CartSyncManager from './features/cart/components/CartSyncManager';
 
 function App() {

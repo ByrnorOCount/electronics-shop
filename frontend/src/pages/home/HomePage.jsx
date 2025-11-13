@@ -1,7 +1,7 @@
 import React from "react";
-import Hero from "../components/Hero";
-import FeaturedGrid from "../features/products/components/FeaturedGrid";
-import Newsletter from "../components/Newsletter";
+import Hero from "./Hero";
+import FeaturedGrid from "../../features/products/components/FeaturedGrid";
+import Newsletter from "./Newsletter";
 
 export default function HomePage() {
   return (

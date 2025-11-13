@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '../../api/api';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { registerUser } from './authSlice';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -10,9 +11,10 @@ const RegisterPage = () => {
     email: '',
     password: '',
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { status, error } = useAppSelector((state) => state.auth);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,17 +22,14 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-    try {
-      await api.post('/users/register', formData);
-      // On success, redirect to the login page with a success message
-      navigate('/login?status=registered');
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Registration failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    dispatch(registerUser(formData))
+      .unwrap()
+      .then(() => {
+        navigate('/login?status=registered');
+      })
+      .catch((err) => {
+        toast.error(err || 'Registration failed. Please try again.');
+      });
   };
 
   return (
@@ -55,8 +54,8 @@ const RegisterPage = () => {
             <label className="block text-gray-700">Password</label>
             <input type="password" name="password" onChange={handleChange} required className="w-full px-3 py-2 border rounded-lg" autoComplete="new-password" />
           </div>
-          <button type="submit" disabled={loading} className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300">
-            {loading ? 'Registering...' : 'Register'}
+          <button type="submit" disabled={status === 'loading'} className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300">
+            {status === 'loading' ? 'Registering...' : 'Register'}
           </button>
         </form>
         <p className="text-center text-sm text-gray-600 mt-4">

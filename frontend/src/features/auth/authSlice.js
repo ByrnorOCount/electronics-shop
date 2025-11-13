@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import authService from './authService';
 
 const tokenFromStorage = localStorage.getItem('token') || null;
 const userFromStorage = localStorage.getItem('user')
@@ -11,6 +12,28 @@ const initialState = {
     status: 'idle',
     error: null,
 };
+
+// Async thunk for user registration
+export const registerUser = createAsyncThunk('auth/register', async (user, thunkAPI) => {
+    try {
+        return await authService.register(user);
+    } catch (error) {
+        const message = error.response?.data?.message || error.message || error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+});
+
+// Async thunk for user login
+export const loginUser = createAsyncThunk('auth/login', async (user, thunkAPI) => {
+    try {
+        const data = await authService.login(user);
+        // The service returns the data, the thunk passes it to the reducer
+        return data;
+    } catch (error) {
+        const message = error.response?.data?.message || error.message || error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+});
 
 const authSlice = createSlice({
     name: 'auth',
@@ -40,6 +63,33 @@ const authSlice = createSlice({
             localStorage.removeItem('user');
             state.status = 'idle'; // Reset status on logout
         },
+    },
+    extraReducers: (builder) => {
+        builder
+            // Login cases
+            .addCase(loginUser.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(loginUser.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                // Use the setCredentials reducer to update state
+                authSlice.caseReducers.setCredentials(state, action);
+            })
+            .addCase(loginUser.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload;
+            })
+            // Register cases (we don't log in on register, just handle status)
+            .addCase(registerUser.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(registerUser.fulfilled, (state) => {
+                state.status = 'succeeded';
+            })
+            .addCase(registerUser.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload;
+            });
     },
 });
 
