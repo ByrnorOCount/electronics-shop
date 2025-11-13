@@ -1,32 +1,32 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import Layout from './components/Layout';
+import Layout from './components/layout/Layout';
 import HomePage from './pages/HomePage';
-import ProductsPage from './pages/ProductsPage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
+import ProductsPage from './features/products/ProductsPage';
+import ProductDetailPage from './features/products/ProductDetailPage';
+import LoginPage from './features/auth/LoginPage';
+import RegisterPage from './features/auth/RegisterPage';
 import AboutPage from './pages/AboutPage';
 import CareersPage from './pages/CareersPage';
 import SupportPage from './pages/SupportPage';
 import WarrantyPage from './pages/WarrantyPage';
 import NotFoundPage from './pages/NotFoundPage';
-import CartPage from "./pages/CartPage";
-import WishlistPage from './pages/WishlistPage';
-import CheckoutPage from "./pages/CheckoutPage";
-import OrderConfirmationPage from "./pages/OrderConfirmationPage";
-import OrderHistoryPage from "./pages/OrderHistoryPage";
-import SettingsPage from './pages/SettingsPage';
-import NotificationsPage from './pages/NotificationsPage';
-import ProfilePage from './pages/ProfilePage';
-import AdminLayout from "./pages/admin/AdminLayout";
-import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
-import AdminProductsPage from "./pages/admin/AdminProductsPage";
-import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
-import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import CartPage from "./features/cart/CartPage";
+import WishlistPage from './features/wishlist/WishlistPage';
+import CheckoutPage from './features/checkout-orders/CheckoutPage';
+import OrderConfirmationPage from './features/checkout-orders/OrderConfirmationPage';
+import OrderHistoryPage from './features/checkout-orders/OrderHistoryPage';
+import SettingsPage from './features/user/SettingsPage';
+import NotificationsPage from './features/notification/NotificationsPage';
+import ProfilePage from './features/user/ProfilePage';
+// import AdminLayout from "./features/admin/components/AdminLayout";
+// import AdminDashboardPage from "./features/admin/AdminDashboardPage";
+// import AdminProductsPage from "./features/admin/AdminProductsPage";
+// import AdminOrdersPage from "./features/admin/AdminOrdersPage";
+// import AdminUsersPage from "./features/admin/AdminUsersPage";
 import ProtectedRoute from './components/ProtectedRoute';
-import CartSyncManager from './components/CartSyncManager';
+import CartSyncManager from './features/cart/components/CartSyncManager';
 
 function App() {
   return (
@@ -66,12 +66,12 @@ function App() {
         </Route>
 
         {/* Admin routes */}
-        <Route path="/admin" element={<AdminLayout />}>
+        {/* <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboardPage />} />
           <Route path="products" element={<AdminProductsPage />} />
           <Route path="orders" element={<AdminOrdersPage />} />
           <Route path="users" element={<AdminUsersPage />} />
-        </Route>
+        </Route> */}
 
         {/* Catch-all 404 route */}
         <Route path="*" element={<NotFoundPage />} />

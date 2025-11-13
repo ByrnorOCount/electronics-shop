@@ -1,6 +1,6 @@
 import React from "react";
 import Hero from "../components/Hero";
-import FeaturedGrid from "../components/FeaturedGrid";
+import FeaturedGrid from "../features/products/components/FeaturedGrid";
 import Newsletter from "../components/Newsletter";
 
 export default function HomePage() {

@@ -48,5 +48,5 @@ database/knexfile-local.js
 # Misc
 *.pid
 tree.bat
-tree.txt
+# tree.txt
 plantuml_use_case_diagram.puml

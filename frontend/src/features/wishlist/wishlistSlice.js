@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import wishlistService from '../../services/wishlistService';
+import wishlistService from './wishlistService';
 
 // Async thunk to fetch the user's wishlist from the backend
 export const fetchWishlist = createAsyncThunk(
