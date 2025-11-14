@@ -1,4 +1,4 @@
-import db from '../config/db.js';
+import * as Support from '../models/supportModel.js';
 
 /**
  * Submit a new support ticket.
@@ -14,14 +14,12 @@ export const submitTicket = async (req, res) => {
   }
 
   try {
-    const [newTicket] = await db('support_tickets')
-      .insert({
-        user_id: userId,
-        subject,
-        message,
-        status: 'open',
-      })
-      .returning('*');
+    const newTicket = await Support.create({
+      user_id: userId,
+      subject,
+      message,
+      status: 'open',
+    });
 
     res.status(201).json(newTicket);
   } catch (error) {
@@ -38,9 +36,7 @@ export const submitTicket = async (req, res) => {
 export const getUserTickets = async (req, res) => {
   const userId = req.user.id;
   try {
-    const tickets = await db('support_tickets')
-      .where({ user_id: userId })
-      .orderBy('created_at', 'desc');
+    const tickets = await Support.findByUserId(userId);
     res.status(200).json(tickets);
   } catch (error) {
     console.error('Error fetching support tickets:', error);
@@ -57,9 +53,7 @@ export const getTicketById = async (req, res) => {
   const { ticketId } = req.params;
   const userId = req.user.id;
   try {
-    const ticket = await db('support_tickets')
-      .where({ id: ticketId, user_id: userId })
-      .first();
+    const ticket = await Support.findByIdAndUserId(ticketId, userId);
 
     if (!ticket) {
       return res.status(404).json({ message: 'Ticket not found or you do not have permission to view it.' });

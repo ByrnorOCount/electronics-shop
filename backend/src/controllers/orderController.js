@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import Stripe from 'stripe';
 import db from '../config/db.js';
 import { sendOtpEmail } from '../services/emailService.js';
+import * as Order from '../models/orderModel.js';
 import { createOrderFromCart } from '../services/paymentService.js';
 import { VNPay } from 'vnpay';
 
@@ -29,13 +30,7 @@ export const generateCheckoutOtp = async (req, res) => {
     const otpHash = await bcrypt.hash(otp, 10);
 
     // Set OTP and its expiration (10 minutes) on the user record
-    await db('users')
-      .where({ id: userId })
-      .update({
-        otp_hash: otpHash,
-        otp_expires: db.raw("NOW() + INTERVAL '10 minutes'"),
-      });
-
+    await Order.saveOtpForUser(userId, otpHash);
     // Send the OTP via email
     await sendOtpEmail(req.user, otp);
 
@@ -137,15 +132,14 @@ export const createOrder = async (req, res) => {
   }
 
   // Find user and check OTP
-  const user = await db('users').where({ id: userId }).first();
+  const user = await Order.findUserById(userId);
   const isOtpValid = user.otp_hash && (await bcrypt.compare(otp, user.otp_hash));
   const isOtpExpired = new Date() > new Date(user.otp_expires);
 
   if (!isOtpValid || isOtpExpired) {
     return res.status(400).json({ message: 'Invalid or expired OTP.' });
   }
-
-  const cartItems = await db('cart_items').where({ user_id: userId });
+  const cartItems = await Order.findCartItemsByUserId(userId);
   if (cartItems.length === 0) {
     return res.status(400).json({ message: 'Cannot create an order with an empty cart.' });
   }
@@ -174,7 +168,7 @@ export const createOrder = async (req, res) => {
     finalOrder.items = orderItems;
 
     // Clear the OTP from the user record after successful order creation
-    await db('users').where({ id: userId }).update({ otp_hash: null, otp_expires: null });
+    await Order.clearUserOtp(userId);
 
     res.status(201).json({ message: 'Order created successfully', order: finalOrder });
   } catch (error) {
@@ -191,26 +185,7 @@ export const createOrder = async (req, res) => {
 export const getOrders = async (req, res) => {
   const userId = req.user.id;
   try {
-    // Get all orders for the user
-    const orders = await db('orders').where({ user_id: userId }).orderBy('created_at', 'desc');
-
-    if (orders.length === 0) {
-      return res.status(200).json([]);
-    }
-
-    // Get all items for those orders in a single query
-    const orderIds = orders.map((o) => o.id);
-    const items = await db('order_items')
-      .join('products', 'order_items.product_id', 'products.id')
-      .whereIn('order_items.order_id', orderIds)
-      .select('order_items.*', 'products.name', 'products.image_url');
-
-    // Map items to their respective orders
-    const ordersWithItems = orders.map((order) => ({
-      ...order,
-      items: items.filter((item) => item.order_id === order.id),
-    }));
-
+    const ordersWithItems = await Order.findOrdersByUserIdWithItems(userId);
     res.status(200).json(ordersWithItems);
   } catch (error) {
     console.error('Error fetching orders:', error);
@@ -243,8 +218,8 @@ export const handlePaymentWebhook = async (req, res) => {
       const { userId } = session.metadata;
       // NOTE: In a real app, you'd get the shipping address from session.shipping_details
       // or pass it in metadata if you collected it before creating the session.
-      const shippingAddress = session.shipping_details?.address ? 
-        Object.values(session.shipping_details.address).join(', ') : 
+      const shippingAddress = session.shipping_details?.address ?
+        Object.values(session.shipping_details.address).join(', ') :
         'Address from Stripe';
 
       try {

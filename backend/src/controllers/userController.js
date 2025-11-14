@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { sendPasswordResetEmail, sendVerificationEmail } from '../services/emailService.js';
 import generateToken from '../utils/generateToken.js';
-import db from '../config/db.js';
+import * as User from '../models/userModel.js';
 
 /**
  * Register a new user.
@@ -27,7 +27,7 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // Check if a user with this email already exists (regardless of provider)
-    const existingUser = await db('users').where({ email: email }).first();
+    const existingUser = await User.findByEmail(email);
 
     if (existingUser) {
       return res.status(400).json({ message: 'Email already in use.' });
@@ -38,18 +38,16 @@ export const register = async (req, res) => {
     // Hash the token before storing it in the database.
     const hashedVerificationToken = crypto.createHash('sha256').update(rawVerificationToken).digest('hex');
 
-    const [user] = await db('users')
-      .insert({
-        first_name,
-        last_name,
-        email,
-        password_hash: hashedPassword,
-        provider: 'local', // Explicitly set provider for local registration
-        role: 'customer',
-        is_verified: false,
-        email_verification_token: hashedVerificationToken,
-      })
-      .returning('*');
+    const user = await User.create({
+      first_name,
+      last_name,
+      email,
+      password_hash: hashedPassword,
+      provider: 'local', // Explicitly set provider for local registration
+      role: 'customer',
+      is_verified: false,
+      email_verification_token: hashedVerificationToken,
+    });
 
     // For development convenience, log the verification token to the console.
     if (process.env.NODE_ENV !== 'production') {
@@ -78,9 +76,7 @@ export const login = async (req, res) => {
 
   try {
     // Find a user who has this email AND registered locally
-    const user = await db('users')
-      .where({ email: email, provider: 'local' })
-      .first();
+    const user = await User.findByEmailAndProvider(email, 'local');
 
     // To mitigate timing attacks, we perform the password comparison even if the user is not found.
     // If no user, we use a dummy hash. This ensures the bcrypt.compare function always runs,
@@ -140,11 +136,7 @@ export const updateUserProfile = async (req, res) => {
   }
 
   try {
-    const [updatedUser] = await db('users')
-      .where({ id: req.user.id })
-      .update(updateData)
-      .returning(['id', 'first_name', 'last_name', 'email', 'role']);
-
+    const updatedUser = await User.update(req.user.id, updateData);
     res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
   } catch (error) {
     console.error('Error updating profile:', error);
@@ -174,7 +166,7 @@ export const changePassword = async (req, res) => {
   }
 
   try {
-    const user = await db('users').where({ id: userId }).first();
+    const user = await User.findById(userId);
 
     const isMatch = await bcrypt.compare(currentPassword, user.password_hash);
     if (!isMatch) {
@@ -182,7 +174,7 @@ export const changePassword = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 12);
-    await db('users').where({ id: userId }).update({ password_hash: hashedPassword });
+    await User.update(userId, { password_hash: hashedPassword });
 
     res.status(200).json({ message: 'Password changed successfully.' });
   } catch (error) {
@@ -199,7 +191,7 @@ export const changePassword = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
-    const user = await db('users').where({ email }).first();
+    const user = await User.findByEmail(email);
 
     if (!user) {
       // Don't reveal if a user exists or not for security reasons
@@ -216,12 +208,7 @@ export const forgotPassword = async (req, res) => {
     }
 
     // Set token and expiration on user record
-    await db('users')
-      .where({ id: user.id })
-      .update({
-        password_reset_token: hashedToken,
-        password_reset_expires: db.raw("NOW() + INTERVAL '1 hour'"),
-      });
+    await User.setResetToken(user.id, hashedToken);
 
     // Send the email
     await sendPasswordResetEmail(user, resetToken);
@@ -245,16 +232,13 @@ export const verifyEmail = async (req, res) => {
   const token = crypto.createHash('sha256').update(rawToken).digest('hex');
 
   try {
-    const user = await db('users').where({ email_verification_token: token }).first();
+    const user = await User.findByVerificationToken(token);
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid or expired verification token.' });
     }
 
-    await db('users').where({ id: user.id }).update({
-      is_verified: true,
-      email_verification_token: null,
-    });
+    await User.verifyUser(user.id);
 
     // In a real frontend app, you would redirect to the login page with a success message.
     res.status(200).send('<h1>Email verified successfully!</h1><p>You can now close this tab and log in.</p>');
@@ -281,10 +265,7 @@ export const resetPassword = async (req, res) => {
   const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
   try {
-    const user = await db('users')
-      .where({ password_reset_token: hashedToken })
-      .andWhere('password_reset_expires', '>', db.raw('NOW()'))
-      .first();
+    const user = await User.findByResetToken(hashedToken);
 
     if (!user) {
       return res.status(400).json({ message: 'Password reset token is invalid or has expired.' });
@@ -292,7 +273,7 @@ export const resetPassword = async (req, res) => {
 
     // Hash new password and update user
     const hashedPassword = await bcrypt.hash(password, 12);
-    await db('users').where({ id: user.id }).update({
+    await User.update(user.id, {
       password_hash: hashedPassword,
       password_reset_token: null,
       password_reset_expires: null,

@@ -1,5 +1,5 @@
-import db from '../config/db.js';
 import { createNotification } from '../services/notificationService.js';
+import * as Staff from '../models/staffModel.js';
 
 /**
  * Create a new product.
@@ -13,9 +13,7 @@ export const createProduct = async (req, res) => {
   }
 
   try {
-    const [newProduct] = await db('products')
-      .insert({ name, description, category_id, price, stock, image_url, is_featured })
-      .returning('*');
+    const newProduct = await Staff.createProduct({ name, description, category_id, price, stock, image_url, is_featured });
     res.status(201).json(newProduct);
   } catch (error) {
     console.error('Error creating product:', error);
@@ -35,7 +33,7 @@ export const updateProduct = async (req, res) => {
   const updateData = { name, description, category_id, price, stock, image_url, is_featured };
 
   try {
-    const [updatedProduct] = await db('products').where({ id }).update(updateData).returning('*');
+    const updatedProduct = await Staff.updateProduct(id, updateData);
     if (!updatedProduct) {
       return res.status(404).json({ message: 'Product not found.' });
     }
@@ -54,7 +52,7 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   const { id } = req.params;
   try {
-    const deletedCount = await db('products').where({ id }).del();
+    const deletedCount = await Staff.deleteProduct(id);
     if (deletedCount === 0) {
       return res.status(404).json({ message: 'Product not found.' });
     }
@@ -72,8 +70,7 @@ export const deleteProduct = async (req, res) => {
  */
 export const getAllProducts = async (req, res) => {
   try {
-    // Simple query to get all products, could be enhanced with pagination later
-    const products = await db('products').orderBy('id', 'asc');
+    const products = await Staff.findAllProducts();
     res.status(200).json(products);
   } catch (error) {
     console.error('Error fetching all products for staff:', error);
@@ -88,7 +85,7 @@ export const getAllProducts = async (req, res) => {
  */
 export const getAllOrders = async (req, res) => {
   try {
-    const orders = await db('orders').orderBy('created_at', 'desc');
+    const orders = await Staff.findAllOrders();
     res.status(200).json(orders);
   } catch (error) {
     console.error('Error fetching all orders:', error);
@@ -110,7 +107,7 @@ export const updateOrderStatus = async (req, res) => {
   }
 
   try {
-    const [updatedOrder] = await db('orders').where({ id }).update({ status }).returning('*');
+    const updatedOrder = await Staff.updateOrderStatus(id, status);
     if (!updatedOrder) {
       return res.status(404).json({ message: 'Order not found.' });
     }
@@ -128,7 +125,7 @@ export const updateOrderStatus = async (req, res) => {
  */
 export const getAllSupportTickets = async (req, res) => {
   try {
-    const tickets = await db('support_tickets').orderBy('created_at', 'desc');
+    const tickets = await Staff.findAllSupportTickets();
     res.status(200).json(tickets);
   } catch (error) {
     console.error('Error fetching all support tickets:', error);
@@ -153,21 +150,19 @@ export const replyToTicket = async (req, res) => {
   }
 
   try {
-    const ticket = await db('support_tickets').where({ id: ticketId }).first();
+    const ticket = await Staff.findSupportTicketById(ticketId);
     if (!ticket) {
       return res.status(404).json({ message: 'Support ticket not found.' });
     }
 
-    const [newReply] = await db('support_ticket_replies')
-      .insert({
-        ticket_id: ticketId,
-        user_id: staffId,
-        message: message,
-      })
-      .returning('*');
+    const newReply = await Staff.createSupportTicketReply({
+      ticket_id: ticketId,
+      user_id: staffId,
+      message: message,
+    });
 
     // Optionally, update the ticket status to 'in_progress' or 'answered'
-    await db('support_tickets').where({ id: ticketId }).update({ status: 'in_progress' });
+    await Staff.updateSupportTicketStatus(ticketId, 'in_progress');
 
     // Notify the user that their ticket has a new reply
     await createNotification(ticket.user_id, `Your support ticket #${ticketId} has a new reply from staff.`);

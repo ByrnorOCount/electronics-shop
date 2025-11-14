@@ -1,4 +1,4 @@
-import db from '../config/db.js';
+import * as Wishlist from '../models/wishlistModel.js';
 
 /**
  * Get all items in the user's wishlist.
@@ -7,12 +7,7 @@ import db from '../config/db.js';
  */
 export const getWishlist = async (req, res) => {
   try {
-    const wishlistItems = await db('wishlists')
-      .join('products', 'wishlists.product_id', 'products.id')
-      .where('wishlists.user_id', req.user.id)
-      .select('products.*')
-      .orderBy('wishlists.id', 'asc');
-
+    const wishlistItems = await Wishlist.findByUserId(req.user.id);
     res.status(200).json(wishlistItems);
   } catch (error) {
     console.error('Error getting wishlist:', error);
@@ -34,15 +29,12 @@ export const addToWishlist = async (req, res) => {
   }
 
   try {
-    const existingItem = await db('wishlists')
-      .where({ user_id: userId, product_id: productId })
-      .first();
-
+    const existingItem = await Wishlist.findOne(userId, productId);
     if (existingItem) {
       return res.status(400).json({ message: 'Product already in wishlist.' });
     }
 
-    await db('wishlists').insert({ user_id: userId, product_id: productId });
+    await Wishlist.create(userId, productId);
     res.status(201).json({ message: 'Product added to wishlist.' });
   } catch (error) {
     console.error('Error adding to wishlist:', error);
@@ -60,10 +52,7 @@ export const removeFromWishlist = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const deletedCount = await db('wishlists')
-      .where({ user_id: userId, product_id: productId })
-      .del();
-
+    const deletedCount = await Wishlist.remove(userId, productId);
     if (deletedCount === 0) {
       return res.status(404).json({ message: 'Product not found in wishlist.' });
     }

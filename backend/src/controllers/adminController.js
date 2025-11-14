@@ -1,4 +1,4 @@
-import db from '../config/db.js';
+import * as Admin from '../models/adminModel.js';
 
 /**
  * Get all users in the system.
@@ -7,9 +7,7 @@ import db from '../config/db.js';
  */
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await db('users')
-      .select('id', 'first_name', 'last_name', 'email', 'role', 'created_at')
-      .orderBy('id', 'asc');
+    const users = await Admin.findAllUsers();
     res.status(200).json(users);
   } catch (error) {
     console.error('Error fetching all users:', error);
@@ -31,11 +29,7 @@ export const updateUserRole = async (req, res) => {
   }
 
   try {
-    const [updatedUser] = await db('users')
-      .where({ id })
-      .update({ role })
-      .returning(['id', 'email', 'role']);
-
+    const updatedUser = await Admin.updateUserRole(id, role);
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found.' });
     }
@@ -60,7 +54,7 @@ export const deleteUser = async (req, res) => {
   }
 
   try {
-    const deletedCount = await db('users').where({ id }).del();
+    const deletedCount = await Admin.deleteUser(id);
     if (deletedCount === 0) {
       return res.status(404).json({ message: 'User not found.' });
     }
@@ -78,17 +72,8 @@ export const deleteUser = async (req, res) => {
  */
 export const getDashboardMetrics = async (req, res) => {
   try {
-    const [totalSales] = await db('orders').sum('total_amount as total');
-    const [userCount] = await db('users').count('id as count');
-    const [orderCount] = await db('orders').count('id as count');
-    const recentOrders = await db('orders').orderBy('created_at', 'desc').limit(5);
-
-    res.status(200).json({
-      totalSales: totalSales.total || 0,
-      totalUsers: userCount.count || 0,
-      totalOrders: orderCount.count || 0,
-      recentOrders,
-    });
+    const metrics = await Admin.getDashboardMetrics();
+    res.status(200).json(metrics);
   } catch (error) {
     console.error('Error fetching dashboard metrics:', error);
     res.status(500).json({ message: 'Server error while fetching dashboard metrics.' });
@@ -107,7 +92,7 @@ export const createCategory = async (req, res) => {
   }
 
   try {
-    const [newCategory] = await db('categories').insert({ name, description }).returning('*');
+    const newCategory = await Admin.createCategory({ name, description });
     res.status(201).json(newCategory);
   } catch (error) {
     console.error('Error creating category:', error);
@@ -122,7 +107,7 @@ export const createCategory = async (req, res) => {
  */
 export const getAllCategories = async (req, res) => {
   try {
-    const categories = await db('categories').orderBy('id', 'asc');
+    const categories = await Admin.findAllCategories();
     res.status(200).json(categories);
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -144,7 +129,7 @@ export const updateCategory = async (req, res) => {
   }
 
   try {
-    const [updatedCategory] = await db('categories').where({ id }).update({ name, description }).returning('*');
+    const updatedCategory = await Admin.updateCategory(id, { name, description });
     if (!updatedCategory) {
       return res.status(404).json({ message: 'Category not found.' });
     }
@@ -165,7 +150,7 @@ export const deleteCategory = async (req, res) => {
   try {
     // Note: Products using this category will have their category_id set to NULL
     // due to the onDelete('SET NULL') constraint in the migration.
-    const deletedCount = await db('categories').where({ id }).del();
+    const deletedCount = await Admin.deleteCategory(id);
     if (deletedCount === 0) {
       return res.status(404).json({ message: 'Category not found.' });
     }

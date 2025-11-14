@@ -1,5 +1,4 @@
 import * as Product from '../models/productModel.js';
-import db from '../config/db.js';
 
 /**
  * Gets a list of products with filtering and searching.
@@ -13,7 +12,7 @@ export const getProducts = async (req, res) => {
 
     let categoryId;
     if (category) {
-      const categoryRecord = await db('categories').where({ name: category }).first();
+      const categoryRecord = await Product.findCategoryByName(category);
       if (categoryRecord) {
         categoryId = categoryRecord.id;
       } else {
@@ -72,7 +71,7 @@ export const getProductById = async (req, res) => {
  */
 export const getProductCategories = async (req, res) => {
   try {
-    const categories = await db('categories').orderBy('name', 'asc');
+    const categories = await Product.findAllCategories();
     res.status(200).json(categories);
   } catch (error) {
     console.error('Error fetching product categories:', error);

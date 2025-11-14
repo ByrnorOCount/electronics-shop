@@ -1,4 +1,4 @@
-import db from '../config/db.js';
+import * as Notification from '../models/notificationModel.js';
 
 /**
  * Get all notifications for the logged-in user.
@@ -7,15 +7,8 @@ import db from '../config/db.js';
  */
 export const getNotifications = async (req, res) => {
     try {
-        const { limit } = req.query;
-
-        let query = db('notifications').where({ user_id: req.user.id }).orderBy('created_at', 'desc');
-
-        if (limit && !isNaN(parseInt(limit, 10))) {
-            query = query.limit(parseInt(limit, 10));
-        }
-
-        const notifications = await query;
+        const { limit } = req.query; // The model will handle parsing the limit
+        const notifications = await Notification.findByUserId(req.user.id, limit);
         res.status(200).json(notifications);
     } catch (error) {
         console.error('Error fetching notifications:', error);
@@ -33,11 +26,7 @@ export const markNotificationAsRead = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        const [notification] = await db('notifications')
-            .where({ id, user_id: userId })
-            .update({ is_read: true })
-            .returning('*');
-
+        const notification = await Notification.updateAsRead(id, userId);
         if (!notification) {
             return res.status(404).json({ message: 'Notification not found or you do not have permission to view it.' });
         }
@@ -58,8 +47,7 @@ export const markAllNotificationsAsRead = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        await db('notifications').where({ user_id: userId, is_read: false }).update({ is_read: true });
-
+        await Notification.updateAllAsRead(userId);
         res.status(200).json({ message: 'All notifications marked as read.' });
     } catch (error) {
         console.error('Error marking all notifications as read:', error);

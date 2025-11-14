@@ -50,3 +50,20 @@ export const find = async (filters = {}) => {
 export const findById = async (id) => {
   return db('products').where({ id }).first();
 };
+
+/**
+ * Fetches all product categories from the database.
+ * @returns {Promise<Array>} A promise that resolves to an array of category objects.
+ */
+export const findAllCategories = () => {
+  return db('categories').orderBy('name', 'asc');
+};
+
+/**
+ * Finds a category by its name.
+ * @param {string} name - The name of the category.
+ * @returns {Promise<object|undefined>} The category object or undefined.
+ */
+export const findCategoryByName = (name) => {
+  return db('categories').where({ name }).first();
+};

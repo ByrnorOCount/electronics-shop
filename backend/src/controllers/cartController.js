@@ -1,4 +1,4 @@
-import db from '../config/db.js';
+import * as Cart from '../models/cartModel.js';
 
 /**
  * Get all items in the user's cart.
@@ -7,18 +7,7 @@ import db from '../config/db.js';
  */
 export const getCart = async (req, res) => {
   try {
-    const cartItems = await db('cart_items')
-      .join('products', 'cart_items.product_id', 'products.id')
-      .where('cart_items.user_id', req.user.id)
-      .select(
-        'cart_items.id', // This is the cart_item id
-        'products.id as product_id',
-        'products.name',
-        'products.price',
-        'products.image_url',
-        'cart_items.quantity'
-      )
-      .orderBy('cart_items.id', 'asc');
+    const cartItems = await Cart.findByUserId(req.user.id);
     res.status(200).json(cartItems);
   } catch (error) {
     console.error('Error getting cart:', error);
@@ -40,41 +29,20 @@ export const addItemToCart = async (req, res) => {
   }
 
   try {
-    const existingItem = await db('cart_items')
-      .where({ user_id: userId, product_id: productId })
-      .first();
+    const existingItem = await Cart.findOne(userId, productId);
 
     if (existingItem) {
       // Item exists, update quantity
-      await db('cart_items')
-        .where({ id: existingItem.id })
-        .update({
-          quantity: db.raw('quantity + ?', [quantity]), // Use db.raw for safe increment
-          updated_at: db.fn.now(), // Explicitly update the timestamp
-        });
-
-      // Fetch the updated item with product details to return to the client
-      const itemToReturn = await db('cart_items')
-        .join('products', 'cart_items.product_id', 'products.id')
-        .where('cart_items.id', existingItem.id)
-        .select('cart_items.id', 'products.id as product_id', 'products.name', 'products.price', 'products.image_url', 'cart_items.quantity')
-        .first();
-
-      res.status(200).json(itemToReturn);
+      await Cart.update(existingItem.id, quantity, true); // true for increment
+      const updatedCart = await Cart.findByUserId(userId);
+      const itemToReturn = updatedCart.find(item => item.product_id === productId);
+      res.status(200).json(itemToReturn || {});
     } else {
       // Item does not exist, insert new
-      const [newItem] = await db('cart_items')
-        .insert({ user_id: userId, product_id: productId, quantity })
-        .returning('*');
-
-      // Fetch the new item with product details
-      const itemToReturn = await db('cart_items')
-        .join('products', 'cart_items.product_id', 'products.id')
-        .where('cart_items.id', newItem.id)
-        .select('cart_items.id', 'products.id as product_id', 'products.name', 'products.price', 'products.image_url', 'cart_items.quantity')
-        .first();
-
-      res.status(201).json(itemToReturn);
+      await Cart.create(userId, productId, quantity);
+      const updatedCart = await Cart.findByUserId(userId);
+      const itemToReturn = updatedCart.find(item => item.product_id === productId);
+      res.status(201).json(itemToReturn || {});
     }
   } catch (error) {
     console.error('Error adding item to cart:', error);
@@ -96,36 +64,10 @@ export const syncCart = async (req, res) => {
   }
 
   try {
-    // Use a transaction to treat the sync as a single atomic operation.
-    await db.transaction(async (trx) => {
-      // 1. Clear the user's existing cart completely.
-      await trx('cart_items').where({ user_id: userId }).del();
-
-      // 2. If there are items in the guest cart, insert them as the new cart.
-      if (itemsToSync.length > 0) {
-        const itemsToInsert = itemsToSync.map(item => ({
-          user_id: userId,
-          product_id: item.productId,
-          quantity: item.quantity,
-        }));
-        // Insert the new items from the guest cart.
-        await trx('cart_items').insert(itemsToInsert);
-      }
-    });
+    await Cart.replace(userId, itemsToSync);
 
     // After sync, fetch the entire updated cart to return to the client.
-    const updatedCart = await db('cart_items')
-      .join('products', 'cart_items.product_id', 'products.id')
-      .where('cart_items.user_id', userId)
-      .select(
-        'cart_items.id',
-        'products.id as product_id',
-        'products.name',
-        'products.price',
-        'products.image_url',
-        'cart_items.quantity'
-      )
-      .orderBy('cart_items.id', 'asc');
+    const updatedCart = await Cart.findByUserId(userId);
 
     res.status(200).json(updatedCart);
   } catch (error) {
@@ -148,14 +90,7 @@ export const updateCartItem = async (req, res) => {
   }
 
   try {
-    const [updatedItem] = await db('cart_items')
-      .where({ id: itemId, user_id: req.user.id })
-      .update({
-        quantity,
-        updated_at: db.fn.now(), // Explicitly update the timestamp
-      })
-      .returning('*');
-
+    const [updatedItem] = await Cart.update(itemId, quantity);
     if (!updatedItem) {
       return res.status(404).json({ message: 'Cart item not found.' });
     }
@@ -176,9 +111,7 @@ export const removeCartItem = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const deletedCount = await db('cart_items')
-      .where({ id: itemId, user_id: userId })
-      .del();
+    const deletedCount = await Cart.remove(itemId, userId);
 
     if (deletedCount === 0) {
       return res.status(404).json({ message: 'Cart item not found or you do not have permission to delete it.' });
