@@ -4,8 +4,8 @@
   "description": "Express.js backend for Online Shop (API, auth, DB)",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.js",
-    "start": "node src/index.js",
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
     "migrate": "knex migrate:latest --knexfile ./database/knexfile.js",
     "rollback": "knex migrate:rollback --knexfile ./database/knexfile.js",
     "seed": "knex seed:run --knexfile ./database/knexfile.js",

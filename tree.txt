@@ -2,7 +2,6 @@
 |-- CHECKLIST.md
 |-- backend
 |   |-- database
-|   |   |-- index.js
 |   |   |-- knexfile.js
 |   |   |-- migrations
 |   |   |   |-- 20251005120000_create_initial_tables.js
@@ -15,7 +14,8 @@
 |   |   |   |-- 20251018080615_add_payment_columns_to_orders.js
 |   |   |   |-- 20251031111400_add_timestamps_to_cart_items.js
 |   |   |   |-- 20251107111559_add_link_to_notifications.js
-|   |   |   `-- 20251111203527_add_google_id_to_users.js
+|   |   |   |-- 20251111203527_add_provider_info_to_users.js
+|   |   |   `-- 20251114121700_add_password_changed_at_to_users.js
 |   |   `-- seeders
 |   |       |-- 00_cleanup.js
 |   |       |-- 01_initial_categories.js
@@ -29,49 +29,66 @@
 |   |   `-- openapi.yaml
 |   |-- package.json
 |   |-- src
+|   |   |-- app.js
 |   |   |-- config
 |   |   |   |-- db.js
 |   |   |   `-- passport.js
-|   |   |-- controllers
-|   |   |   |-- adminController.js
-|   |   |   |-- cartController.js
-|   |   |   |-- notificationController.js
-|   |   |   |-- orderController.js
-|   |   |   |-- productController.js
-|   |   |   |-- staffController.js
-|   |   |   |-- supportController.js
-|   |   |   |-- userController.js
-|   |   |   `-- wishlistController.js
-|   |   |-- index.js
-|   |   |-- middlewares
-|   |   |   `-- authMiddleware.js
-|   |   |-- models
-|   |   |   |-- adminModel.js
-|   |   |   |-- cartModel.js
-|   |   |   |-- notificationModel.js
-|   |   |   |-- orderModel.js
-|   |   |   |-- productModel.js
-|   |   |   |-- staffModel.js
-|   |   |   |-- supportModel.js
-|   |   |   |-- userModel.js
-|   |   |   `-- wishlistModel.js
-|   |   |-- routes
-|   |   |   |-- adminRoutes.js
-|   |   |   |-- authRoutes.js
-|   |   |   |-- cartRoutes.js
-|   |   |   |-- notificationRoutes.js
-|   |   |   |-- orderRoutes.js
-|   |   |   |-- productRoutes.js
-|   |   |   |-- staffRoutes.js
-|   |   |   |-- supportRoutes.js
-|   |   |   |-- userRoutes.js
-|   |   |   `-- wishlistRoutes.js
-|   |   |-- services
-|   |   |   |-- emailService.js
-|   |   |   |-- notificationService.js
-|   |   |   `-- paymentService.js
-|   |   `-- utils
-|   |       `-- generateToken.js
+|   |   |-- core
+|   |   |   |-- integrations
+|   |   |   |   |-- email.service.js
+|   |   |   |   `-- payment.service.js
+|   |   |   |-- middlewares
+|   |   |   |   |-- authMiddleware.js
+|   |   |   |   |-- error.middleware.js
+|   |   |   |   `-- validation.middleware.js
+|   |   |   `-- utils
+|   |   |       |-- ApiError.js
+|   |   |       |-- ApiResponse.js
+|   |   |       `-- generateToken.js
+|   |   |-- modules
+|   |   |   |-- admin
+|   |   |   |   |-- admin.controller.js
+|   |   |   |   |-- admin.model.js
+|   |   |   |   `-- admin.routes.js
+|   |   |   |-- auth
+|   |   |   |   |-- auth.controller.js
+|   |   |   |   `-- auth.routes.js
+|   |   |   |-- cart
+|   |   |   |   |-- cart.controller.js
+|   |   |   |   |-- cart.model.js
+|   |   |   |   `-- cart.routes.js
+|   |   |   |-- notification
+|   |   |   |   |-- notification.controller.js
+|   |   |   |   |-- notification.model.js
+|   |   |   |   |-- notification.routes.js
+|   |   |   |   `-- notification.service.js
+|   |   |   |-- orders
+|   |   |   |   |-- order.controller.js
+|   |   |   |   |-- order.model.js
+|   |   |   |   `-- order.routes.js
+|   |   |   |-- products
+|   |   |   |   |-- product.controller.js
+|   |   |   |   |-- product.model.js
+|   |   |   |   `-- product.routes.js
+|   |   |   |-- staff
+|   |   |   |   |-- staff.controller.js
+|   |   |   |   |-- staff.model.js
+|   |   |   |   `-- staff.routes.js
+|   |   |   |-- support
+|   |   |   |   |-- support.controller.js
+|   |   |   |   |-- support.model.js
+|   |   |   |   `-- support.routes.js
+|   |   |   |-- users
+|   |   |   |   |-- user.controller.js
+|   |   |   |   |-- user.model.js
+|   |   |   |   |-- user.routes.js
+|   |   |   |   `-- user.service.js
+|   |   |   `-- wishlist
+|   |   |       |-- wishlist.controller.js
+|   |   |       |-- wishlist.model.js
+|   |   |       `-- wishlist.routes.js
+|   |   |-- routes.js
+|   |   `-- server.js
 |   `-- tests
 |-- frontend
 |   |-- index.html
@@ -170,4 +187,4 @@
 |-- package-lock.json
 `-- package.json
 
-40 directories, 130 files
+49 directories, 138 files
