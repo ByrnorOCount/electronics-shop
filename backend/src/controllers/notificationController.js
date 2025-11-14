@@ -17,6 +17,22 @@ export const getNotifications = async (req, res) => {
 };
 
 /**
+ * Get the count of unread notifications for the logged-in user.
+ * @route GET /api/notifications/unread-count
+ * @access Private
+ */
+export const getUnreadCount = async (req, res) => {
+    try {
+        const count = await Notification.countUnreadByUserId(req.user.id);
+        // The result from knex is an object like { count: '5' }, so we parse it.
+        res.status(200).json({ count: parseInt(count, 10) });
+    } catch (error) {
+        console.error('Error fetching unread notification count:', error);
+        res.status(500).json({ message: 'Server error while fetching notification count.' });
+    }
+};
+
+/**
  * Mark a single notification as read.
  * @route PUT /api/notifications/:id
  * @access Private

@@ -9,9 +9,9 @@ import GoogleLoginButton from './components/GoogleLoginButton';
 import FacebookLoginButton from './components/FacebookLoginButton';
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState({ 
-    email: '', 
-    password: '' 
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
   });
 
   const dispatch = useAppDispatch();

@@ -2,21 +2,40 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useApi } from '../../../hooks/useApi';
 import { notificationService } from '../../../api';
+import { useAppSelector } from '../../../store/hooks';
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef(null);
+  const { token } = useAppSelector((state) => state.auth);
 
   const { data, error, loading, request: fetchNotifications } = useApi(notificationService.getNotifications);
+  const { data: countData, request: fetchUnreadCount } = useApi(notificationService.getUnreadCount);
   const { request: markRead } = useApi(notificationService.markAsRead);
   const { request: markAllRead } = useApi(notificationService.markAllAsRead);
 
-  const unreadCount = notifications.filter(n => !n.is_read).length;
+  // Fetch unread count on mount and when login status changes
+  useEffect(() => {
+    if (token) {
+      fetchUnreadCount();
+    } else {
+      setUnreadCount(0); // Reset on logout
+      setNotifications([]);
+    }
+  }, [token, fetchUnreadCount]);
+
+  // Update local unread count when fetch is successful
+  useEffect(() => {
+    if (countData) {
+      setUnreadCount(countData.count);
+    }
+  }, [countData]);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
-    if (!isOpen) {
+    if (!isOpen && token) {
       fetchNotifications(7); // Fetch only the 7 most recent notifications
     }
   };
@@ -41,12 +60,14 @@ export default function NotificationDropdown() {
   const handleMarkAsRead = async (id) => {
     await markRead(id);
     setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
+    setUnreadCount(prev => Math.max(0, prev - 1));
   };
 
   const handleMarkAllAsRead = async () => {
     if (unreadCount === 0) return;
     await markAllRead();
     setNotifications(notifications.map(n => ({ ...n, is_read: true })));
+    setUnreadCount(0);
   };
 
   return (

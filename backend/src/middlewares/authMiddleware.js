@@ -27,6 +27,22 @@ export const protect = async (req, res, next) => {
       // If a user is found, remove the password hash before attaching to the request.
       if (user) {
         delete user.password_hash;
+
+        // * Note: Currently can't fetch facebook email so we skip this check.
+        // Security Check 1: Ensure the user has verified their email.
+        // This prevents unverified users from accessing protected routes.
+        // if (!user.is_verified) {
+        //   return res.status(403).json({ message: 'Please verify your email to continue.' });
+        // }
+
+        // Security Check 2: Invalidate token if password was changed after the token was issued.
+        if (user.password_changed_at) {
+          const passwordChangedTimestamp = parseInt(new Date(user.password_changed_at).getTime() / 1000, 10);
+          if (decoded.iat < passwordChangedTimestamp) {
+            return res.status(401).json({ message: 'User recently changed password. Please log in again.' });
+          }
+        }
+
         req.user = user;
       }
 

@@ -10,6 +10,15 @@ const getNotifications = async () => {
 };
 
 /**
+ * Fetches the count of unread notifications.
+ * @returns {Promise<{count: number}>} A promise that resolves to an object with the count.
+ */
+const getUnreadCount = async () => {
+  const response = await api.get('/notifications/unread-count');
+  return response.data;
+};
+
+/**
  * Marks a single notification as read.
  * @param {number} id - The ID of the notification to mark as read.
  * @returns {Promise<object>} A promise that resolves to the updated notification object.
@@ -30,6 +39,7 @@ const markAllAsRead = async () => {
 
 const notificationService = {
   getNotifications,
+  getUnreadCount,
   markAsRead,
   markAllAsRead,
 };

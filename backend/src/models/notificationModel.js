@@ -17,6 +17,16 @@ export const findByUserId = (userId, limit) => {
 };
 
 /**
+ * Counts the number of unread notifications for a specific user.
+ * @param {number} userId - The ID of the user.
+ * @returns {Promise<number>} A promise that resolves to the count of unread notifications.
+ */
+export const countUnreadByUserId = async (userId) => {
+    const result = await db('notifications').where({ user_id: userId, is_read: false }).count('id as count').first();
+    return result.count;
+};
+
+/**
  * Marks a single notification as read.
  * @param {number} notificationId - The ID of the notification.
  * @param {number} userId - The ID of the user (for ownership verification).

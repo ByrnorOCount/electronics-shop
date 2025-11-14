@@ -1,5 +1,5 @@
 import React from "react";
-
+// TODO: Make it functional with backend integration
 export default function Newsletter() {
   return (
     <section className="bg-gradient-to-b from-yellow-50 to-yellow-100 py-16">
