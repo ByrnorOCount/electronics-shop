@@ -1,0 +1,64 @@
+/products:
+  get:
+    summary: Get a list of products
+    description: Retrieves a paginated list of products. Can be filtered by name, category, and price.
+    tags:
+      - Products
+    parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          default: 1
+        description: Page number for pagination
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Search term to filter products by name.
+      - in: query
+        name: category
+        schema:
+          type: string
+        description: Filter by category name.
+      - in: query
+        name: brand
+        schema:
+          type: string
+        description: Filter by brand name.
+      - in: query
+        name: featured
+        schema:
+          type: boolean
+        description: Filter for featured products.
+    responses:
+      '200':
+        description: A list of products.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas.yaml#/Product'
+/products/{id}:
+  get:
+    summary: Get a single product by ID
+    description: Retrieves detailed information for a specific product.
+    tags:
+      - Products
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        description: The ID of the product to retrieve.
+    responses:
+      '200':
+        description: Product details.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/Product'
+      '404':
+        description: Product not found.

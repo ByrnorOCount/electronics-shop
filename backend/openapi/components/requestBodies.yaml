@@ -1,0 +1,25 @@
+CategoryUpdate:
+  description: Category object that needs to be updated.
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+          description:
+            type: string
+
+UserProfileUpdate:
+  description: Fields to update for the user profile.
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          first_name:
+            type: string
+          last_name:
+            type: string

@@ -1,0 +1,55 @@
+/wishlist:
+  get:
+    summary: Get the user's wishlist
+    description: Retrieves all products currently in the logged-in user's wishlist.
+    tags:
+      - Wishlist
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: An array of products in the user's wishlist.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas.yaml#/Product'
+  post:
+    summary: Add a product to the wishlist
+    description: Adds a product to the user's wishlist.
+    tags:
+      - Wishlist
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/AddToWishlistRequest'
+    responses:
+      '201':
+        description: Product added to wishlist.
+      '400':
+        description: Product already in wishlist.
+      '401':
+        description: Unauthorized.
+/wishlist/{productId}:
+  delete:
+    summary: Remove a product from the wishlist
+    description: Deletes a product from the user's wishlist.
+    tags:
+      - Wishlist
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: productId
+        required: true
+        schema:
+          type: integer
+        description: The ID of the product to remove from the wishlist.
+    responses:
+      '204':
+        description: Product successfully removed from wishlist.

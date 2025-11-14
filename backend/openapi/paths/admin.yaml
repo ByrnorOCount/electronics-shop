@@ -1,0 +1,148 @@
+/admin/dashboard:
+  get:
+    summary: Get dashboard metrics
+    description: (Admin Only) Retrieves key metrics for the admin dashboard, such as total sales, user count, and recent orders.
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: A summary of dashboard metrics.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/DashboardMetrics'
+
+/admin/categories:
+  get:
+    summary: Get all categories
+    description: (Admin Only) Retrieves a list of all product categories.
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: A list of all categories.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas.yaml#/Category'
+  post:
+    summary: Create a new category
+    description: (Admin Only) Adds a new product category to the system.
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/NewCategory'
+    responses:
+      '201':
+        description: Category created successfully.
+
+/admin/categories/{id}:
+  put:
+    summary: Update a category
+    description: (Admin Only) Updates the name or description of a category.
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+    requestBody:
+      $ref: '../components/requestBodies.yaml#/CategoryUpdate'
+    responses:
+      '200':
+        description: Category updated successfully.
+  delete:
+    summary: Delete a category
+    description: (Admin Only) Deletes a category. Products in this category will have their category set to null.
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+    responses:
+      '204':
+        description: Category deleted successfully.
+
+/admin/users:
+  get:
+    summary: Get all users
+    description: (Admin Only) Retrieves a list of all users in the system (customers, staff, and admins).
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: A list of all users.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas.yaml#/User'
+
+/admin/users/{id}:
+  put:
+    summary: Update a user's role
+    description: (Admin Only) Updates the role of a specific user.
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              role:
+                type: string
+                enum: [customer, staff, admin]
+    responses:
+      '200':
+        description: User role updated successfully.
+
+  delete:
+    summary: Delete a user
+    description: (Admin Only) Permanently deletes a user from the system.
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+    responses:
+      '204':
+        description: User deleted successfully.
