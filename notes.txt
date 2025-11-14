@@ -178,3 +178,5 @@ snackbar/toast notifications for user actions (e.g., "Product added to cart", "P
 profile page should have settings like default shipping address, payment methods, password change, etc.
 
 zalo/github/twitter login
+
+kill vnpay, use momo instead

@@ -46,7 +46,15 @@
 |   |   |-- middlewares
 |   |   |   `-- authMiddleware.js
 |   |   |-- models
-|   |   |   `-- productModel.js
+|   |   |   |-- adminModel.js
+|   |   |   |-- cartModel.js
+|   |   |   |-- notificationModel.js
+|   |   |   |-- orderModel.js
+|   |   |   |-- productModel.js
+|   |   |   |-- staffModel.js
+|   |   |   |-- supportModel.js
+|   |   |   |-- userModel.js
+|   |   |   `-- wishlistModel.js
 |   |   |-- routes
 |   |   |   |-- adminRoutes.js
 |   |   |   |-- authRoutes.js
@@ -162,4 +170,4 @@
 |-- package-lock.json
 `-- package.json
 
-40 directories, 122 files
+40 directories, 130 files

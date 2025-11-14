@@ -6,6 +6,7 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import session from "express-session";
+import csrf from 'tiny-csrf';
 import cookieParser from "cookie-parser";
 import passport from "passport";
 
@@ -33,7 +34,7 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
-app.use(cookieParser()); // Add cookie-parser middleware
+app.use(cookieParser(process.env.SESSION_SECRET)); // Pass secret for signed cookies
 
 app.use(
   session({
@@ -53,6 +54,30 @@ app.use(passport.initialize());
 app.use(passport.session());
 //
 
+if (!process.env.CSRF_SECRET || process.env.CSRF_SECRET.length < 32) {
+  console.warn('WARNING: CSRF_SECRET is not defined or is too short. Using a temporary, insecure secret. Please set a 32-character string in your .env file for production.');
+  if (process.env.NODE_ENV !== 'production') {
+    process.env.CSRF_SECRET = 'a_temporary_insecure_secret_32ch';
+  }
+}
+
+// CSRF Protection Middleware
+// This must come after cookieParser and any session middleware.
+const csrfProtection = csrf(
+  process.env.CSRF_SECRET, // A 32-character secret from .env
+  ['POST', 'PUT', 'DELETE', 'PATCH'], // Methods to protect
+  [
+    // Routes to exclude from CSRF protection
+    '/api/users/login',
+    '/api/users/register',
+    '/api/users/forgot-password',
+    '/api/cart/sync', // Cart sync happens immediately on login, may race for a new token.
+    '/api/orders/webhook', // Webhooks are external and won't have a CSRF token
+  ]
+);
+
+app.use(csrfProtection); // Apply CSRF protection before the routes that need it.
+
 // --- API Routes ---
 // This is now the single source of truth for routing
 app.use('/api/users', userRoutes);
@@ -65,6 +90,11 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes); //Authentication routes Google OAuth
+
+// A simple route for the frontend to fetch the current CSRF token
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
 
 // Root (API health check)
 app.get("/", (req, res) => {

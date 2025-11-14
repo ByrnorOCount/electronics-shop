@@ -31,6 +31,7 @@
     "passport-google-oauth20": "^2.0.0",
     "pg": "^8.16.3",
     "stripe": "^19.1.0",
+    "tiny-csrf": "^1.1.6",
     "vnpay": "^2.4.4"
   },
   "devDependencies": {

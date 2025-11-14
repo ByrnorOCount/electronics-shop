@@ -29,21 +29,22 @@ export const addItemToCart = async (req, res) => {
   }
 
   try {
+    let statusCode = 201; // Default to 201 (Created)
     const existingItem = await Cart.findOne(userId, productId);
 
     if (existingItem) {
       // Item exists, update quantity
       await Cart.update(existingItem.id, quantity, true); // true for increment
-      const updatedCart = await Cart.findByUserId(userId);
-      const itemToReturn = updatedCart.find(item => item.product_id === productId);
-      res.status(200).json(itemToReturn || {});
+      statusCode = 200; // Set to 200 (OK) for an update
     } else {
       // Item does not exist, insert new
       await Cart.create(userId, productId, quantity);
-      const updatedCart = await Cart.findByUserId(userId);
-      const itemToReturn = updatedCart.find(item => item.product_id === productId);
-      res.status(201).json(itemToReturn || {});
     }
+
+    const updatedCart = await Cart.findByUserId(userId);
+    const itemToReturn = updatedCart.find((item) => item.product_id === productId);
+
+    res.status(statusCode).json(itemToReturn || {});
   } catch (error) {
     console.error('Error adding item to cart:', error);
     res.status(500).json({ message: 'Server error while adding to cart.' });

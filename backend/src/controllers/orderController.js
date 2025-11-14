@@ -42,6 +42,68 @@ export const generateCheckoutOtp = async (req, res) => {
 };
 
 /**
+ * Creates a Stripe checkout session.
+ * @param {Array} cartItems - The items in the user's cart.
+ * @param {number} userId - The ID of the user.
+ * @returns {Promise<object>} An object containing the session URL.
+ */
+const createStripeSession = async (cartItems, userId) => {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: cartItems.map(item => ({
+      price_data: {
+        currency: 'usd', // Or your desired currency
+        product_data: {
+          name: item.name,
+        },
+        unit_amount: Math.round(item.price * 100), // Stripe expects amount in cents
+      },
+      quantity: item.quantity,
+    })),
+    mode: 'payment',
+    success_url: `${process.env.VNPAY_RETURN_URL}?success=true`,
+    cancel_url: `${process.env.VNPAY_RETURN_URL}?success=false`,
+    metadata: {
+      userId,
+      // In a real app, you'd collect the shipping address on the frontend
+      // and pass it here to be used in the webhook.
+    },
+  });
+  return { url: session.url };
+};
+
+/**
+ * Creates a VNPay payment URL.
+ * @param {Array} cartItems - The items in the user's cart.
+ * @param {import('express').Request} req - The Express request object.
+ * @returns {Promise<object>} An object containing the payment URL.
+ */
+const createVNPaySession = async (cartItems, req) => {
+  const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const ipAddr = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const orderId = `${Date.now()}`; // Temporary ID for tracking
+
+  const paymentUrl = vnpay.buildPaymentUrl({
+    vnp_Amount: totalAmount * 100, // VNPay requires amount in pennies
+    vnp_IpAddr: ipAddr,
+    vnp_ReturnUrl: process.env.VNPAY_RETURN_URL,
+    vnp_TxnRef: orderId,
+    vnp_OrderInfo: 'Payment for order at Electronics Shop',
+    vnp_OrderType: 'other',
+    vnp_Locale: 'vn',
+    vnp_CurrCode: 'VND',
+  });
+
+  return { url: paymentUrl };
+};
+
+// Strategy map for payment providers
+const paymentStrategies = {
+  stripe: createStripeSession,
+  vnpay: createVNPaySession,
+};
+
+/**
  * Create a payment session for online payments (Stripe, VNPay).
  * @route POST /api/orders/create-payment-session
  * @access Private
@@ -60,58 +122,17 @@ export const createPaymentSession = async (req, res) => {
       return res.status(400).json({ message: 'Cannot create payment with an empty cart.' });
     }
 
-    const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const orderDescription = `Payment for order at Electronics Shop`;
+    // Look up the correct payment strategy function from the map
+    const paymentHandler = paymentStrategies[paymentMethod];
 
-    // This is a temporary order ID for tracking. A real order will be created after payment success.
-    const orderId = `${Date.now()}`;
-
-    if (paymentMethod === 'stripe') {
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: cartItems.map(item => ({
-          price_data: {
-            currency: 'usd', // Or your desired currency
-            product_data: {
-              name: item.name,
-            },
-            unit_amount: Math.round(item.price * 100), // Stripe expects amount in cents
-          },
-          quantity: item.quantity,
-        })),
-        mode: 'payment',
-        success_url: `${process.env.VNPAY_RETURN_URL}?success=true`, // Use your frontend success URL
-        cancel_url: `${process.env.VNPAY_RETURN_URL}?success=false`, // Use your frontend cancel URL
-        metadata: {
-          // We need to pass the shipping address to the webhook
-          // This should be collected on the frontend before creating the session
-          userId,
-          // You can add more metadata here to help with order creation in the webhook
-        },
-      });
-
-      res.json({ id: session.id, url: session.url, paymentMethod: 'stripe' });
-
-    } else if (paymentMethod === 'vnpay') {
-      const ipAddr = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-
-      const paymentUrl = vnpay.buildPaymentUrl({
-        vnp_Amount: totalAmount * 100, // VNPay requires amount in pennies
-        vnp_IpAddr: ipAddr,
-        vnp_ReturnUrl: process.env.VNPAY_RETURN_URL,
-        vnp_TxnRef: orderId,
-        vnp_OrderInfo: orderDescription,
-        vnp_OrderType: 'other',
-        vnp_Locale: 'vn',
-        vnp_CurrCode: 'VND',
-      });
-
-      res.json({ url: paymentUrl, paymentMethod: 'vnpay' });
-
-    } else {
+    if (!paymentHandler) {
       return res.status(400).json({ message: 'Invalid online payment method specified.' });
     }
 
+    // Execute the chosen strategy
+    const paymentData = await paymentHandler(cartItems, req);
+
+    res.status(200).json({ ...paymentData, paymentMethod });
   } catch (error) {
     console.error('Error creating payment session:', error);
     res.status(500).json({ message: 'Server error while creating payment session.' });
