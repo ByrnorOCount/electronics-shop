@@ -17,6 +17,7 @@ import wishlistRoutes from './routes/wishlistRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import supportRoutes from './routes/supportRoutes.js';
 import staffRoutes from './routes/staffRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import './config/passport.js';
 import authRoutes from './routes/authRoutes.js';
@@ -60,6 +61,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/support', supportRoutes); // FAQ route is at /api/support/faq
+app.use('/api/notifications', notificationRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes); //Authentication routes Google OAuth

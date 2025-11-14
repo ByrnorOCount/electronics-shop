@@ -5,7 +5,7 @@ import api from '../../api/axios';
  * @returns {Promise<Array>} A promise that resolves to an array of notification objects.
  */
 const getNotifications = async () => {
-  const response = await api.get('/users/me/notifications');
+  const response = await api.get('/notifications');
   return response.data;
 };
 
@@ -15,7 +15,7 @@ const getNotifications = async () => {
  * @returns {Promise<object>} A promise that resolves to the updated notification object.
  */
 const markAsRead = async (id) => {
-  const response = await api.put(`/users/me/notifications/${id}`);
+  const response = await api.put(`/notifications/${id}`);
   return response.data;
 };
 
@@ -24,7 +24,7 @@ const markAsRead = async (id) => {
  * @returns {Promise<object>} A promise that resolves to a success message.
  */
 const markAllAsRead = async () => {
-  const response = await api.post('/users/me/notifications/mark-all-read');
+  const response = await api.post('/notifications/mark-all-read');
   return response.data;
 };
 

@@ -35,7 +35,7 @@
 |   |   |-- controllers
 |   |   |   |-- adminController.js
 |   |   |   |-- cartController.js
-|   |   |   |-- notificationService.js
+|   |   |   |-- notificationController.js
 |   |   |   |-- orderController.js
 |   |   |   |-- productController.js
 |   |   |   |-- staffController.js
@@ -51,7 +51,7 @@
 |   |   |   |-- adminRoutes.js
 |   |   |   |-- authRoutes.js
 |   |   |   |-- cartRoutes.js
-|   |   |   |-- index.js
+|   |   |   |-- notificationRoutes.js
 |   |   |   |-- orderRoutes.js
 |   |   |   |-- productRoutes.js
 |   |   |   |-- staffRoutes.js
