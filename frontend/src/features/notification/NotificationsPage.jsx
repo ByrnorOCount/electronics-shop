@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApi } from '../../hooks/useApi';
-import { notificationService } from '../../features/notification/notificationService';
+import { notificationService } from '../../api';
 import toast from 'react-hot-toast';
 
 export default function NotificationsPage() {

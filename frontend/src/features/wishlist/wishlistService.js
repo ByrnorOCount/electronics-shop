@@ -1,4 +1,4 @@
-import api from '../../api/api';
+import api from '../../api/axios';
 
 const getWishlist = async () => {
   const response = await api.get('/wishlist');

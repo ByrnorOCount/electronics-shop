@@ -3,7 +3,7 @@
  */
 import React, { useEffect } from "react";
 import ProductCard from "./ProductCard";
-import productService from "../productService";
+import { productService } from "../../../api";
 import { useApi } from "../../../hooks/useApi";
 
 export default function FeaturedGrid() {

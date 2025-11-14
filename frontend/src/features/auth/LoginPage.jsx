@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useAppDispatch } from '../../store/hooks';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { setCredentials, loginUser } from './authSlice';
-import api from '../../api/api';
+import api from '../../api/axios';
 import toast from 'react-hot-toast';
 import GoogleLoginButton from './components/GoogleLoginButton';
 import FacebookLoginButton from './components/FacebookLoginButton';

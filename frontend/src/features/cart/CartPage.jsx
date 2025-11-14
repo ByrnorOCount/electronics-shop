@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { removeItem, updateQuantity, clearCart, setCart } from './cartSlice';
-import cartService from './cartService';
+import { cartService } from '../../api';
 import QuantityInput from '../../components/ui/QuantityInput';
 import OrderSummary from './components/OrderSummary';
 import { Link } from 'react-router-dom';

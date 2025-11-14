@@ -1,4 +1,3 @@
-// frontend/src/components/auth/GoogleLoginButton.jsx
 import React from 'react';
 
 const GoogleLoginButton = () => {

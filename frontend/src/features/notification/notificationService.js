@@ -1,4 +1,4 @@
-import api from '../../api/api';
+import api from '../../api/axios';
 
 /**
  * Fetches all notifications for the logged-in user.
@@ -28,8 +28,10 @@ const markAllAsRead = async () => {
   return response.data;
 };
 
-export const notificationService = {
+const notificationService = {
   getNotifications,
   markAsRead,
   markAllAsRead,
 };
+
+export default notificationService;

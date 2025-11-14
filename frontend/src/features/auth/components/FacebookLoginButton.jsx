@@ -1,4 +1,3 @@
-// frontend/src/components/auth/FacebookLoginButton.jsx
 import React from 'react';
 
 const FacebookLoginButton = () => {

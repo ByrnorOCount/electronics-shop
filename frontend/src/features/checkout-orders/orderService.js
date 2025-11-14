@@ -1,4 +1,4 @@
-import api from '../../api/api';
+import api from '../../api/axios';
 
 /**
  * Generates a One-Time Password (OTP) for checkout and sends it to the user's email.

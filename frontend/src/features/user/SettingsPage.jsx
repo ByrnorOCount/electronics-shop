@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { useApi } from '../../hooks/useApi';
-import userService from './userService.js';
+import { userService } from '../../api';
 import { setUser } from '../auth/authSlice';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';

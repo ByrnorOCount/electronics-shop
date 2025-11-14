@@ -14,8 +14,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/hooks"; // Correc
 import { addItem } from "../../cart/cartSlice";
 import { addToWishlistLocal, removeFromWishlistLocal } from "../../wishlist/wishlistSlice";
 import Button from '../../../components/ui/Button';
-import cartService from "../../cart/cartService";
-import wishlistService from "../../wishlist/wishlistService";
+import { cartService, wishlistService } from "../../../api";
 import { selectToken } from "../../auth/authSlice";
 import toast from "react-hot-toast";
 
@@ -96,12 +95,12 @@ export default function ProductCard({ product }) {
           </button>
         )}
       </div>
-        <div className="p-4">
-          <h3 className="font-bold text-lg truncate">{product.name}</h3>
-          <p className="text-gray-600 text-sm mt-1 mb-1 h-10">{product.description}</p>
-          <p className="text-lg font-semibold text-gray-800 mb-1">${Number(product.price).toFixed(2)}</p>
-          <Button onClick={handleAdd} size="sm" className="rounded-full bg-green-600 hover:bg-green-700 text-white">Add to Cart</Button>
-        </div>
+      <div className="p-4">
+        <h3 className="font-bold text-lg truncate">{product.name}</h3>
+        <p className="text-gray-600 text-sm mt-1 mb-1 h-10">{product.description}</p>
+        <p className="text-lg font-semibold text-gray-800 mb-1">${Number(product.price).toFixed(2)}</p>
+        <Button onClick={handleAdd} size="sm" className="rounded-full bg-green-600 hover:bg-green-700 text-white">Add to Cart</Button>
+      </div>
     </Link>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useApi } from '../../../hooks/useApi';
-import { notificationService } from '../notificationService';
+import { notificationService } from '../../../api';
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);

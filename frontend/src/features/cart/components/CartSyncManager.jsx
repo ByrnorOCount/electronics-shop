@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../store/hooks';
 import { setCart, setCartSyncStatus } from '../cartSlice';
-import cartService from '../cartService';
+import { cartService } from '../../../api';
 
 /**
  * A headless component that manages the synchronization of the local (guest)

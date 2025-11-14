@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useApi } from '../../hooks/useApi';
 import ProductCard from './components/ProductCard';
 import ProductFilter from './components/ProductFilter';
-import productService from './productService';
+import { productService } from '../../api';
 
 const ProductsPage = () => {
   const { data: products, loading, error, request: fetchProducts } = useApi(productService.getProducts);

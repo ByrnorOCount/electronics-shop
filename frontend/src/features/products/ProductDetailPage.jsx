@@ -4,9 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { addItem } from '../cart/cartSlice';
 import { addToWishlistLocal, removeFromWishlistLocal } from '../wishlist/wishlistSlice';
 import { useApi } from '../../hooks/useApi';
-import productService from './productService';
-import cartService from '../cart/cartService';
-import wishlistService from '../wishlist/wishlistService.js';
+import { productService, cartService, wishlistService } from '../../api';
 import toast from 'react-hot-toast';
 
 const ProductDetailPage = () => {

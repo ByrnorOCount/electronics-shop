@@ -1,4 +1,4 @@
-import api from '../../api/api'; // Import a pre-configured axios instance
+import api from '../../api/axios'; // Import a pre-configured axios instance
 
 /**
  * Fetches a list of products, with optional filtering.
