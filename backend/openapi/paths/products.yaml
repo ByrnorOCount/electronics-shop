@@ -1,9 +1,11 @@
-/products:
+'products':
   get:
     summary: Get a list of products
     description: Retrieves a paginated list of products. Can be filtered by name, category, and price.
+    operationId: getProducts
     tags:
       - Products
+    security: []
     parameters:
       - in: query
         name: page
@@ -40,12 +42,20 @@
               type: array
               items:
                 $ref: '../components/schemas.yaml#/Product'
-/products/{id}:
+      '400':
+        description: Bad Request (e.g., invalid filter parameters).
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/Error'
+'products/{id}':
   get:
     summary: Get a single product by ID
     description: Retrieves detailed information for a specific product.
+    operationId: getProductById
     tags:
       - Products
+    security: []
     parameters:
       - in: path
         name: id
@@ -62,3 +72,7 @@
               $ref: '../components/schemas.yaml#/Product'
       '404':
         description: Product not found.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/Error'

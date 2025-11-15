@@ -261,3 +261,42 @@ NewCategory:
       type: string
     description:
       type: string
+
+Notification:
+  type: object
+  properties:
+    id:
+      type: integer
+      description: The unique ID of the notification.
+    message:
+      type: string
+      description: The content of the notification.
+    read:
+      type: boolean
+      description: Whether the user has read the notification.
+    created_at:
+      type: string
+      format: date-time
+
+Error:
+  type: object
+  properties:
+    message:
+      type: string
+      description: A human-readable error message.
+
+ForgotPasswordRequest:
+  type: object
+  required: [email]
+  properties:
+    email:
+      type: string
+      format: email
+
+ResetPasswordRequest:
+  type: object
+  required: [password]
+  properties:
+    password:
+      type: string
+      format: password

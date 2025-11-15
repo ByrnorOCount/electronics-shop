@@ -1,19 +1,29 @@
-/auth/google:
+'auth/google':
   get:
     summary: Initiate Google OAuth2 login
     description: Redirects the user to Google's authentication page. After successful authentication, Google redirects the user back to the `/api/auth/google/callback` endpoint, which in turn redirects to the frontend application with a JWT. This endpoint is not meant to be called via AJAX/fetch; it should be used as the `href` for a link or button.
+    operationId: authGoogle
     tags:
       - Authentication
+    security: []
     responses:
+      '200':
+        description: A successful response for clients that do not automatically follow redirects. The body may contain the redirect URL.
       '302':
         description: Found. Redirecting to Google for authentication.
+      '400':
+        description: Bad Request (e.g., misconfigured client-side redirect).
+      '500':
+        description: Internal Server Error (e.g., OAuth provider misconfigured).
 
-/auth/google/callback:
+'auth/google/callback':
   get:
     summary: Google OAuth2 callback URL
     description: This endpoint is called by Google's servers after a user authenticates and should not be called directly by the client application. On success, it exchanges the code from Google for user profile information, creates or logs in the user, and redirects to the frontend application with a JWT. On failure, it redirects to the frontend login page.
+    operationId: authGoogleCallback
     tags:
       - Authentication
+    security: []
     parameters:
       - in: query
         name: code
@@ -26,25 +36,41 @@
           type: string
         description: The scopes granted by the user.
     responses:
+      '200':
+        description: A successful response for clients that do not automatically follow redirects. The body may contain the JWT.
       '302':
         description: Found. Redirecting to the frontend application.
+      '400':
+        description: Bad Request (e.g., missing or invalid 'code' parameter).
+      '500':
+        description: Internal Server Error (e.g., failed to exchange code for token).
 
-/auth/facebook:
+'auth/facebook':
   get:
     summary: Initiate Facebook OAuth2 login
     description: Redirects the user to Facebook's authentication page. After successful authentication, Facebook redirects the user back to the `/api/auth/facebook/callback` endpoint.
+    operationId: authFacebook
     tags:
       - Authentication
+    security: []
     responses:
+      '200':
+        description: A successful response for clients that do not automatically follow redirects. The body may contain the redirect URL.
       '302':
         description: Found. Redirecting to Facebook for authentication.
+      '400':
+        description: Bad Request (e.g., misconfigured client-side redirect).
+      '500':
+        description: Internal Server Error (e.g., OAuth provider misconfigured).
 
-/auth/facebook/callback:
+'auth/facebook/callback':
   get:
     summary: Facebook OAuth2 callback URL
     description: This endpoint is called by Facebook's servers after a user authenticates. It handles user creation/login and redirects to the frontend with a JWT.
+    operationId: authFacebookCallback
     tags:
       - Authentication
+    security: []
     parameters:
       - in: query
         name: code
@@ -52,5 +78,11 @@
           type: string
         description: The authorization code provided by Facebook.
     responses:
+      '200':
+        description: A successful response for clients that do not automatically follow redirects. The body may contain the JWT.
       '302':
         description: Found. Redirecting to the frontend application.
+      '400':
+        description: Bad Request (e.g., missing or invalid 'code' parameter).
+      '500':
+        description: Internal Server Error (e.g., failed to exchange code for token).

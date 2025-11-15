@@ -23,3 +23,50 @@ UserProfileUpdate:
             type: string
           last_name:
             type: string
+
+UpdateCartItem:
+  description: The new quantity for the cart item.
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          quantity:
+            type: integer
+            minimum: 1
+
+UpdateUserRole:
+  description: The new role to assign to the user.
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          role:
+            type: string
+            enum: [customer, staff, admin]
+
+UpdateOrderStatus:
+  description: The new status for the order.
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: [Pending, Processing, Shipped, Delivered, Canceled, Completed]
+
+ReplyToSupportTicket:
+  description: The message content for the reply.
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          message:
+            type: string

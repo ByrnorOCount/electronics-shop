@@ -1,7 +1,8 @@
-/cart:
+'cart':
   get:
     summary: Get the user's shopping cart
     description: Retrieves all items currently in the logged-in user's shopping cart.
+    operationId: getCart
     tags:
       - Cart
     security:
@@ -21,6 +22,7 @@
   post:
     summary: Add an item to the cart
     description: Adds a product to the user's cart. If the item already exists, its quantity is updated.
+    operationId: addItemToCart
     tags:
       - Cart
     security:
@@ -47,10 +49,11 @@
       '401':
         description: Unauthorized.
 
-/cart/items/{itemId}:
+'cart/items/{itemId}':
   put:
     summary: Update item quantity in cart
     description: Updates the quantity of a specific item in the cart.
+    operationId: updateCartItemQuantity
     tags:
       - Cart
     security:
@@ -61,17 +64,8 @@
         required: true
         schema:
           type: integer
-        description: The ID of the cart item to update.
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              quantity:
-                type: integer
-                minimum: 1
+        description: The ID of the cart item to update.    
+    requestBody: { $ref: '../components/requestBodies.yaml#/UpdateCartItem' }
     responses:
       '200':
         description: Quantity updated successfully.
@@ -81,6 +75,7 @@
   delete:
     summary: Remove an item from the cart
     description: Deletes a specific item from the user's shopping cart.
+    operationId: removeCartItem
     tags:
       - Cart
     security:

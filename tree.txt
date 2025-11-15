@@ -26,7 +26,21 @@
 |   |       |-- 06_initial_support_tickets.js
 |   |       `-- 07_initial_notifications.js
 |   |-- openapi
-|   |   `-- openapi.yaml
+|   |   |-- components
+|   |   |   |-- requestBodies.yaml
+|   |   |   |-- schemas.yaml
+|   |   |   `-- securitySchemes.yaml
+|   |   |-- openapi.yaml
+|   |   `-- paths
+|   |       |-- admin.yaml
+|   |       |-- auth.yaml
+|   |       |-- cart.yaml
+|   |       |-- orders.yaml
+|   |       |-- products.yaml
+|   |       |-- staff.yaml
+|   |       |-- support.yaml
+|   |       |-- users.yaml
+|   |       `-- wishlist.yaml
 |   |-- package.json
 |   |-- src
 |   |   |-- app.js
@@ -187,4 +201,4 @@
 |-- package-lock.json
 `-- package.json
 
-49 directories, 138 files
+51 directories, 150 files

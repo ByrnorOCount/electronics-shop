@@ -1,9 +1,11 @@
-/users/register:
+'users/register':
   post:
     summary: Register a new user
     description: Creates a new user account. Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character. An email will be sent to the user to verify their address before they can log in.
+    operationId: registerUser
     tags:
       - Users
+    security: []
     requestBody:
       required: true
       content:
@@ -16,12 +18,14 @@
       '400':
         description: Invalid input (e.g., email already exists, weak password).
 
-/users/login:
+'users/login':
   post:
     summary: Log in a user
     description: Authenticates a user and returns a JWT.
+    operationId: loginUser
     tags:
       - Users
+    security: []
     requestBody:
       required: true
       content:
@@ -38,12 +42,14 @@
       '401':
         description: Invalid credentials.
 
-/users/verify-email/{token}:
+'users/verify-email/{token}':
   get:
     summary: Verify a user's email address
     description: Verifies a user's email using the token sent during registration.
+    operationId: verifyEmail
     tags:
       - Users
+    security: []
     parameters:
       - in: path
         name: token
@@ -57,32 +63,32 @@
       '400':
         description: Token is invalid or has expired.
 
-/users/forgot-password:
+'users/forgot-password':
   post:
     summary: Request a password reset
     description: Sends a password reset link to the user's email if the account exists.
+    operationId: forgotPassword
     tags:
       - Users
+    security: []
     requestBody:
       required: true
       content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-                format: email
+        application/json: { schema: { $ref: '../components/schemas.yaml#/ForgotPasswordRequest' } }
     responses:
       '200':
         description: A generic success message is always returned to prevent email enumeration.
+      '400':
+        description: Bad Request (e.g., invalid email format).
 
-/users/reset-password/{token}:
+'users/reset-password/{token}':
   post:
     summary: Reset password with a token
     description: Sets a new password for a user using a valid reset token.
+    operationId: resetPassword
     tags:
       - Users
+    security: []
     parameters:
       - in: path
         name: token
@@ -93,23 +99,18 @@
     requestBody:
       required: true
       content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              password:
-                type: string
-                format: password
+        application/json: { schema: { $ref: '../components/schemas.yaml#/ResetPasswordRequest' } }
     responses:
       '200':
         description: Password has been successfully reset.
       '400':
         description: Token is invalid or expired, or password not provided.
 
-/users/me:
+'users/me':
   get:
     summary: Get current user's profile
     description: Retrieves the profile information for the currently authenticated user.
+    operationId: getCurrentUser
     tags:
       - User Profile
     security:
@@ -121,9 +122,12 @@
           application/json:
             schema:
               $ref: '../components/schemas.yaml#/User'
+      '401':
+        description: Unauthorized.
   put:
     summary: Update current user's profile
     description: Updates the first name, last name, or email for the currently authenticated user.
+    operationId: updateCurrentUser
     tags:
       - User Profile
     security:
@@ -133,11 +137,16 @@
     responses:
       '200':
         description: Profile updated successfully.
+      '400':
+        description: Bad Request (e.g., invalid data).
+      '401':
+        description: Unauthorized.
 
-/users/me/password:
+'users/me/password':
   put:
     summary: Change current user's password
     description: Updates the password for the currently authenticated user. The new password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.
+    operationId: changePassword
     tags:
       - User Profile
     security:
@@ -154,10 +163,11 @@
       '400':
         description: Bad request (e.g., missing fields, weak new password).
 
-/users/me/notifications:
+'users/me/notifications':
   get:
     summary: Get user's notifications
     description: Retrieves a list of all notifications for the logged-in user.
+    operationId: getNotifications
     tags:
       - Users
     security:
@@ -171,3 +181,5 @@
               type: array
               items:
                 $ref: '../components/schemas.yaml#/Notification'
+      '401':
+        description: Unauthorized.

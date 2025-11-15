@@ -3,6 +3,9 @@ info:
   title: Electronics Shop API
   description: API for an online electronics shop.
   version: 1.1.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
 servers:
   - url: http://localhost:3001/api
     description: Development server
@@ -30,20 +33,55 @@ tags:
     description: (Admin Only) System-wide user management.
 
 paths:
-  $ref: './paths/products.yaml'
-  $ref: './paths/users.yaml'
-  $ref: './paths/auth.yaml'
-  $ref: './paths/cart.yaml'
-  $ref: './paths/wishlist.yaml'
-  $ref: './paths/orders.yaml'
-  $ref: './paths/support.yaml'
-  $ref: './paths/staff.yaml'
-  $ref: './paths/admin.yaml'
+  # Products
+  /products: { $ref: './paths/products.yaml#/products' } # No slash in key, no escape needed
+  '/products/{id}': { $ref: './paths/products.yaml#/products~1{id}' } # Escaped '/' as '~1'
+  # Users & Auth
+  /users/register: { $ref: './paths/users.yaml#/users~1register' }
+  /users/login: { $ref: './paths/users.yaml#/users~1login' }
+  '/users/verify-email/{token}': { $ref: './paths/users.yaml#/users~1verify-email~1{token}' }
+  /users/forgot-password: { $ref: './paths/users.yaml#/users~1forgot-password' }
+  '/users/reset-password/{token}': { $ref: './paths/users.yaml#/users~1reset-password~1{token}' }
+  /users/me: { $ref: './paths/users.yaml#/users~1me' }
+  /users/me/password: { $ref: './paths/users.yaml#/users~1me~1password' }
+  /users/me/notifications: { $ref: './paths/users.yaml#/users~1me~1notifications' }
+  /auth/google: { $ref: './paths/auth.yaml#/auth~1google' }
+  /auth/google/callback: { $ref: './paths/auth.yaml#/auth~1google~1callback' }
+  /auth/facebook: { $ref: './paths/auth.yaml#/auth~1facebook' }
+  /auth/facebook/callback: { $ref: './paths/auth.yaml#/auth~1facebook~1callback' }
+  # Cart, Wishlist, Orders
+  /cart: { $ref: './paths/cart.yaml#/cart' }
+  '/cart/items/{itemId}': { $ref: './paths/cart.yaml#/cart~1items~1{itemId}' }
+  /wishlist: { $ref: './paths/wishlist.yaml#/wishlist' }
+  '/wishlist/{productId}': { $ref: './paths/wishlist.yaml#/wishlist~1{productId}' }
+  /orders: { $ref: './paths/orders.yaml#/orders' }
+  /orders/generate-otp: { $ref: './paths/orders.yaml#/orders~1generate-otp' }
+  /orders/create-payment-session: { $ref: './paths/orders.yaml#/orders~1create-payment-session' }
+  # Support
+  /support: { $ref: './paths/support.yaml#/support' }
+  '/support/{ticketId}': { $ref: './paths/support.yaml#/support~1{ticketId}' }
+  /faq: { $ref: './paths/support.yaml#/faq' }
+  # Staff
+  /staff/products: { $ref: './paths/staff.yaml#/staff~1products' }
+  '/staff/products/{id}': { $ref: './paths/staff.yaml#/staff~1products~1{id}' }
+  /staff/orders: { $ref: './paths/staff.yaml#/staff~1orders' }
+  '/staff/orders/{id}': { $ref: './paths/staff.yaml#/staff~1orders~1{id}' }
+  /staff/support-tickets: { $ref: './paths/staff.yaml#/staff~1support-tickets' }
+  '/staff/support-tickets/{ticketId}/reply': { $ref: './paths/staff.yaml#/staff~1support-tickets~1{ticketId}~1reply' }
+  # Admin
+  /admin/dashboard: { $ref: './paths/admin.yaml#/admin~1dashboard' }
+  /admin/categories: { $ref: './paths/admin.yaml#/admin~1categories' }
+  '/admin/categories/{id}': { $ref: './paths/admin.yaml#/admin~1categories~1{id}' }
+  /admin/users: { $ref: './paths/admin.yaml#/admin~1users' }
+  '/admin/users/{id}': { $ref: './paths/admin.yaml#/admin~1users~1{id}' }
 
 components:
-  schemas:
+  schemas: {
     $ref: './components/schemas.yaml'
-  requestBodies:
+  }
+  requestBodies: {
     $ref: './components/requestBodies.yaml'
-  securitySchemes:
+  }
+  securitySchemes: {
     $ref: './components/securitySchemes.yaml'
+  }
