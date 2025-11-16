@@ -1,8 +1,17 @@
 import express from 'express';
 import passport from 'passport';
-import { socialAuthCallback } from './auth.controller.js';
+import { register, login, socialAuthCallback, logout } from './auth.controller.js';
+import validate from '../../core/middlewares/validation.middleware.js';
+import authValidation from './auth.validation.js';
 
 const router = express.Router();
+
+// --- Local Authentication ---
+router.post('/register', validate(authValidation.register), register);
+router.post('/login', validate(authValidation.login), login);
+
+// --- Logout ---
+router.post('/logout', logout);
 
 /**
  * @route   GET /api/auth/google

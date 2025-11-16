@@ -1,41 +1,6 @@
 import * as UserService from './user.service.js';
 
 /**
- * Register a new user.
- */
-export const register = async (req, res) => {
-  try {
-    const result = await UserService.registerUser(req.body);
-    res.status(201).json(result);
-  } catch (error) {
-    console.error('Error during registration:', error);
-    // A more advanced error handler would check error type
-    if (error.message.includes('required fields') || error.message.includes('Password must be') || error.message.includes('Email already in use')) {
-      return res.status(400).json({ message: error.message });
-    }
-    res.status(500).json({ message: 'Server error during registration.' });
-  }
-};
-
-/**
- * Log in a user.
- * TODO: Could add rate-limitting to prevent brute-force attacks.
- */
-export const login = async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const result = await UserService.loginUser(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    console.error('Error during login:', error);
-    if (error.message.includes('credentials') || error.message.includes('verify your email')) {
-      return res.status(401).json({ message: error.message });
-    }
-    res.status(500).json({ message: 'Server error during login.' });
-  }
-};
-
-/**
  * Get user profile.
  * @route GET /api/users/me
  * @access Private

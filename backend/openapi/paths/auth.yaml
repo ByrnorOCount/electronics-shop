@@ -1,3 +1,51 @@
+'auth/register':
+  post:
+    summary: Register a new user
+    description: Creates a new user account with the provided details.
+    operationId: registerUser
+    tags:
+      - Authentication
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/NewUser'
+    responses:
+      '201':
+        description: User registered successfully.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/User'
+      '400':
+        description: Bad Request (e.g., email already taken, invalid password).
+
+'auth/login':
+  post:
+    summary: Log in a user
+    description: Authenticates a user and returns a JWT.
+    operationId: loginUser
+    tags:
+      - Authentication
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/LoginCredentials'
+    responses:
+      '200':
+        description: Login successful.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/AuthResponse'
+      '401':
+        description: Unauthorized (e.g., incorrect credentials).
+
 'auth/google':
   get:
     summary: Initiate Google OAuth2 login
@@ -44,6 +92,21 @@
         description: Bad Request (e.g., missing or invalid 'code' parameter).
       '500':
         description: Internal Server Error (e.g., failed to exchange code for token).
+
+'auth/logout':
+  post:
+    summary: Log out a user
+    description: Logs out the current user. For JWT, this primarily involves the client deleting the token. This endpoint can be used to clear server-side session cookies if they exist (e.g., from social logins).
+    operationId: logoutUser
+    tags:
+      - Authentication
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Successfully logged out.
+      '401':
+        description: Unauthorized if no user was logged in.
 
 'auth/facebook':
   get:

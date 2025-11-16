@@ -93,3 +93,13 @@ export const setResetToken = (id, hashedToken) => {
         password_reset_expires: db.raw("NOW() + INTERVAL '1 hour'"),
     });
 };
+
+/**
+ * Finds a user by their OAuth provider and provider-specific ID.
+ * @param {string} provider - The OAuth provider (e.g., 'google', 'facebook').
+ * @param {string} providerId - The user's ID from the provider.
+ * @returns {Promise<object|undefined>} The user object or undefined.
+ */
+export const findByProvider = (provider, providerId) => {
+    return db('users').where({ provider, provider_id: providerId }).first();
+};
