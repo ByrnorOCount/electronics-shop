@@ -49,6 +49,32 @@
       '401':
         description: Unauthorized.
 
+'cart/sync':
+  post:
+    summary: Synchronize the user's cart
+    description: Replaces the user's entire cart with the provided list of items. This is useful for syncing a local/guest cart with the server after login.
+    operationId: syncCart
+    tags:
+      - Cart
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../components/schemas.yaml#/AddToCartRequest'
+    responses:
+      '200':
+        description: Cart synchronized successfully. Returns the full, updated cart.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas.yaml#/CartItem'
 'cart/items/{itemId}':
   put:
     summary: Update item quantity in cart

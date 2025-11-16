@@ -48,17 +48,17 @@ export const create = async (userId, productId, quantity) => {
  * Updates the quantity of an existing cart item.
  * @param {number} itemId - The ID of the cart item.
  * @param {number} quantity - The new quantity.
- * @param {boolean} [increment=false] - Whether to increment the quantity or set it.
+ * @param {number} userId - The ID of the user (for ownership verification).
  * @returns {Promise<number>} The number of updated rows.
  */
-export const update = (itemId, quantity, increment = false) => {
-    const updateData = increment
-        ? { quantity: db.raw('quantity + ?', [quantity]) }
-        : { quantity };
-
-    updateData.updated_at = db.fn.now();
-
-    return db('cart_items').where({ id: itemId }).update(updateData).returning('*');
+export const update = (itemId, quantity, userId) => {
+    return db('cart_items')
+        .where({ id: itemId, user_id: userId }) // Enforce ownership
+        .update({
+            quantity,
+            updated_at: db.fn.now()
+        })
+        .returning('*');
 };
 
 /**

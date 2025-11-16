@@ -1,17 +1,18 @@
-import * as Cart from './cart.model.js';
+import * as cartService from './cart.service.js';
+import httpStatus from 'http-status';
+import ApiResponse from '../../core/utils/ApiResponse.js';
 
 /**
  * Get all items in the user's cart.
  * @route GET /api/cart
  * @access Private
  */
-export const getCart = async (req, res) => {
+export const getCart = async (req, res, next) => {
   try {
-    const cartItems = await Cart.findByUserId(req.user.id);
-    res.status(200).json(cartItems);
+    const cartItems = await cartService.getCartByUserId(req.user.id);
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, cartItems));
   } catch (error) {
-    console.error('Error getting cart:', error);
-    res.status(500).json({ message: 'Server error while retrieving cart.' });
+    next(error);
   }
 };
 
@@ -20,34 +21,23 @@ export const getCart = async (req, res) => {
  * @route POST /api/cart
  * @access Private
  */
-export const addItemToCart = async (req, res) => {
+export const addItemToCart = async (req, res, next) => {
   const { productId, quantity } = req.body;
   const userId = req.user.id;
 
-  if (!productId || !quantity || quantity < 1) {
-    return res.status(400).json({ message: 'Product ID and a valid quantity are required.' });
-  }
-
   try {
-    let statusCode = 201; // Default to 201 (Created)
-    const existingItem = await Cart.findOne(userId, productId);
+    const { wasCreated } = await cartService.addItemToCart(userId, productId, quantity);
 
-    if (existingItem) {
-      // Item exists, update quantity
-      await Cart.update(existingItem.id, quantity, true); // true for increment
-      statusCode = 200; // Set to 200 (OK) for an update
-    } else {
-      // Item does not exist, insert new
-      await Cart.create(userId, productId, quantity);
-    }
+    const statusCode = wasCreated ? httpStatus.CREATED : httpStatus.OK;
+    const message = wasCreated ? 'Item added to cart.' : 'Item quantity updated in cart.';
 
-    const updatedCart = await Cart.findByUserId(userId);
+    // Fetch the updated cart to return the specific item that was affected
+    const updatedCart = await cartService.getCartByUserId(userId);
     const itemToReturn = updatedCart.find((item) => item.product_id === productId);
 
-    res.status(statusCode).json(itemToReturn || {});
+    res.status(statusCode).json(new ApiResponse(statusCode, itemToReturn, message));
   } catch (error) {
-    console.error('Error adding item to cart:', error);
-    res.status(500).json({ message: 'Server error while adding to cart.' });
+    next(error);
   }
 };
 
@@ -56,24 +46,14 @@ export const addItemToCart = async (req, res) => {
  * @route POST /api/cart/sync
  * @access Private
  */
-export const syncCart = async (req, res) => {
-  const itemsToSync = req.body.items || req.body; // Accept {items: []} or []
+export const syncCart = async (req, res, next) => {
   const userId = req.user.id;
 
-  if (!Array.isArray(itemsToSync)) {
-    return res.status(400).json({ message: 'Request body must be an array of cart items.' });
-  }
-
   try {
-    await Cart.replace(userId, itemsToSync);
-
-    // After sync, fetch the entire updated cart to return to the client.
-    const updatedCart = await Cart.findByUserId(userId);
-
-    res.status(200).json(updatedCart);
+    const updatedCart = await cartService.syncUserCart(userId, req.body);
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedCart, 'Cart synchronized successfully.'));
   } catch (error) {
-    console.error('Error syncing cart:', error);
-    res.status(500).json({ message: error.message || 'Server error while syncing cart.' });
+    next(error);
   }
 };
 
@@ -82,23 +62,16 @@ export const syncCart = async (req, res) => {
  * @route PUT /api/cart/items/:itemId
  * @access Private
  */
-export const updateCartItem = async (req, res) => {
+export const updateCartItem = async (req, res, next) => {
   const { itemId } = req.params;
   const { quantity } = req.body;
-
-  if (!quantity || quantity < 1) {
-    return res.status(400).json({ message: 'A valid quantity is required.' });
-  }
+  const userId = req.user.id;
 
   try {
-    const [updatedItem] = await Cart.update(itemId, quantity);
-    if (!updatedItem) {
-      return res.status(404).json({ message: 'Cart item not found.' });
-    }
-    res.status(200).json(updatedItem);
+    const updatedItem = await cartService.updateCartItem(userId, itemId, quantity);
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedItem, 'Cart item updated.'));
   } catch (error) {
-    console.error('Error updating cart item:', error);
-    res.status(500).json({ message: 'Server error while updating cart item.' });
+    next(error);
   }
 };
 
@@ -107,21 +80,14 @@ export const updateCartItem = async (req, res) => {
  * @route DELETE /api/cart/items/:itemId
  * @access Private
  */
-export const removeCartItem = async (req, res) => {
+export const removeCartItem = async (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user.id;
 
   try {
-    const deletedCount = await Cart.remove(itemId, userId);
-
-    if (deletedCount === 0) {
-      return res.status(404).json({ message: 'Cart item not found or you do not have permission to delete it.' });
-    }
-
-    // Successfully deleted, send 204 No Content.
-    res.status(204).send();
+    await cartService.removeCartItem(userId, itemId);
+    res.status(httpStatus.NO_CONTENT).send();
   } catch (error) {
-    console.error('Error removing item from cart:', error);
-    res.status(500).json({ message: 'Server error while removing item from cart.' });
+    next(error);
   }
 };
