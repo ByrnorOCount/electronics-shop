@@ -1,67 +1,50 @@
-import * as Admin from './admin.model.js';
+import httpStatus from 'http-status';
+import adminService from './admin.service.js';
+import ApiResponse from '../../core/utils/ApiResponse.js';
 
 /**
  * Get all users in the system.
  * @route GET /api/admin/users
  * @access Admin
  */
-export const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res, next) => {
   try {
-    const users = await Admin.findAllUsers();
-    res.status(200).json(users);
+    const users = await adminService.getAllUsers(req.query);
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, users, 'Users retrieved successfully'));
   } catch (error) {
-    console.error('Error fetching all users:', error);
-    res.status(500).json({ message: 'Server error while fetching users.' });
+    next(error);
   }
 };
 
 /**
  * Update a user's role.
- * @route PUT /api/admin/users/:id
+ * @route PUT /api/admin/users/:userId
  * @access Admin
  */
-export const updateUserRole = async (req, res) => {
-  const { id } = req.params;
+export const updateUserRole = async (req, res, next) => {
+  const { userId } = req.params;
   const { role } = req.body;
 
-  if (!role || !['customer', 'staff', 'admin'].includes(role)) {
-    return res.status(400).json({ message: 'A valid role (customer, staff, admin) is required.' });
-  }
-
   try {
-    const updatedUser = await Admin.updateUserRole(id, role);
-    if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
-    res.status(200).json({ message: 'User role updated successfully.', user: updatedUser });
+    const updatedUser = await adminService.updateUserRole(userId, role);
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedUser, 'User role updated successfully'));
   } catch (error) {
-    console.error('Error updating user role:', error);
-    res.status(500).json({ message: 'Server error while updating user role.' });
+    next(error);
   }
 };
 
 /**
  * Delete a user.
- * @route DELETE /api/admin/users/:id
+ * @route DELETE /api/admin/users/:userId
  * @access Admin
  */
-export const deleteUser = async (req, res) => {
-  const { id } = req.params;
-
-  // Prevent admin from deleting themselves
-  if (Number(id) === req.user.id) {
-    return res.status(400).json({ message: 'Cannot delete your own admin account.' });
-  }
-
+export const deleteUser = async (req, res, next) => {
+  const { userId } = req.params;
   try {
-    const deletedCount = await Admin.deleteUser(id);
-    if (deletedCount === 0) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
-    res.status(204).send();
+    await adminService.deleteUser(userId, req.user.id);
+    res.status(httpStatus.NO_CONTENT).send();
   } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).json({ message: 'Server error while deleting user.' });
+    next(error);
   }
 };
 
@@ -70,13 +53,12 @@ export const deleteUser = async (req, res) => {
  * @route GET /api/admin/dashboard
  * @access Admin
  */
-export const getDashboardMetrics = async (req, res) => {
+export const getDashboardMetrics = async (req, res, next) => {
   try {
-    const metrics = await Admin.getDashboardMetrics();
-    res.status(200).json(metrics);
+    const metrics = await adminService.getDashboardMetrics();
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, metrics, 'Dashboard metrics retrieved successfully'));
   } catch (error) {
-    console.error('Error fetching dashboard metrics:', error);
-    res.status(500).json({ message: 'Server error while fetching dashboard metrics.' });
+    next(error);
   }
 };
 
@@ -85,18 +67,13 @@ export const getDashboardMetrics = async (req, res) => {
  * @route POST /api/admin/categories
  * @access Admin
  */
-export const createCategory = async (req, res) => {
+export const createCategory = async (req, res, next) => {
   const { name, description } = req.body;
-  if (!name) {
-    return res.status(400).json({ message: 'Category name is required.' });
-  }
-
   try {
-    const newCategory = await Admin.createCategory({ name, description });
-    res.status(201).json(newCategory);
+    const newCategory = await adminService.createCategory({ name, description });
+    res.status(httpStatus.CREATED).json(new ApiResponse(httpStatus.CREATED, newCategory, 'Category created successfully'));
   } catch (error) {
-    console.error('Error creating category:', error);
-    res.status(500).json({ message: 'Server error while creating category.' });
+    next(error);
   }
 };
 
@@ -105,58 +82,42 @@ export const createCategory = async (req, res) => {
  * @route GET /api/admin/categories
  * @access Admin
  */
-export const getAllCategories = async (req, res) => {
+export const getAllCategories = async (req, res, next) => {
   try {
-    const categories = await Admin.findAllCategories();
-    res.status(200).json(categories);
+    const categories = await adminService.getAllCategories();
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, categories, 'Categories retrieved successfully'));
   } catch (error) {
-    console.error('Error fetching categories:', error);
-    res.status(500).json({ message: 'Server error while fetching categories.' });
+    next(error);
   }
 };
 
 /**
  * Update a category.
- * @route PUT /api/admin/categories/:id
+ * @route PUT /api/admin/categories/:categoryId
  * @access Admin
  */
-export const updateCategory = async (req, res) => {
-  const { id } = req.params;
+export const updateCategory = async (req, res, next) => {
+  const { categoryId } = req.params;
   const { name, description } = req.body;
-
-  if (!name && !description) {
-    return res.status(400).json({ message: 'Name or description is required to update.' });
-  }
-
   try {
-    const updatedCategory = await Admin.updateCategory(id, { name, description });
-    if (!updatedCategory) {
-      return res.status(404).json({ message: 'Category not found.' });
-    }
-    res.status(200).json(updatedCategory);
+    const updatedCategory = await adminService.updateCategory(categoryId, { name, description });
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedCategory, 'Category updated successfully'));
   } catch (error) {
-    console.error('Error updating category:', error);
-    res.status(500).json({ message: 'Server error while updating category.' });
+    next(error);
   }
 };
 
 /**
  * Delete a category.
- * @route DELETE /api/admin/categories/:id
+ * @route DELETE /api/admin/categories/:categoryId
  * @access Admin
  */
-export const deleteCategory = async (req, res) => {
-  const { id } = req.params;
+export const deleteCategory = async (req, res, next) => {
+  const { categoryId } = req.params;
   try {
-    // Note: Products using this category will have their category_id set to NULL
-    // due to the onDelete('SET NULL') constraint in the migration.
-    const deletedCount = await Admin.deleteCategory(id);
-    if (deletedCount === 0) {
-      return res.status(404).json({ message: 'Category not found.' });
-    }
-    res.status(204).send();
+    await adminService.deleteCategory(categoryId);
+    res.status(httpStatus.NO_CONTENT).send();
   } catch (error) {
-    console.error('Error deleting category:', error);
-    res.status(500).json({ message: 'Server error while deleting category.' });
+    next(error);
   }
 };
