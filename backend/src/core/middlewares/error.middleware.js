@@ -23,25 +23,13 @@ export const notFound = (req, res, next) => {
  * @param {function} next - Express next middleware function.
  */
 export const errorHandler = (err, req, res, next) => {
-    let { statusCode, message } = err;
-
-    // If the error is from tiny-csrf, format it correctly.
-    if (err.code === 'EBADCSRFTOKEN') {
-        statusCode = httpStatus.FORBIDDEN;
-        message = 'Invalid or missing CSRF token.';
-        err.isOperational = true; // Treat CSRF errors as operational.
-    }
+    const { statusCode, message } = err;
 
     if (process.env.NODE_ENV === 'development') {
         console.error(err);
-        // Add detailed logging specifically for CSRF errors in development
-        if (err.code === 'EBADCSRFTOKEN') {
-            console.error('--- CSRF Debug Info ---');
-            console.error('Request Headers:', JSON.stringify(req.headers, null, 2));
-            console.error('--- End CSRF Debug Info ---');
-        }
     }
 
+    // The ApiError class handles setting the correct statusCode and message.
     const response = {
         success: false,
         statusCode: statusCode || httpStatus.INTERNAL_SERVER_ERROR,

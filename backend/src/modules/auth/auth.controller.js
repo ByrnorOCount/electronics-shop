@@ -62,9 +62,11 @@ export const socialAuthCallback = async (req, res, next) => {
  * @route POST /api/auth/logout
  */
 export const logout = (req, res, next) => {
-    // For JWT, logout is typically handled client-side by deleting the token.
-    // However, since we use cookies for social auth, we should clear it.
+    // Clear the authentication token cookie (used for social login sessions).
     res.clearCookie('jwt');
+
+    // Also clear the CSRF token cookie for a complete and secure logout.
+    res.clearCookie('XSRF-TOKEN', { path: '/' });
 
     // If using passport sessions, this would be the way to log out.
     req.logout((err) => {

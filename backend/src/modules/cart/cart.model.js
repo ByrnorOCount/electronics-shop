@@ -21,6 +21,26 @@ export const findByUserId = (userId) => {
 };
 
 /**
+ * Finds a single cart item by its ID, joining with product details.
+ * @param {number} itemId - The ID of the cart item.
+ * @returns {Promise<object|undefined>} The cart item with product details.
+ */
+export const findById = (itemId) => {
+    return db('cart_items')
+        .join('products', 'cart_items.product_id', 'products.id')
+        .where('cart_items.id', itemId)
+        .select(
+            'cart_items.id',
+            'products.id as product_id',
+            'products.name',
+            'products.price',
+            'products.image_url',
+            'cart_items.quantity'
+        )
+        .first();
+};
+
+/**
  * Finds a single cart item by product and user ID.
  * @param {number} userId - The ID of the user.
  * @param {number} productId - The ID of the product.

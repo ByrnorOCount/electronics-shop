@@ -1,6 +1,18 @@
 import db from '../../config/db.js';
 
 /**
+ * Creates a new notification.
+ * @param {object} notificationData - The data for the new notification.
+ * @param {object} [trx] - Optional Knex transaction object.
+ * @returns {Promise<object>} The newly created notification object.
+ */
+export const create = async (notificationData, trx) => {
+    const query = db('notifications').insert(notificationData).returning('*');
+    const [newNotification] = await (trx ? query.transacting(trx) : query);
+    return newNotification;
+};
+
+/**
  * Finds all notifications for a given user.
  * @param {number} userId - The ID of the user.
  * @param {number} [limit] - Optional limit for the number of notifications to fetch.

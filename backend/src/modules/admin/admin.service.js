@@ -6,7 +6,7 @@ import httpStatus from 'http-status';
  * Get dashboard analytics data
  * @returns {Promise<Object>}
  */
-const getDashboardMetrics = async () => {
+export const getDashboardMetrics = async () => {
     const data = await adminModel.getDashboardMetrics();
     return data;
 };
@@ -16,7 +16,7 @@ const getDashboardMetrics = async () => {
  * @param {object} filters - Filters for users
  * @returns {Promise<Array>}
  */
-const getAllUsers = async (filters) => {
+export const getAllUsers = async (filters) => {
     // The model function doesn't currently use filters, but we pass it for future-proofing
     const users = await adminModel.findAllUsers(filters);
     return users;
@@ -28,7 +28,7 @@ const getAllUsers = async (filters) => {
  * @param {string} role
  * @returns {Promise<Object>}
  */
-const updateUserRole = async (userId, role) => {
+export const updateUserRole = async (userId, role) => {
     const updatedUser = await adminModel.updateUserRole(userId, role);
     if (!updatedUser) {
         throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
@@ -42,7 +42,7 @@ const updateUserRole = async (userId, role) => {
  * @param {number} currentAdminId
  * @returns {Promise<void>}
  */
-const deleteUser = async (userIdToDelete, currentAdminId) => {
+export const deleteUser = async (userIdToDelete, currentAdminId) => {
     if (Number(userIdToDelete) === currentAdminId) {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot delete your own admin account.');
     }
@@ -57,7 +57,7 @@ const deleteUser = async (userIdToDelete, currentAdminId) => {
  * @param {object} categoryData
  * @returns {Promise<Object>}
  */
-const createCategory = async (categoryData) => {
+export const createCategory = async (categoryData) => {
     const newCategory = await adminModel.createCategory(categoryData);
     return newCategory;
 };
@@ -66,7 +66,7 @@ const createCategory = async (categoryData) => {
  * Get all categories
  * @returns {Promise<Array>}
  */
-const getAllCategories = async () => {
+export const getAllCategories = async () => {
     const categories = await adminModel.findAllCategories();
     return categories;
 };
@@ -77,7 +77,7 @@ const getAllCategories = async () => {
  * @param {object} updateData
  * @returns {Promise<Object>}
  */
-const updateCategory = async (categoryId, updateData) => {
+export const updateCategory = async (categoryId, updateData) => {
     const updatedCategory = await adminModel.updateCategory(categoryId, updateData);
     if (!updatedCategory) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Category not found.');
@@ -90,20 +90,9 @@ const updateCategory = async (categoryId, updateData) => {
  * @param {number} categoryId
  * @returns {Promise<void>}
  */
-const deleteCategory = async (categoryId) => {
+export const deleteCategory = async (categoryId) => {
     const deletedCount = await adminModel.deleteCategory(categoryId);
     if (deletedCount === 0) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Category not found.');
     }
-};
-
-export default {
-    getDashboardMetrics,
-    getAllUsers,
-    updateUserRole,
-    deleteUser,
-    createCategory,
-    getAllCategories,
-    updateCategory,
-    deleteCategory,
 };

@@ -26,16 +26,12 @@ export const addItemToCart = async (req, res, next) => {
   const userId = req.user.id;
 
   try {
-    const { wasCreated } = await cartService.addItemToCart(userId, productId, quantity);
+    const { item, wasCreated } = await cartService.addItemToCart(userId, productId, quantity);
 
     const statusCode = wasCreated ? httpStatus.CREATED : httpStatus.OK;
     const message = wasCreated ? 'Item added to cart.' : 'Item quantity updated in cart.';
 
-    // Fetch the updated cart to return the specific item that was affected
-    const updatedCart = await cartService.getCartByUserId(userId);
-    const itemToReturn = updatedCart.find((item) => item.product_id === productId);
-
-    res.status(statusCode).json(new ApiResponse(statusCode, itemToReturn, message));
+    res.status(statusCode).json(new ApiResponse(statusCode, item, message));
   } catch (error) {
     next(error);
   }

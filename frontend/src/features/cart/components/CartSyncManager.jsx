@@ -32,7 +32,6 @@ const CartSyncManager = () => {
         const itemsToSync = currentLocalCart.map(item => ({
           productId: item.id,
           quantity: item.qty,
-          modifiedAt: item.modifiedAt,
         }));
         mergedCart = await cartService.syncCart(itemsToSync);
       } else {

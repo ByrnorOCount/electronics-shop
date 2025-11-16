@@ -28,3 +28,14 @@ export const create = async (userData) => {
     const [newUser] = await db('users').insert(userData).returning('*');
     return newUser;
 };
+
+/**
+ * Updates a user by their ID.
+ * @param {number} userId - The ID of the user to update.
+ * @param {object} updateData - The data to update.
+ * @returns {Promise<object>} The updated user object.
+ */
+export const update = async (userId, updateData) => {
+    const [updatedUser] = await db('users').where({ id: userId }).update(updateData).returning('*');
+    return updatedUser;
+};

@@ -10,7 +10,7 @@ import {
   deleteCategory,
 } from './admin.controller.js';
 import validate from '../../core/middlewares/validation.middleware.js';
-import adminValidation from './admin.validation.js';
+import * as adminValidation from './admin.validation.js';
 import {
   authenticate,
   isAdmin
@@ -22,7 +22,7 @@ router.use(authenticate, isAdmin); // All routes in this file are protected and 
 
 router.get('/dashboard', getDashboardMetrics);
 
-router.route('/users').get(getAllUsers);
+router.route('/users').get(validate(adminValidation.getAllUsers), getAllUsers);
 router
   .route('/users/:userId')
   .put(validate(adminValidation.updateUserRole), updateUserRole)

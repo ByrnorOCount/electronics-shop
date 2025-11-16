@@ -23,16 +23,18 @@ export const addItemToCart = async (userId, productId, quantity) => {
 
     if (existingItem) {
         const newQuantity = existingItem.quantity + quantity;
-        await cartModel.update(existingItem.id, newQuantity, userId);
-        return { wasCreated: false };
+        const [updatedItem] = await cartModel.update(existingItem.id, newQuantity, userId);
+        const itemWithDetails = await cartModel.findById(updatedItem.id);
+        return { item: itemWithDetails, wasCreated: false };
     } else {
-        await cartModel.create(userId, productId, quantity);
-        return { wasCreated: true };
+        const newItem = await cartModel.create(userId, productId, quantity);
+        const itemWithDetails = await cartModel.findById(newItem.id);
+        return { item: itemWithDetails, wasCreated: true };
     }
 };
 
 /**
- * Update a specific cart item's quantity.
+ * Update a cart item's quantity.
  * @param {number} userId
  * @param {number} itemId
  * @param {number} quantity
@@ -41,7 +43,7 @@ export const addItemToCart = async (userId, productId, quantity) => {
 export const updateCartItem = async (userId, itemId, quantity) => {
     const [updatedItem] = await cartModel.update(itemId, quantity, userId);
     if (!updatedItem) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Cart item not found.');
+        throw new ApiError(httpStatus.NOT_FOUND, 'Cart item not found or you do not have permission to update it.');
     }
     return updatedItem;
 };

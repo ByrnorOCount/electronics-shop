@@ -5,6 +5,18 @@ import ApiError from '../../core/utils/ApiError.js';
 import generateToken from '../../core/utils/generateToken.js';
 
 /**
+ * Generates a token and returns the user object without the password hash.
+ * @param {object} user - The user object.
+ * @returns {{user: object, token: string}}
+ */
+const generateAuthTokens = (user) => {
+  const token = generateToken(user.id, user.role);
+  // Omit password from the returned user object
+  const { password_hash: _, ...userWithoutPassword } = user;
+  return { user: userWithoutPassword, token };
+};
+
+/**
  * Register a new user
  * @param {object} userData
  * @returns {Promise<object>}
@@ -49,11 +61,7 @@ const login = async (email, password) => {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
 
-  const token = generateToken(user.id, user.role);
-
-  // Omit password from the returned user object
-  const { password_hash: _, ...userWithoutPassword } = user;
-  return { user: userWithoutPassword, token };
+  return generateAuthTokens(user);
 };
 
 /**
@@ -89,10 +97,7 @@ const handleSocialLogin = async (profile) => {
     }
   }
 
-  const token = generateToken(user.id, user.role);
-  // Omit password from the returned user object for security
-  const { password_hash: _, ...userWithoutPassword } = user;
-  return { user: userWithoutPassword, token };
+  return generateAuthTokens(user);
 };
 
 export { register, login, handleSocialLogin };

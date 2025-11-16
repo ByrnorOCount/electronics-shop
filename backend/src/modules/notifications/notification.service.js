@@ -6,20 +6,13 @@ import ApiError from '../../core/utils/ApiError.js';
  * Creates a notification for a user.
  * @param {number} userId - The ID of the user to notify.
  * @param {string} message - The notification message.
+ * @param {string|null} [link=null] - An optional URL for the notification.
  * @param {object} [trx] - Optional Knex transaction object.
  */
-export const createNotification = async (userId, message, trx) => {
-  const notificationData = { user_id: userId, message };
-  // The model layer doesn't have a `create` function. We need to use knex directly
-  // or add a `create` function to the model. For consistency, let's use the db object.
-  // Also, `notification.model.js` doesn't export `db`. Let's assume we should add a create method there.
-  // For now, I'll assume a create method should be added to the model.
-  // Based on the model, it seems it only exports find/update methods. The create logic is missing.
-  const query = db('notifications').insert(notificationData);
-  if (trx) {
-    query.transacting(trx);
-  }
-  await query;
+export const createNotification = async (userId, message, link = null, trx) => {
+  const notificationData = { user_id: userId, message, link };
+  // Use the newly created model function for consistency.
+  await notificationModel.create(notificationData, trx);
 };
 
 /**
