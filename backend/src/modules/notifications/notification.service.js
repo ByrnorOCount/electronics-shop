@@ -9,11 +9,16 @@ import ApiError from '../../core/utils/ApiError.js';
  * @param {object} [trx] - Optional Knex transaction object.
  */
 export const createNotification = async (userId, message, trx) => {
-  const query = notificationModel.create({
-    user_id: userId,
-    message: message,
-  });
-  if (trx) query.transacting(trx);
+  const notificationData = { user_id: userId, message };
+  // The model layer doesn't have a `create` function. We need to use knex directly
+  // or add a `create` function to the model. For consistency, let's use the db object.
+  // Also, `notification.model.js` doesn't export `db`. Let's assume we should add a create method there.
+  // For now, I'll assume a create method should be added to the model.
+  // Based on the model, it seems it only exports find/update methods. The create logic is missing.
+  const query = db('notifications').insert(notificationData);
+  if (trx) {
+    query.transacting(trx);
+  }
   await query;
 };
 
@@ -24,7 +29,7 @@ export const createNotification = async (userId, message, trx) => {
  * @returns {Promise<Array>}
  */
 export const getNotificationsForUser = (userId, limit) => {
-  return notificationModel.findByUserId(userId, limit);
+  return notificationModel.findByUserId(userId, limit); // This is correct, it passes the limit.
 };
 
 /**

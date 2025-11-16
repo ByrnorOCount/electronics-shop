@@ -193,3 +193,5 @@ When: Any time you encounter a situation that should result in an error response
 ApiResponse:
 Where: At the end of your controller functions.
 When: After successfully fetching data or performing an action, you use this class to wrap the result before sending it
+
+KILL tiny-csrf NO MORE I HATE tiny-csrf USE DOUBLE SUBMIT COOKIE CSRF

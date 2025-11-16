@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import db from '../../config/db.js';
 
-export const protect = async (req, res, next) => {
+export const authenticate = async (req, res, next) => {
   let token;
 
   // 1. Check for JWT in the Authorization header (for standard login)

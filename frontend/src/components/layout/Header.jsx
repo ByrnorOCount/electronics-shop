@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { Link } from "react-router-dom";
-import NotificationDropdown from '../../features/notification/components/NotificationDropdown';
+import NotificationDropdown from '../../features/notifications/components/NotificationDropdown';
 import { useAppSelector } from '../../store/hooks';
 
 export default function Header() {

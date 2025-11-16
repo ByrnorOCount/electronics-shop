@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/layout/Layout';
 import HomePage from './pages/home/HomePage';
+import api from './api/axios';
+
 import ProductsPage from './features/products/ProductsPage';
 import ProductDetailPage from './features/products/ProductDetailPage';
 import LoginPage from './features/auth/LoginPage';
@@ -18,7 +20,7 @@ import CheckoutPage from './features/checkout-orders/CheckoutPage';
 import OrderConfirmationPage from './features/checkout-orders/OrderConfirmationPage';
 import OrderHistoryPage from './features/checkout-orders/OrderHistoryPage';
 import SettingsPage from './features/user/SettingsPage';
-import NotificationsPage from './features/notification/NotificationsPage';
+import NotificationsPage from './features/notifications/NotificationsPage';
 import ProfilePage from './features/user/ProfilePage';
 // import AdminLayout from "./features/admin/components/AdminLayout";
 // import AdminDashboardPage from "./features/admin/AdminDashboardPage";
@@ -28,7 +30,26 @@ import ProfilePage from './features/user/ProfilePage';
 import ProtectedRoute from './features/auth/components/ProtectedRoute';
 import CartSyncManager from './features/cart/components/CartSyncManager';
 
+/**
+ * Fetches the CSRF token from the backend to enable secure requests.
+ * This is a key part of the Double-Submit Cookie CSRF protection pattern.
+ * It's called once when the application loads.
+ */
+const initializeCsrf = async () => {
+  try {
+    await api.get('/csrf-token');
+  } catch (error) {
+    console.error('Failed to fetch CSRF token:', error);
+  }
+};
+
 function App() {
+  // Fetch the CSRF token when the application first loads.
+  // This ensures that subsequent state-changing API calls (POST, PUT, DELETE)
+  // will have the necessary token to pass the backend's security check.
+  useEffect(() => {
+    initializeCsrf();
+  }, []);
   return (
     <>
       <CartSyncManager />

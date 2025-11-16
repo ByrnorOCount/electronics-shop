@@ -10,7 +10,7 @@ import {
   replyToTicket,
 } from './staff.controller.js';
 import {
-  protect,
+  authenticate,
   isStaff
 } from '../../core/middlewares/auth.middleware.js';
 
@@ -21,19 +21,18 @@ const router = express.Router();
 
 // Product Management (FR19)
 router.route('/products')
-  .post(protect, isStaff, createProduct)
-  .get(protect, isStaff, getAllProducts);
+  .post(authenticate, isStaff, createProduct)
+  .get(authenticate, isStaff, getAllProducts);
 
 router.route('/products/:id')
-  .put(protect, isStaff, updateProduct)
-  .delete(protect, isStaff, deleteProduct);
+  .put(authenticate, isStaff, updateProduct)
+  .delete(authenticate, isStaff, deleteProduct);
 
 // Order Management (FR20)
-router.route('/orders').get(protect, isStaff, getAllOrders);
-router.route('/orders/:id').put(protect, isStaff, updateOrderStatus);
-
+router.route('/orders').get(authenticate, isStaff, getAllOrders);
+router.route('/orders/:id').put(authenticate, isStaff, updateOrderStatus);
 // Customer Support Ticket Management (FR21)
-router.route('/support-tickets').get(protect, isStaff, getAllSupportTickets);
-router.route('/support-tickets/:ticketId/reply').post(protect, isStaff, replyToTicket);
+router.route('/support-tickets').get(authenticate, isStaff, getAllSupportTickets);
+router.route('/support-tickets/:ticketId/reply').post(authenticate, isStaff, replyToTicket);
 
 export default router;

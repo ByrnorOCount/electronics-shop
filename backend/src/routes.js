@@ -1,5 +1,7 @@
 import { Router } from 'express';
+import crypto from 'crypto';
 
+import { authenticate } from './core/middlewares/auth.middleware.js';
 import userRoutes from './modules/users/user.routes.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import productRoutes from './modules/products/product.routes.js';
@@ -12,6 +14,23 @@ import staffRoutes from './modules/staff/staff.routes.js';
 import adminRoutes from './modules/admin/admin.routes.js';
 
 const apiRouter = Router();
+
+// Route to provide the CSRF token to the frontend.
+// This implements the "Double-Submit Cookie" pattern.
+apiRouter.get('/csrf-token', (req, res) => {
+    const csrfToken = crypto.randomBytes(16).toString('hex');
+
+    // Send the token in a cookie that is NOT httpOnly, so the frontend JS can read it.
+    res.cookie('XSRF-TOKEN', csrfToken, {
+        // secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        // sameSite: 'lax',
+        path: '/',
+    });
+
+    // Also send the token in the response body. Axios doesn't strictly need this,
+    // but it can be useful for other clients or for debugging.
+    res.json({ csrfToken });
+});
 
 apiRouter.use('/users', userRoutes);
 apiRouter.use('/auth', authRoutes);

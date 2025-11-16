@@ -5,10 +5,9 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
-import session from "express-session";
-import csrf from 'tiny-csrf';
 import cookieParser from "cookie-parser";
 import passport from "passport";
+import httpStatus from "http-status";
 
 import apiRouter from './routes.js';
 import { errorHandler, notFound } from './core/middlewares/error.middleware.js';
@@ -26,61 +25,45 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Initialize cookie-parser with a secret. This must come before the session middleware.
-// The secret provided here MUST match the secret used by tiny-csrf, as cookie-parser
-// is responsible for unsigning the CSRF cookie.
-app.use(cookieParser(process.env.CSRF_SECRET));
-
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET, // Get from .env file
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            // In production, you should use `secure: true` and `sameSite: 'none'` if your frontend and backend are on different domains.
-            // For localhost development (even with different ports), `lax` is the correct and secure setting.
-            secure: process.env.NODE_ENV === 'production',
-            httpOnly: true,
-            sameSite: 'lax',
-            maxAge: 1000 * 60 * 60 * 24, // 1 day
-        },
-    })
-);
+// Initialize cookie-parser without a secret. The Double-Submit pattern does not require signed cookies.
+app.use(cookieParser());
 
 // Initialize Passport and use session
 app.use(passport.initialize());
-app.use(passport.session());
 
-// CSRF Protection Middleware
-// It's best practice to apply this after all parsing and session middleware.
-const csrfProtection = csrf(
-    process.env.CSRF_SECRET || 'a_temporary_insecure_secret_32ch', // Provide a fallback directly
-    ['POST', 'PUT', 'DELETE', 'PATCH'], // 2. Methods to protect
-    [
-        // 3. Excluded routes
-        '/api/auth/login',
-        '/api/auth/register',
-        '/api/users/forgot-password',
-        '/api/cart/sync',
-        '/api/orders/webhook',
-    ],
-    [], // 4. Excluded Referrers (we are not using this feature)
-    { cookie: true } // 5. Options: Use a signed cookie to store the CSRF secret.
-);
+// --- Double-Submit Cookie CSRF Protection ---
+const csrfProtection = (req, res, next) => {
+    const excludedRoutes = [
+        '/api/auth/login', // Login doesn't need CSRF
+        '/api/auth/register', // Public registration
+        '/api/users/forgot-password', // Public
+        '/api/orders/webhook', // External service webhook
+        '/api/csrf-token', // The token-issuing route is always excluded
+    ];
 
-if (!process.env.CSRF_SECRET || process.env.CSRF_SECRET.length < 32) {
-    console.warn('WARNING: CSRF_SECRET is not defined or is too short. Using a temporary, insecure secret. Please set a 32-character string in your .env file for production.');
-}
+    // Only apply CSRF protection to state-changing methods and non-excluded routes
+    const isStateChanging = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method);
+    const isExcluded = excludedRoutes.some(route => req.originalUrl.startsWith(route));
 
-app.use(csrfProtection);
+    if (!isStateChanging || isExcluded) {
+        return next();
+    }
 
-// A simple route for the frontend to fetch the current CSRF token
-// This MUST be defined before the main apiRouter.
-app.get('/api/csrf-token', (req, res) => {
-    res.json({ csrfToken: req.csrfToken() });
-});
+    const tokenFromCookie = req.cookies['XSRF-TOKEN'];
+    // Express lowercases all incoming header keys. 'X-XSRF-TOKEN' becomes 'x-xsrf-token'.
+    const tokenFromHeader = req.headers['x-xsrf-token'];
+
+    if (!tokenFromCookie || !tokenFromHeader || tokenFromCookie !== tokenFromHeader) {
+        console.error(`CSRF Token Mismatch: Cookie=${tokenFromCookie}, Header=${tokenFromHeader}`);
+        return next(new ApiError(httpStatus.FORBIDDEN, 'Invalid or missing CSRF token.'));
+    }
+
+    next();
+};
 
 // --- API Routes ---
+// Apply CSRF protection before the main router.
+app.use('/api', csrfProtection);
 app.use('/api', apiRouter);
 
 // Root (API health check)

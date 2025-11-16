@@ -17,7 +17,8 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     if (data) {
-      setNotifications(data);
+      // The API returns an ApiResponse object, the actual notifications are in the `data` property.
+      setNotifications(data.data || []);
     }
   }, [data]);
 

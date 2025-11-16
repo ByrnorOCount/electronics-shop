@@ -4,15 +4,15 @@ import {
   addToWishlist,
   removeFromWishlist
 } from './wishlist.controller.js';
-import { protect } from '../../core/middlewares/auth.middleware.js';
+import { authenticate } from '../../core/middlewares/auth.middleware.js';
 
 const router = express.Router();
 
 router.route('/')
-  .get(protect, getWishlist)
-  .post(protect, addToWishlist);
+  .get(authenticate, getWishlist)
+  .post(authenticate, addToWishlist);
 
 router.route('/:productId')
-  .delete(protect, removeFromWishlist);
+  .delete(authenticate, removeFromWishlist);
 
 export default router;

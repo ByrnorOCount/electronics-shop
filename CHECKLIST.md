@@ -240,8 +240,8 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 ### **Security**
 
 - [ ] Use HTTPS in production.
-- [ ] Sanitize all inputs.
-- [ ] Prevent CSRF, XSS, and SQL injection.
+- [x] Sanitize all inputs (handled by Knex for SQLi and React for XSS).
+- [x] Prevent CSRF (Double-Submit Cookie CSRF), XSS (React), and SQL (Knex) injection.
 - [x] Encrypt sensitive user data.
 
 ### **Compatibility**

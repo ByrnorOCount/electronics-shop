@@ -3,9 +3,14 @@ import api from '../../api/axios';
 /**
  * Fetches all notifications for the logged-in user.
  * @returns {Promise<Array>} A promise that resolves to an array of notification objects.
+ * @param {number} [limit] - Optional limit for the number of notifications to fetch.
  */
-const getNotifications = async () => {
-  const response = await api.get('/notifications');
+const getNotifications = async (limit) => {
+  const params = {};
+  if (limit) {
+    params.limit = limit;
+  }
+  const response = await api.get('/notifications', { params });
   return response.data;
 };
 

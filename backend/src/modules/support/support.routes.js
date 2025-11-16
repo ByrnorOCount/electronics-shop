@@ -5,7 +5,7 @@ import {
   getTicketById,
   getFaqs
 } from './support.controller.js';
-import { protect } from '../../core/middlewares/auth.middleware.js';
+import { authenticate } from '../../core/middlewares/auth.middleware.js';
 
 const router = express.Router();
 
@@ -13,12 +13,9 @@ const router = express.Router();
 router.route('/faq').get(getFaqs);
 
 // Routes for support tickets (protected)
-router.route('/')
-  .post(protect, submitTicket)
-  .get(protect, getUserTickets);
+router.route('/').post(authenticate, submitTicket).get(authenticate, getUserTickets);
 
 // Route for a single support ticket
-router.route('/:ticketId')
-  .get(protect, getTicketById);
+router.route('/:ticketId').get(authenticate, getTicketById);
 
 export default router;

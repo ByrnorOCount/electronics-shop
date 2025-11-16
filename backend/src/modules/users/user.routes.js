@@ -8,7 +8,7 @@ import {
   verifyEmail,
 } from './user.controller.js';
 import {
-  protect,
+  authenticate,
   isStaff,
   isAdmin
 } from '../../core/middlewares/auth.middleware.js';
@@ -20,7 +20,7 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
 
 // User Profile & Settings
-router.route('/me').get(protect, getUserProfile).put(protect, updateUserProfile);
-router.put('/me/password', protect, changePassword);
+router.route('/me').get(authenticate, getUserProfile).put(authenticate, updateUserProfile);
+router.put('/me/password', authenticate, changePassword);
 
 export default router;
