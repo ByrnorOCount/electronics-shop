@@ -36,16 +36,16 @@ const findOrCreateUser = async (provider, profile, done) => {
         if (!isPlaceholderEmail) {
             let existingUser = await db('users').where({ email }).first();
             if (existingUser) {
-            // If an account exists, link it to the new provider.
-            const [linkedUser] = await db('users')
-                .where({ id: existingUser.id })
-                .update({
-                    provider: provider,
-                    provider_id: providerId,
-                    is_verified: true, // Social logins are considered verified.
-                })
-                .returning('*');
-            return done(null, linkedUser);
+                // If an account exists, link it to the new provider.
+                const [linkedUser] = await db('users')
+                    .where({ id: existingUser.id })
+                    .update({
+                        provider: provider,
+                        provider_id: providerId,
+                        is_verified: true, // Social logins are considered verified.
+                    })
+                    .returning('*');
+                return done(null, linkedUser);
             }
         }
 

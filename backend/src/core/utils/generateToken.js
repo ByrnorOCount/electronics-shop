@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 * @param {string} role The user's role to embed in the token.
  * @returns {string} The generated JWT.
  */
-const generateToken = (id, role) => {
+const generateToken = (id, role = 'customer') => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });

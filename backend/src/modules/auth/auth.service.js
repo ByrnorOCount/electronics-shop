@@ -18,6 +18,7 @@ const register = async (userData) => {
   const newUser = await authModel.create({
     ...userData,
     password_hash: hashedPassword,
+    role: 'customer', // Assign default role
   });
 
   // In a real app, you would send a verification email here.
@@ -33,7 +34,18 @@ const register = async (userData) => {
  */
 const login = async (email, password) => {
   const user = await authModel.findByEmail(email);
-  if (!user || !user.password_hash || !(await bcrypt.compare(password, user.password_hash))) {
+
+  if (!user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
+  }
+
+  // Explicitly check for password hash. If it doesn't exist, this is a social-only account.
+  if (!user.password_hash) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
+  }
+
+  const isPasswordMatch = await bcrypt.compare(password, user.password_hash);
+  if (!isPasswordMatch) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
 
@@ -41,7 +53,6 @@ const login = async (email, password) => {
 
   // Omit password from the returned user object
   const { password_hash: _, ...userWithoutPassword } = user;
-
   return { user: userWithoutPassword, token };
 };
 
@@ -66,12 +77,22 @@ const handleSocialLogin = async (profile) => {
         provider: profile.provider,
         provider_id: profile.id,
         is_verified: true, // Social logins are considered verified
+        role: 'customer', // Assign default role
+      });
+    } else if (!user.provider || !user.provider_id) {
+      // If user exists but is not linked to a social provider, update them
+      user = await authModel.update(user.id, {
+        provider: profile.provider,
+        provider_id: profile.id,
+        is_verified: true, // Mark as verified if they login via social
       });
     }
   }
 
   const token = generateToken(user.id, user.role);
-  return { user, token };
+  // Omit password from the returned user object for security
+  const { password_hash: _, ...userWithoutPassword } = user;
+  return { user: userWithoutPassword, token };
 };
 
-export default { register, login, handleSocialLogin };
+export { register, login, handleSocialLogin };

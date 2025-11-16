@@ -5,7 +5,7 @@ import api from '../../api/axios';
  * @param {object} userData - The user's registration data (first_name, last_name, email, password).
  */
 const register = async (userData) => {
-  const response = await api.post('/users/register', userData);
+  const response = await api.post('/auth/register', userData);
   return response.data;
 };
 
@@ -15,13 +15,22 @@ const register = async (userData) => {
  * @returns {Promise<object>} The user and token data.
  */
 const login = async (userData) => {
-  const response = await api.post('/users/login', userData);
+  const response = await api.post('/auth/login', userData);
+  return response.data;
+};
+
+/**
+ * Logs out the user by calling the backend endpoint.
+ */
+const logout = async () => {
+  const response = await api.post('/auth/logout');
   return response.data;
 };
 
 const authService = {
   register,
   login,
+  logout,
 };
 
 export default authService;

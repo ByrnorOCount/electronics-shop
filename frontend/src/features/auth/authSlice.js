@@ -1,10 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authService } from '../../api';
 
+const userJSON = localStorage.getItem('user');
+const userFromStorage = userJSON && userJSON !== 'undefined' ? JSON.parse(userJSON) : null;
 const tokenFromStorage = localStorage.getItem('token') || null;
-const userFromStorage = localStorage.getItem('user')
-    ? JSON.parse(localStorage.getItem('user'))
-    : null;
 
 const initialState = {
     user: userFromStorage,
@@ -26,9 +25,20 @@ export const registerUser = createAsyncThunk('auth/register', async (user, thunk
 // Async thunk for user login
 export const loginUser = createAsyncThunk('auth/login', async (user, thunkAPI) => {
     try {
-        const data = await authService.login(user);
-        // The service returns the data, the thunk passes it to the reducer
-        return data;
+        const response = await authService.login(user);
+        // Return only the nested data object which contains user and token
+        return response.data;
+    } catch (error) {
+        const message = error.response?.data?.message || error.message || error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+});
+
+// Async thunk for user logout
+export const logoutUser = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
+    try {
+        await authService.logout();
+        // The reducer will handle clearing local state regardless of API success.
     } catch (error) {
         const message = error.response?.data?.message || error.message || error.toString();
         return thunkAPI.rejectWithValue(message);
@@ -89,6 +99,10 @@ const authSlice = createSlice({
             .addCase(registerUser.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload;
+            })
+            // Logout case
+            .addCase(logoutUser.fulfilled, (state) => {
+                authSlice.caseReducers.logout(state);
             });
     },
 });

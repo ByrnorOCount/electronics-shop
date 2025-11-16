@@ -37,8 +37,9 @@ export const login = async (req, res, next) => {
  */
 export const socialAuthCallback = async (req, res, next) => {
     try {
-        // The passport middleware attaches the provider's profile to req.user
-        const { user, token } = await authService.handleSocialLogin(req.user);
+        // The passport middleware attaches the user profile to req.user.
+        // The service layer handles finding/creating the user and generating the token.
+        const { token } = await authService.handleSocialLogin(req.user);
 
         // Set the token in a secure, httpOnly cookie for the browser.
         res.cookie('jwt', token, {

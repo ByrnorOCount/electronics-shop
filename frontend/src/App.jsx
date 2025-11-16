@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/layout/Layout';
 import HomePage from './pages/home/HomePage';
@@ -30,11 +30,10 @@ import CartSyncManager from './features/cart/components/CartSyncManager';
 
 function App() {
   return (
-    <Router>
+    <>
       <CartSyncManager />
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
-        {/* Routes with Header and Footer */}
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="products" element={<ProductsPage />} />
@@ -76,7 +75,7 @@ function App() {
         {/* Catch-all 404 route */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </Router>
+    </>
   );
 }
 
