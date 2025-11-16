@@ -6,7 +6,7 @@ import {
   createPaymentSession,
   handlePaymentWebhook,
 } from './order.controller.js';
-import { protect } from '../../core/middlewares/authMiddleware.js';
+import { protect } from '../../core/middlewares/auth.middleware.js';
 
 const router = express.Router();
 

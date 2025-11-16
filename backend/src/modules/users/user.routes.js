@@ -11,7 +11,7 @@ import {
   protect,
   isStaff,
   isAdmin
-} from '../../core/middlewares/authMiddleware.js';
+} from '../../core/middlewares/auth.middleware.js';
 
 const router = express.Router();
 

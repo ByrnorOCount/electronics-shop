@@ -11,7 +11,7 @@ import {
 } from './admin.controller.js';
 import validate from '../../core/middlewares/validation.middleware.js';
 import adminValidation from './admin.validation.js';
-import { protect, isAdmin } from '../../core/middlewares/authMiddleware.js';
+import { protect, isAdmin } from '../../core/middlewares/auth.middleware.js';
 
 const router = express.Router();
 

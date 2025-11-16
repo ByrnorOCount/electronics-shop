@@ -5,7 +5,7 @@ import {
     markNotificationAsRead,
     markAllNotificationsAsRead,
 } from './notification.controller.js';
-import { protect } from '../../core/middlewares/authMiddleware.js';
+import { protect } from '../../core/middlewares/auth.middleware.js';
 
 const router = express.Router();
 

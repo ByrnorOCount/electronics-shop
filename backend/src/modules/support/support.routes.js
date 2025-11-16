@@ -5,7 +5,7 @@ import {
   getTicketById,
   getFaqs
 } from './support.controller.js';
-import { protect } from '../../core/middlewares/authMiddleware.js';
+import { protect } from '../../core/middlewares/auth.middleware.js';
 
 const router = express.Router();
 
