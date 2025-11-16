@@ -180,3 +180,16 @@ profile page should have settings like default shipping address, payment methods
 zalo/github/twitter login
 
 kill vnpay, use momo instead
+
+npm install -g @redocly/cli
+redocly bundle backend/openapi/openapi.yaml -o backend/openapi/openapi.bundled.yaml
+redocly lint backend/openapi/openapi.bundled.yaml
+redocly lint backend/openapi/openapi.yaml
+
+ApiError:
+Where: In your services and controllers.
+When: Any time you encounter a situation that should result in an error response to the client. This includes invalid input, resources not being found, or authorization failures.
+
+ApiResponse:
+Where: At the end of your controller functions.
+When: After successfully fetching data or performing an action, you use this class to wrap the result before sending it

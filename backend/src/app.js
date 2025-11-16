@@ -10,10 +10,8 @@ import csrf from 'tiny-csrf';
 import cookieParser from "cookie-parser";
 import passport from "passport";
 
-// This will be your new central router
 import apiRouter from './routes.js';
-
-// Passport config needs to be imported to be executed
+import { errorHandler, notFound } from './core/middlewares/error.middleware.js';
 import './config/passport.js';
 
 const app = express();
@@ -76,8 +74,12 @@ app.get('/api/csrf-token', (req, res) => {
 });
 
 // Root (API health check)
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
     res.json({ message: "Backend is running 🚀" });
 });
+
+// --- Error Handling Middlewares ---
+app.use(notFound);
+app.use(errorHandler);
 
 export default app;
