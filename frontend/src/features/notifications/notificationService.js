@@ -20,7 +20,7 @@ const getNotifications = async (limit) => {
  */
 const getUnreadCount = async () => {
   const response = await api.get('/notifications/unread-count');
-  return response.data;
+  return response.data; // The slice will handle extracting the nested data
 };
 
 /**

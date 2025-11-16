@@ -9,12 +9,12 @@ import {
   updateCategory,
   deleteCategory,
 } from './admin.controller.js';
-import validate from '../../core/middlewares/validation.middleware.js';
-import * as adminValidation from './admin.validation.js';
 import {
   authenticate,
   isAdmin
 } from '../../core/middlewares/auth.middleware.js';
+import validate from '../../core/middlewares/validation.middleware.js';
+import * as adminValidation from './admin.validation.js';
 
 const router = express.Router();
 

@@ -14,9 +14,13 @@ const router = express.Router();
 // All routes in this file are protected
 router.use(authenticate);
 
-router.get('/', validate(notificationValidation.getNotifications), getNotifications);
+router.route('/').get(validate(notificationValidation.getNotifications), getNotifications);
+
 router.get('/unread-count', getUnreadCount);
 router.post('/mark-all-read', markAllNotificationsAsRead);
-router.put('/:id', validate(notificationValidation.markAsRead), markNotificationAsRead);
+
+router
+    .route('/:id')
+    .put(validate(notificationValidation.markAsRead), markNotificationAsRead);
 
 export default router;

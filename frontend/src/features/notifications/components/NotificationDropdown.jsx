@@ -1,37 +1,31 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useApi } from '../../../hooks/useApi';
-import { notificationService } from '../../../api';
-import { useAppSelector } from '../../../store/hooks';
+import notificationService from '../notificationService';
+import { useAppSelector, useAppDispatch } from '../../../store/hooks';
+import { fetchUnreadCount, setUnreadCount, decrementUnreadCount } from '../notificationSlice';
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef(null);
+  const dispatch = useAppDispatch();
   const { token } = useAppSelector((state) => state.auth);
+  const { unreadCount } = useAppSelector((state) => state.notifications);
 
   const { data, error, loading, request: fetchNotifications } = useApi(notificationService.getNotifications);
-  const { data: countData, request: fetchUnreadCount } = useApi(notificationService.getUnreadCount);
   const { request: markRead } = useApi(notificationService.markAsRead);
   const { request: markAllRead } = useApi(notificationService.markAllAsRead);
 
-  // Fetch unread count on mount and when login status changes
+  // Fetch unread count when login status changes
   useEffect(() => {
     if (token) {
-      fetchUnreadCount();
+      dispatch(fetchUnreadCount());
     } else {
-      setUnreadCount(0); // Reset on logout
+      dispatch(setUnreadCount(0)); // Reset on logout
       setNotifications([]);
     }
-  }, [token, fetchUnreadCount]);
-
-  // Update local unread count when fetch is successful
-  useEffect(() => {
-    if (countData) {
-      setUnreadCount(countData.count);
-    }
-  }, [countData]);
+  }, [token, dispatch]);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -61,14 +55,14 @@ export default function NotificationDropdown() {
   const handleMarkAsRead = async (id) => {
     await markRead(id);
     setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
-    setUnreadCount(prev => Math.max(0, prev - 1));
+    dispatch(decrementUnreadCount());
   };
 
   const handleMarkAllAsRead = async () => {
     if (unreadCount === 0) return;
     await markAllRead();
     setNotifications(notifications.map(n => ({ ...n, is_read: true })));
-    setUnreadCount(0);
+    dispatch(setUnreadCount(0));
   };
 
   return (

@@ -12,13 +12,19 @@ import * as orderValidation from './order.validation.js';
 
 const router = express.Router();
 
-// This route needs to be before the express.json() middleware in your main app file
-// or use this special middleware to get the raw body for signature verification.
+// This webhook route must be public and come before authentication middleware.
+// It also needs the raw body for signature verification.
 router.post('/webhook', express.raw({ type: 'application/json' }), handlePaymentWebhook);
 
-router.route('/').get(authenticate, getOrders).post(authenticate, validate(orderValidation.createOrder), createOrder);
+// All subsequent routes in this module are for authenticated users.
+router.use(authenticate);
 
-router.post('/generate-otp', authenticate, generateCheckoutOtp);
-router.post('/create-payment-session', authenticate, validate(orderValidation.createPaymentSession), createPaymentSession);
+router
+  .route('/')
+  .get(getOrders)
+  .post(validate(orderValidation.createOrder), createOrder);
+
+router.post('/generate-otp', generateCheckoutOtp);
+router.post('/create-payment-session', validate(orderValidation.createPaymentSession), createPaymentSession);
 
 export default router;
