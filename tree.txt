@@ -35,6 +35,7 @@
 |   |       |-- admin.yaml
 |   |       |-- auth.yaml
 |   |       |-- cart.yaml
+|   |       |-- notifications.yaml
 |   |       |-- orders.yaml
 |   |       |-- products.yaml
 |   |       |-- staff.yaml
@@ -78,15 +79,18 @@
 |   |   |   |   |-- cart.routes.js
 |   |   |   |   |-- cart.service.js
 |   |   |   |   `-- cart.validation.js
-|   |   |   |-- notification
+|   |   |   |-- notifications
 |   |   |   |   |-- notification.controller.js
 |   |   |   |   |-- notification.model.js
 |   |   |   |   |-- notification.routes.js
-|   |   |   |   `-- notification.service.js
+|   |   |   |   |-- notification.service.js
+|   |   |   |   `-- notification.validation.js
 |   |   |   |-- orders
 |   |   |   |   |-- order.controller.js
 |   |   |   |   |-- order.model.js
-|   |   |   |   `-- order.routes.js
+|   |   |   |   |-- order.routes.js
+|   |   |   |   |-- order.service.js
+|   |   |   |   `-- order.validation.js
 |   |   |   |-- products
 |   |   |   |   |-- product.controller.js
 |   |   |   |   |-- product.model.js
@@ -210,4 +214,4 @@
 |-- package-lock.json
 `-- package.json
 
-53 directories, 157 files
+53 directories, 161 files

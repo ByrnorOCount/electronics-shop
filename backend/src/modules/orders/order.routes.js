@@ -7,6 +7,8 @@ import {
   handlePaymentWebhook,
 } from './order.controller.js';
 import { protect } from '../../core/middlewares/auth.middleware.js';
+import validate from '../../core/middlewares/validation.middleware.js';
+import * as orderValidation from './order.validation.js';
 
 const router = express.Router();
 
@@ -14,9 +16,9 @@ const router = express.Router();
 // or use this special middleware to get the raw body for signature verification.
 router.post('/webhook', express.raw({ type: 'application/json' }), handlePaymentWebhook);
 
-router.route('/').get(protect, getOrders).post(protect, createOrder);
+router.route('/').get(protect, getOrders).post(protect, validate(orderValidation.createOrder), createOrder);
 
 router.post('/generate-otp', protect, generateCheckoutOtp);
-router.post('/create-payment-session', protect, createPaymentSession);
+router.post('/create-payment-session', protect, validate(orderValidation.createPaymentSession), createPaymentSession);
 
 export default router;

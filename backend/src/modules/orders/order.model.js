@@ -34,6 +34,28 @@ export const findCartItemsByUserId = (userId) => {
 };
 
 /**
+ * Finds a single order by its ID, including its items.
+ * @param {number} orderId - The ID of the order.
+ * @returns {Promise<object|undefined>} An order object with its items, or undefined.
+ */
+export const findOrderByIdWithItems = async (orderId) => {
+    const order = await db('orders').where({ id: orderId }).first();
+
+    if (!order) {
+        return undefined;
+    }
+
+    const items = await db('order_items')
+        .join('products', 'order_items.product_id', 'products.id')
+        .where('order_items.order_id', orderId)
+        .select('order_items.*', 'products.name', 'products.image_url');
+
+    return {
+        ...order,
+        items,
+    };
+};
+/**
  * Finds all orders for a user, including their items.
  * @param {number} userId - The ID of the user.
  * @returns {Promise<Array>} An array of order objects with their items.
