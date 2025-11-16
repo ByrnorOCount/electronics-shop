@@ -1,5 +1,5 @@
+import * as authService from './auth.service.js';
 import httpStatus from 'http-status';
-import authService from './auth.service.js';
 import ApiResponse from '../../core/utils/ApiResponse.js';
 
 /**

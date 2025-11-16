@@ -17,6 +17,8 @@ tags:
     description: User authentication and management
   - name: Authentication
     description: Social login and external authentication providers.
+  - name: Notifications
+    description: User notification management.
   - name: Cart
     description: Shopping cart operations
   - name: Wishlist
@@ -44,7 +46,6 @@ paths:
   '/users/reset-password/{token}': { $ref: './paths/users.yaml#/users~1reset-password~1{token}' }
   /users/me: { $ref: './paths/users.yaml#/users~1me' }
   /users/me/password: { $ref: './paths/users.yaml#/users~1me~1password' }
-  /users/me/notifications: { $ref: './paths/users.yaml#/users~1me~1notifications' }
   /auth/google: { $ref: './paths/auth.yaml#/auth~1google' }
   /auth/google/callback: { $ref: './paths/auth.yaml#/auth~1google~1callback' }
   /auth/facebook: { $ref: './paths/auth.yaml#/auth~1facebook' }
@@ -57,6 +58,11 @@ paths:
   /orders: { $ref: './paths/orders.yaml#/orders' }
   /orders/generate-otp: { $ref: './paths/orders.yaml#/orders~1generate-otp' }
   /orders/create-payment-session: { $ref: './paths/orders.yaml#/orders~1create-payment-session' }
+  # Notifications
+  /notifications: { $ref: './paths/notifications.yaml#/' }
+  /notifications/unread-count: { $ref: './paths/notifications.yaml#/unread-count' }
+  /notifications/mark-all-read: { $ref: './paths/notifications.yaml#/mark-all-read' }
+  '/notifications/{id}': { $ref: './paths/notifications.yaml#/{id}' }
   # Support
   /support: { $ref: './paths/support.yaml#/support' }
   '/support/{ticketId}': { $ref: './paths/support.yaml#/support~1{ticketId}' }

@@ -8,7 +8,7 @@ import cartRoutes from './modules/cart/cart.routes.js';
 import wishlistRoutes from './modules/wishlist/wishlist.routes.js';
 import orderRoutes from './modules/orders/order.routes.js';
 import supportRoutes from './modules/support/support.routes.js';
-import notificationRoutes from './modules/notification/notification.routes.js';
+import notificationRoutes from './modules/notifications/notification.routes.js';
 import staffRoutes from './modules/staff/staff.routes.js';
 import adminRoutes from './modules/admin/admin.routes.js';
 

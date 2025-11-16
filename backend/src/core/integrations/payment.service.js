@@ -1,5 +1,5 @@
 import db from '../../config/db.js';
-import { createNotification } from '../../modules/notification/notification.service.js';
+import { createNotification } from '../../modules/notifications/notification.service.js';
 import { sendOrderConfirmationEmail } from './email.service.js';
 
 /**

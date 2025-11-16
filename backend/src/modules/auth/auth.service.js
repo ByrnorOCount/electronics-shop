@@ -1,6 +1,6 @@
 import httpStatus from 'http-status';
 import bcrypt from 'bcrypt';
-import * as userModel from '../users/user.model.js';
+import * as authModel from './auth.model.js';
 import ApiError from '../../core/utils/ApiError.js';
 import generateToken from '../../core/utils/generateToken.js';
 
@@ -10,12 +10,12 @@ import generateToken from '../../core/utils/generateToken.js';
  * @returns {Promise<object>}
  */
 const register = async (userData) => {
-  if (await userModel.findByEmail(userData.email)) {
+  if (await authModel.findByEmail(userData.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
 
   const hashedPassword = await bcrypt.hash(userData.password, 10);
-  const newUser = await userModel.create({
+  const newUser = await authModel.create({
     ...userData,
     password_hash: hashedPassword,
   });
@@ -32,15 +32,15 @@ const register = async (userData) => {
  * @returns {Promise<{user: object, token: string}>}
  */
 const login = async (email, password) => {
-  const user = await userModel.findByEmail(email);
+  const user = await authModel.findByEmail(email);
   if (!user || !user.password_hash || !(await bcrypt.compare(password, user.password_hash))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
 
-  const token = generateToken(user.id);
+  const token = generateToken(user.id, user.role);
 
   // Omit password from the returned user object
-  const { password: _, ...userWithoutPassword } = user;
+  const { password_hash: _, ...userWithoutPassword } = user;
 
   return { user: userWithoutPassword, token };
 };
@@ -51,15 +51,15 @@ const login = async (email, password) => {
  * @returns {Promise<{user: object, token: string}>}
  */
 const handleSocialLogin = async (profile) => {
-  let user = await userModel.findByProvider(profile.provider, profile.id);
+  let user = await authModel.findByProvider(profile.provider, profile.id);
 
   if (!user) {
     // If user with this provider doesn't exist, check by email
-    user = await userModel.findByEmail(profile.emails[0].value);
+    user = await authModel.findByEmail(profile.emails[0].value);
 
     if (!user) {
       // If no user found, create a new one
-      user = await userModel.create({
+      user = await authModel.create({
         email: profile.emails[0].value,
         first_name: profile.name.givenName,
         last_name: profile.name.familyName,
@@ -70,7 +70,7 @@ const handleSocialLogin = async (profile) => {
     }
   }
 
-  const token = generateToken(user.id);
+  const token = generateToken(user.id, user.role);
   return { user, token };
 };
 

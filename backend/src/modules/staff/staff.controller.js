@@ -1,4 +1,4 @@
-import { createNotification } from '../notification/notification.service.js';
+import { createNotification } from '../notifications/notification.service.js';
 import * as Staff from './staff.model.js';
 
 /**

@@ -1,5 +1,5 @@
+import * as adminService from './admin.service.js';
 import httpStatus from 'http-status';
-import adminService from './admin.service.js';
 import ApiResponse from '../../core/utils/ApiResponse.js';
 
 /**
