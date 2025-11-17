@@ -195,3 +195,7 @@ Where: At the end of your controller functions.
 When: After successfully fetching data or performing an action, you use this class to wrap the result before sending it
 
 KILL tiny-csrf NO MORE I HATE tiny-csrf USE DOUBLE SUBMIT COOKIE CSRF
+
+feature has slice file: service file returns response.data
+feature doesn't: service file returns response.data.data
+modules should follow _template module

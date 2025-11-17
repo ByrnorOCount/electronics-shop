@@ -1,6 +1,6 @@
-import * as notificationModel from './notification.model.js';
-import httpStatus from 'http-status';
-import ApiError from '../../core/utils/ApiError.js';
+import * as notificationModel from "./notification.model.js";
+import httpStatus from "http-status";
+import ApiError from "../../core/utils/ApiError.js";
 
 /**
  * Creates a notification for a user.
@@ -42,9 +42,15 @@ export const getUnreadCountForUser = async (userId) => {
  * @returns {Promise<object>}
  */
 export const markOneAsRead = async (notificationId, userId) => {
-  const notification = await notificationModel.updateAsRead(notificationId, userId);
+  const notification = await notificationModel.updateAsRead(
+    notificationId,
+    userId
+  );
   if (!notification) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Notification not found or you do not have permission to view it.');
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      "Notification not found or you do not have permission to view it."
+    );
   }
   return notification;
 };

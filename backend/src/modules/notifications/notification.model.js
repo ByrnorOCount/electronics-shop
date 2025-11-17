@@ -1,4 +1,4 @@
-import db from '../../config/db.js';
+import db from "../../config/db.js";
 
 /**
  * Creates a new notification.
@@ -7,9 +7,9 @@ import db from '../../config/db.js';
  * @returns {Promise<object>} The newly created notification object.
  */
 export const create = async (notificationData, trx) => {
-    const query = db('notifications').insert(notificationData).returning('*');
-    const [newNotification] = await (trx ? query.transacting(trx) : query);
-    return newNotification;
+  const query = db("notifications").insert(notificationData).returning("*");
+  const [newNotification] = await (trx ? query.transacting(trx) : query);
+  return newNotification;
 };
 
 /**
@@ -19,13 +19,15 @@ export const create = async (notificationData, trx) => {
  * @returns {Promise<Array>} A promise that resolves to an array of notifications.
  */
 export const findByUserId = (userId, limit) => {
-    let query = db('notifications').where({ user_id: userId }).orderBy('created_at', 'desc');
+  let query = db("notifications")
+    .where({ user_id: userId })
+    .orderBy("created_at", "desc");
 
-    if (limit && !isNaN(parseInt(limit, 10))) {
-        query = query.limit(parseInt(limit, 10));
-    }
+  if (limit && !isNaN(parseInt(limit, 10))) {
+    query = query.limit(parseInt(limit, 10));
+  }
 
-    return query;
+  return query;
 };
 
 /**
@@ -34,8 +36,11 @@ export const findByUserId = (userId, limit) => {
  * @returns {Promise<number>} A promise that resolves to the count of unread notifications.
  */
 export const countUnreadByUserId = async (userId) => {
-    const result = await db('notifications').where({ user_id: userId, is_read: false }).count('id as count').first();
-    return result.count;
+  const result = await db("notifications")
+    .where({ user_id: userId, is_read: false })
+    .count("id as count")
+    .first();
+  return result.count;
 };
 
 /**
@@ -45,11 +50,11 @@ export const countUnreadByUserId = async (userId) => {
  * @returns {Promise<object|undefined>} The updated notification object or undefined if not found.
  */
 export const updateAsRead = async (notificationId, userId) => {
-    const [notification] = await db('notifications')
-        .where({ id: notificationId, user_id: userId })
-        .update({ is_read: true })
-        .returning('*');
-    return notification;
+  const [notification] = await db("notifications")
+    .where({ id: notificationId, user_id: userId })
+    .update({ is_read: true })
+    .returning("*");
+  return notification;
 };
 
 /**
@@ -58,7 +63,7 @@ export const updateAsRead = async (notificationId, userId) => {
  * @returns {Promise<number>} The number of updated rows.
  */
 export const updateAllAsRead = (userId) => {
-    return db('notifications')
-        .where({ user_id: userId, is_read: false })
-        .update({ is_read: true });
+  return db("notifications")
+    .where({ user_id: userId, is_read: false })
+    .update({ is_read: true });
 };

@@ -36,7 +36,7 @@ export default function NotificationDropdown() {
 
   useEffect(() => {
     if (data) {
-      // The API returns an ApiResponse object, the actual notifications are in the `data` property.
+      // The useApi hook returns the full ApiResponse, the notifications are in the `data` property.
       setNotifications(data.data || []);
     }
   }, [data]);

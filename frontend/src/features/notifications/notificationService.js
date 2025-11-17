@@ -1,4 +1,4 @@
-import api from '../../api/axios';
+import api from "../../api/axios";
 
 /**
  * Fetches all notifications for the logged-in user.
@@ -10,7 +10,7 @@ const getNotifications = async (limit) => {
   if (limit) {
     params.limit = limit;
   }
-  const response = await api.get('/notifications', { params });
+  const response = await api.get("/notifications", { params });
   return response.data;
 };
 
@@ -19,8 +19,8 @@ const getNotifications = async (limit) => {
  * @returns {Promise<{count: number}>} A promise that resolves to an object with the count.
  */
 const getUnreadCount = async () => {
-  const response = await api.get('/notifications/unread-count');
-  return response.data; // The slice will handle extracting the nested data
+  const response = await api.get("/notifications/unread-count");
+  return response.data;
 };
 
 /**
@@ -38,7 +38,7 @@ const markAsRead = async (id) => {
  * @returns {Promise<object>} A promise that resolves to a success message.
  */
 const markAllAsRead = async () => {
-  const response = await api.post('/notifications/mark-all-read');
+  const response = await api.post("/notifications/mark-all-read");
   return response.data;
 };
 
