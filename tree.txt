@@ -54,6 +54,7 @@
 |   |   |   |   `-- payment.service.js
 |   |   |   |-- middlewares
 |   |   |   |   |-- auth.middleware.js
+|   |   |   |   |-- csrf.middleware.js
 |   |   |   |   |-- error.middleware.js
 |   |   |   |   `-- validation.middleware.js
 |   |   |   `-- utils
@@ -61,6 +62,12 @@
 |   |   |       |-- ApiResponse.js
 |   |   |       `-- generateToken.js
 |   |   |-- modules
+|   |   |   |-- _template
+|   |   |   |   |-- template.controller.js
+|   |   |   |   |-- template.model.js
+|   |   |   |   |-- template.routes.js
+|   |   |   |   |-- template.service.js
+|   |   |   |   `-- template.validation.js
 |   |   |   |-- admin
 |   |   |   |   |-- admin.controller.js
 |   |   |   |   |-- admin.model.js
@@ -94,15 +101,21 @@
 |   |   |   |-- products
 |   |   |   |   |-- product.controller.js
 |   |   |   |   |-- product.model.js
-|   |   |   |   `-- product.routes.js
+|   |   |   |   |-- product.routes.js
+|   |   |   |   |-- product.service.js
+|   |   |   |   `-- product.validation.js
 |   |   |   |-- staff
 |   |   |   |   |-- staff.controller.js
 |   |   |   |   |-- staff.model.js
-|   |   |   |   `-- staff.routes.js
+|   |   |   |   |-- staff.routes.js
+|   |   |   |   |-- staff.service.js
+|   |   |   |   `-- staff.validation.js
 |   |   |   |-- support
 |   |   |   |   |-- support.controller.js
 |   |   |   |   |-- support.model.js
-|   |   |   |   `-- support.routes.js
+|   |   |   |   |-- support.routes.js
+|   |   |   |   |-- support.service.js
+|   |   |   |   `-- support.validation.js
 |   |   |   |-- users
 |   |   |   |   |-- user.controller.js
 |   |   |   |   |-- user.model.js
@@ -169,11 +182,12 @@
 |   |   |   |   |-- OrderConfirmationPage.jsx
 |   |   |   |   |-- OrderHistoryPage.jsx
 |   |   |   |   `-- orderService.js
-|   |   |   |-- notification
+|   |   |   |-- notifications
 |   |   |   |   |-- NotificationsPage.jsx
 |   |   |   |   |-- components
 |   |   |   |   |   `-- NotificationDropdown.jsx
-|   |   |   |   `-- notificationService.js
+|   |   |   |   |-- notificationService.js
+|   |   |   |   `-- notificationSlice.js
 |   |   |   |-- products
 |   |   |   |   |-- ProductDetailPage.jsx
 |   |   |   |   |-- ProductsPage.jsx
@@ -214,4 +228,4 @@
 |-- package-lock.json
 `-- package.json
 
-53 directories, 161 files
+54 directories, 174 files

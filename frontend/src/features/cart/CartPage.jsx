@@ -26,6 +26,7 @@ export default function CartPage() {
     } else {
       // For guests, just update Redux state.
       dispatch(updateQuantity({ id: item.id, qty: newQuantity }));
+      toast.success('Quantity updated.');
     }
   };
 
