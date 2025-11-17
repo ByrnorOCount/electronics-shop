@@ -1,12 +1,12 @@
-import api from '../../api/axios';
+import api from "../../api/axios";
 
 /**
  * Generates a One-Time Password (OTP) for checkout and sends it to the user's email.
  * @returns {Promise<object>} A promise that resolves to the success message.
  */
 const generateOtp = async () => {
-  const response = await api.post('/orders/generate-otp');
-  return response.data;
+  const response = await api.post("/orders/generate-otp");
+  return response.data.data;
 };
 
 /**
@@ -16,12 +16,12 @@ const generateOtp = async () => {
  * @returns {Promise<object>} A promise that resolves to the newly created order details.
  */
 const createCodOrder = async (shippingAddress, otp) => {
-  const response = await api.post('/orders', {
+  const response = await api.post("/orders", {
     shippingAddress,
-    paymentMethod: 'cod',
+    paymentMethod: "cod",
     otp,
   });
-  return response.data;
+  return response.data.data;
 };
 
 /**
@@ -30,8 +30,10 @@ const createCodOrder = async (shippingAddress, otp) => {
  * @returns {Promise<{url: string}>} A promise that resolves to an object containing the payment URL.
  */
 const createPaymentSession = async (paymentMethod) => {
-  const response = await api.post('/orders/create-payment-session', { paymentMethod });
-  return response.data;
+  const response = await api.post("/orders/create-payment-session", {
+    paymentMethod,
+  });
+  return response.data.data;
 };
 
 /**
@@ -39,8 +41,8 @@ const createPaymentSession = async (paymentMethod) => {
  * @returns {Promise<Array<object>>} A promise that resolves to an array of orders.
  */
 const getOrderHistory = async () => {
-  const response = await api.get('/orders');
-  return response.data;
+  const response = await api.get("/orders");
+  return response.data.data;
 };
 
 const orderService = {

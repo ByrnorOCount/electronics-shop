@@ -1,4 +1,4 @@
-import api from '../../api/axios'; // Import a pre-configured axios instance
+import api from "../../api/axios"; // Import a pre-configured axios instance
 
 /**
  * Fetches a list of products, with optional filtering.
@@ -8,10 +8,12 @@ import api from '../../api/axios'; // Import a pre-configured axios instance
 const getProducts = async (filters) => {
   // Clean up filters to remove empty values before sending to the API
   const cleanFilters = Object.fromEntries(
-    Object.entries(filters || {}).filter(([, value]) => value !== '' && value !== null)
+    Object.entries(filters || {}).filter(
+      ([, value]) => value !== "" && value !== null
+    )
   );
-  const response = await api.get('/products', { params: cleanFilters });
-  return response.data;
+  const response = await api.get("/products", { params: cleanFilters });
+  return response.data.data;
 };
 
 /**
@@ -20,9 +22,9 @@ const getProducts = async (filters) => {
  * @returns {Promise<object>} A promise that resolves to the product object.
  */
 const getProductById = async (id) => {
-    if (!id) throw new Error("Product ID is required.");
-    const response = await api.get(`/products/${id}`);
-    return response.data;
+  if (!id) throw new Error("Product ID is required.");
+  const response = await api.get(`/products/${id}`);
+  return response.data.data;
 };
 
 /**
@@ -31,9 +33,9 @@ const getProductById = async (id) => {
  * @returns {Promise<Array<object>>} A promise that resolves to an array of product objects.
  */
 const getFeaturedProducts = async () => {
-    // The backend controller `getProducts` expects a query parameter `?featured=true`
-    const response = await api.get('/products', { params: { featured: true } });
-    return response.data;
+  // The backend controller `getProducts` expects a query parameter `?featured=true`
+  const response = await api.get("/products", { params: { featured: true } });
+  return response.data.data;
 };
 
 /**
@@ -42,15 +44,15 @@ const getFeaturedProducts = async () => {
  * @returns {Promise<Array<object>>} A promise that resolves to an array of category objects.
  */
 const getProductCategories = async () => {
-  const response = await api.get('/products/categories');
-  return response.data;
+  const response = await api.get("/products/categories");
+  return response.data.data;
 };
 
 const productService = {
-    getProducts,
-    getProductById,
-    getFeaturedProducts,
-    getProductCategories,
+  getProducts,
+  getProductById,
+  getFeaturedProducts,
+  getProductCategories,
 };
 
 export default productService;

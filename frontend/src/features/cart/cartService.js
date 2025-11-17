@@ -1,12 +1,12 @@
-import api from '../../api/axios';
+import api from "../../api/axios";
 
 /**
  * Fetches all items from the user's cart.
  * @returns {Promise<Array<object>>} A promise that resolves to an array of cart items.
  */
 const getCartItems = async () => {
-  const response = await api.get('/cart');
-  return response.data.data; // Extract the nested data array
+  const response = await api.get("/cart");
+  return response.data.data;
 };
 
 /**
@@ -16,7 +16,7 @@ const getCartItems = async () => {
  * @returns {Promise<object>} A promise that resolves to the added/updated cart item.
  */
 const addItemToCart = async (productId, quantity) => {
-  const response = await api.post('/cart', { productId, quantity });
+  const response = await api.post("/cart", { productId, quantity });
   return response.data.data;
 };
 
@@ -47,8 +47,8 @@ const removeCartItem = async (itemId) => {
  */
 const syncCart = async (itemsToSync) => {
   // This sends the local cart to a new endpoint for the backend to merge.
-  const response = await api.post('/cart/sync', { items: itemsToSync });
-  return response.data.data; // Extract the nested data array
+  const response = await api.post("/cart/sync", { items: itemsToSync });
+  return response.data.data;
 };
 
 const cartService = {

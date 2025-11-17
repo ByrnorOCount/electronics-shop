@@ -1,4 +1,4 @@
-import db from '../../config/db.js';
+import db from "../../config/db.js";
 
 /**
  * Finds a user by their email address.
@@ -6,7 +6,7 @@ import db from '../../config/db.js';
  * @returns {Promise<object|undefined>} The user object or undefined if not found.
  */
 export const findByEmail = (email) => {
-    return db('users').where({ email }).first();
+  return db("users").where({ email }).first();
 };
 
 /**
@@ -16,7 +16,7 @@ export const findByEmail = (email) => {
  * @returns {Promise<object|undefined>} The user object or undefined if not found.
  */
 export const findByProvider = (provider, providerId) => {
-    return db('users').where({ provider, provider_id: providerId }).first();
+  return db("users").where({ provider, provider_id: providerId }).first();
 };
 
 /**
@@ -25,8 +25,8 @@ export const findByProvider = (provider, providerId) => {
  * @returns {Promise<object>} The newly created user object.
  */
 export const create = async (userData) => {
-    const [newUser] = await db('users').insert(userData).returning('*');
-    return newUser;
+  const [newUser] = await db("users").insert(userData).returning("*");
+  return newUser;
 };
 
 /**
@@ -36,6 +36,9 @@ export const create = async (userData) => {
  * @returns {Promise<object>} The updated user object.
  */
 export const update = async (userId, updateData) => {
-    const [updatedUser] = await db('users').where({ id: userId }).update(updateData).returning('*');
-    return updatedUser;
+  const [updatedUser] = await db("users")
+    .where({ id: userId })
+    .update(updateData)
+    .returning("*");
+  return updatedUser;
 };

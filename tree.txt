@@ -120,11 +120,14 @@
 |   |   |   |   |-- user.controller.js
 |   |   |   |   |-- user.model.js
 |   |   |   |   |-- user.routes.js
-|   |   |   |   `-- user.service.js
+|   |   |   |   |-- user.service.js
+|   |   |   |   `-- user.validation.js
 |   |   |   `-- wishlist
 |   |   |       |-- wishlist.controller.js
 |   |   |       |-- wishlist.model.js
-|   |   |       `-- wishlist.routes.js
+|   |   |       |-- wishlist.routes.js
+|   |   |       |-- wishlist.service.js
+|   |   |       `-- wishlist.validation.js
 |   |   |-- routes.js
 |   |   `-- server.js
 |   `-- tests
@@ -228,4 +231,4 @@
 |-- package-lock.json
 `-- package.json
 
-54 directories, 174 files
+54 directories, 177 files
