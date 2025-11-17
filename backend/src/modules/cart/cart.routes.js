@@ -12,12 +12,14 @@ import * as cartValidation from './cart.validation.js';
 
 const router = express.Router();
 
-// All cart routes are for authenticated users only.
-router.use(authenticate);
+// Cart endpoints should be accessible to both guests and authenticated users.
+// Only the sync endpoint requires authentication (to merge guest cart into user cart).
+router
+  .route('/')
+  .get(getCart)
+  .post(validate(cartValidation.addItem), addItemToCart);
 
-router.route('/').get(getCart).post(validate(cartValidation.addItem), addItemToCart);
-
-router.post('/sync', validate(cartValidation.syncCart), syncCart);
+router.post('/sync', authenticate, validate(cartValidation.syncCart), syncCart);
 
 router
   .route('/items/:itemId')
