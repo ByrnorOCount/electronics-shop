@@ -1,18 +1,30 @@
-import express from 'express';
-import {
-  getWishlist,
-  addToWishlist,
-  removeFromWishlist
-} from './wishlist.controller.js';
-import { authenticate } from '../../core/middlewares/auth.middleware.js';
+import express from "express";
+import * as wishlistController from "./wishlist.controller.js";
+import * as wishlistValidation from "./wishlist.validation.js";
+import { authenticate } from "../../core/middlewares/auth.middleware.js";
+import validate from "../../core/middlewares/validation.middleware.js";
 
 const router = express.Router();
 
-router.route('/')
-  .get(authenticate, getWishlist)
-  .post(authenticate, addToWishlist);
+// All wishlist routes require an authenticated user.
+router.use(authenticate);
 
-router.route('/:productId')
-  .delete(authenticate, removeFromWishlist);
+router
+  .route("/")
+  .get(
+    validate(wishlistValidation.getWishlist),
+    wishlistController.getWishlistItems
+  )
+  .post(
+    validate(wishlistValidation.addToWishlist),
+    wishlistController.addWishlistItem
+  );
+
+router
+  .route("/:productId")
+  .delete(
+    validate(wishlistValidation.removeFromWishlist),
+    wishlistController.removeWishlistItem
+  );
 
 export default router;

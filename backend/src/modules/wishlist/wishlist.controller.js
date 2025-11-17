@@ -1,17 +1,26 @@
-import * as Wishlist from './wishlist.model.js';
+import * as wishlistService from "./wishlist.service.js";
+import httpStatus from "http-status";
+import ApiResponse from "../../core/utils/ApiResponse.js";
 
 /**
  * Get all items in the user's wishlist.
  * @route GET /api/wishlist
  * @access Private
  */
-export const getWishlist = async (req, res) => {
+export const getWishlistItems = async (req, res, next) => {
   try {
-    const wishlistItems = await Wishlist.findByUserId(req.user.id);
-    res.status(200).json(wishlistItems);
+    const wishlistItems = await wishlistService.getWishlistItems(req.user.id);
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          wishlistItems,
+          "Wishlist retrieved successfully."
+        )
+      );
   } catch (error) {
-    console.error('Error getting wishlist:', error);
-    res.status(500).json({ message: 'Server error while retrieving wishlist.' });
+    next(error);
   }
 };
 
@@ -20,46 +29,46 @@ export const getWishlist = async (req, res) => {
  * @route POST /api/wishlist
  * @access Private
  */
-export const addToWishlist = async (req, res) => {
-  const { productId } = req.body;
-  const userId = req.user.id;
-
-  if (!productId) {
-    return res.status(400).json({ message: 'Product ID is required.' });
-  }
-
+export const addWishlistItem = async (req, res, next) => {
   try {
-    const existingItem = await Wishlist.findOne(userId, productId);
-    if (existingItem) {
-      return res.status(400).json({ message: 'Product already in wishlist.' });
-    }
-
-    await Wishlist.create(userId, productId);
-    res.status(201).json({ message: 'Product added to wishlist.' });
+    const { productId } = req.body;
+    const newItem = await wishlistService.addItemToWishlist(
+      req.user.id,
+      productId
+    );
+    res
+      .status(httpStatus.CREATED)
+      .json(
+        new ApiResponse(
+          httpStatus.CREATED,
+          newItem,
+          "Product added to wishlist."
+        )
+      );
   } catch (error) {
-    console.error('Error adding to wishlist:', error);
-    res.status(500).json({ message: 'Server error while adding to wishlist.' });
+    next(error);
   }
 };
 
 /**
  * Remove a product from the wishlist.
- * @route DELETE /api/wishlist/:productId
+ * @route DELETE /api/wishlist/:id
  * @access Private
  */
-export const removeFromWishlist = async (req, res) => {
-  const { productId } = req.params;
-  const userId = req.user.id;
-
+export const removeWishlistItem = async (req, res, next) => {
   try {
-    const deletedCount = await Wishlist.remove(userId, productId);
-    if (deletedCount === 0) {
-      return res.status(404).json({ message: 'Product not found in wishlist.' });
-    }
-
-    res.status(204).send();
+    const { productId } = req.params;
+    await wishlistService.removeItemFromWishlist(req.user.id, productId);
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          { productId },
+          "Product removed from wishlist."
+        )
+      );
   } catch (error) {
-    console.error('Error removing from wishlist:', error);
-    res.status(500).json({ message: 'Server error while removing from wishlist.' });
+    next(error);
   }
 };

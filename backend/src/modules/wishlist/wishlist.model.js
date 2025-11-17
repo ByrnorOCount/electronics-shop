@@ -1,4 +1,4 @@
-import db from '../../config/db.js';
+import db from "../../config/db.js";
 
 /**
  * Finds all products in a user's wishlist.
@@ -6,11 +6,11 @@ import db from '../../config/db.js';
  * @returns {Promise<Array>} An array of product objects in the wishlist.
  */
 export const findByUserId = (userId) => {
-    return db('wishlists')
-        .join('products', 'wishlists.product_id', 'products.id')
-        .where('wishlists.user_id', userId)
-        .select('products.*')
-        .orderBy('wishlists.id', 'asc');
+  return db("wishlists")
+    .join("products", "wishlists.product_id", "products.id")
+    .where("wishlists.user_id", userId)
+    .select("products.*")
+    .orderBy("wishlists.id", "asc");
 };
 
 /**
@@ -20,7 +20,9 @@ export const findByUserId = (userId) => {
  * @returns {Promise<object|undefined>} The wishlist item or undefined if not found.
  */
 export const findOne = (userId, productId) => {
-    return db('wishlists').where({ user_id: userId, product_id: productId }).first();
+  return db("wishlists")
+    .where({ user_id: userId, product_id: productId })
+    .first();
 };
 
 /**
@@ -30,7 +32,7 @@ export const findOne = (userId, productId) => {
  * @returns {Promise<void>}
  */
 export const create = (userId, productId) => {
-    return db('wishlists').insert({ user_id: userId, product_id: productId });
+  return db("wishlists").insert({ user_id: userId, product_id: productId });
 };
 
 /**
@@ -40,5 +42,7 @@ export const create = (userId, productId) => {
  * @returns {Promise<number>} The number of deleted rows.
  */
 export const remove = (userId, productId) => {
-    return db('wishlists').where({ user_id: userId, product_id: productId }).del();
+  return db("wishlists")
+    .where({ user_id: userId, product_id: productId })
+    .del();
 };
