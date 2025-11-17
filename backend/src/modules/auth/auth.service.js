@@ -66,38 +66,22 @@ const login = async (email, password) => {
 
 /**
  * Handle social login/registration
- * @param {object} profile - Profile information from OAuth provider
+ * @param {object} user - The user object provided by Passport.js after authentication.
  * @returns {Promise<{user: object, token: string}>}
  */
-const handleSocialLogin = async (profile) => {
-  let user = await authModel.findByProvider(profile.provider, profile.id);
-
-  if (!user) {
-    // If user with this provider doesn't exist, check by email
-    user = await authModel.findByEmail(profile.emails[0].value);
-
-    if (!user) {
-      // If no user found, create a new one
-      user = await authModel.create({
-        email: profile.emails[0].value,
-        first_name: profile.name.givenName,
-        last_name: profile.name.familyName,
-        provider: profile.provider,
-        provider_id: profile.id,
-        is_verified: true, // Social logins are considered verified
-        role: "customer", // Assign default role
-      });
-    } else if (!user.provider || !user.provider_id) {
-      // If user exists but is not linked to a social provider, update them
-      user = await authModel.update(user.id, {
-        provider: profile.provider,
-        provider_id: profile.id,
-        is_verified: true, // Mark as verified if they login via social
-      });
-    }
-  }
-
+const handleSocialLogin = async (user) => {
+  // Passport's `findOrCreateUser` has already found or created the user.
+  // All we need to do here is generate the authentication tokens for that user.
   return generateAuthTokens(user);
 };
 
-export { register, login, handleSocialLogin };
+/**
+ * Get the currently authenticated user.
+ * @param {object} user - The user object from the request (attached by middleware).
+ * @returns {Promise<object>}
+ */
+const getMe = async (user) => {
+  return user;
+};
+
+export { register, login, handleSocialLogin, getMe };

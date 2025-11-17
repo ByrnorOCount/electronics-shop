@@ -27,10 +27,21 @@ const logout = async () => {
   return response.data;
 };
 
+/**
+ * Fetches the current user's profile from the backend.
+ * This relies on the httpOnly cookie being sent automatically by the browser.
+ * @returns {Promise<object>} The user object.
+ */
+const getMe = async () => {
+  const response = await api.get("/auth/me");
+  return response.data.data;
+};
+
 const authService = {
   register,
   login,
   logout,
+  getMe,
 };
 
 export default authService;

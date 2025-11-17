@@ -7,6 +7,11 @@ import { store, persistor } from "./store";
 import App from "./App";
 import "./styles/global.css";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { checkAuthStatus } from "./features/auth/authSlice";
+
+// Dispatch the action to check for an existing session (via httpOnly cookie)
+// This is crucial for re-hydrating the user state after social logins.
+store.dispatch(checkAuthStatus());
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

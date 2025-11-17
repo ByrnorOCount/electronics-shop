@@ -69,6 +69,24 @@ export const socialAuthCallback = async (req, res, next) => {
 };
 
 /**
+ * @route GET /api/auth/me
+ * @summary Get the currently authenticated user's profile.
+ * @description This endpoint is used by the frontend to verify an existing session (e.g., on page load).
+ * @access Private
+ */
+export const getMe = async (req, res, next) => {
+  try {
+    // The user object is already attached to the request by the `authenticate` middleware.
+    const user = await authService.getMe(req.user);
+    res
+      .status(httpStatus.OK)
+      .json(new ApiResponse(httpStatus.OK, user, "User profile retrieved."));
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * @route POST /api/auth/logout
  */
 export const logout = (req, res, next) => {

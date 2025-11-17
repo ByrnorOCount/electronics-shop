@@ -140,6 +140,7 @@
 |   |   `-- logo.svg
 |   |-- src
 |   |   |-- App.jsx
+|   |   |-- AppInitializer.jsx
 |   |   |-- api
 |   |   |   |-- axios.js
 |   |   |   `-- index.js
@@ -233,4 +234,4 @@
 |-- package-lock.json
 `-- package.json
 
-54 directories, 179 files
+54 directories, 180 files

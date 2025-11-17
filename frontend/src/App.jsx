@@ -48,6 +48,16 @@ function App() {
   // This ensures that subsequent state-changing API calls (POST, PUT, DELETE)
   // will have the necessary token to pass the backend's security check.
   useEffect(() => {
+    // Clean up the URL if it contains the Facebook OAuth redirect artifact.
+    if (window.location.hash && window.location.hash === "#_=_") {
+      // Use replaceState to remove the hash from the URL without reloading the page.
+      window.history.replaceState(
+        null,
+        document.title,
+        window.location.pathname + window.location.search
+      );
+    }
+
     initializeCsrf();
   }, []);
   return (

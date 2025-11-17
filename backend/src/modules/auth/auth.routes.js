@@ -9,6 +9,7 @@ import {
   login,
   socialAuthCallback,
   logout,
+  getMe,
 } from "./auth.controller.js";
 import validate from "../../core/middlewares/validation.middleware.js";
 import authValidation from "./auth.validation.js";
@@ -21,6 +22,12 @@ router.post("/login", validate(authValidation.login), login);
 
 // --- Logout ---
 router.post("/logout", logout);
+
+// --- Get Current User ---
+// This route is crucial for the frontend to verify the user's session on page load,
+// especially after a social login redirect.
+import { authenticate } from "../../core/middlewares/auth.middleware.js";
+router.get("/me", authenticate, getMe);
 
 // --- Social Login Routes ---
 
