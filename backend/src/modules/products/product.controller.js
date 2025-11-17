@@ -1,80 +1,45 @@
-import * as Product from './product.model.js';
+import * as productService from './product.service.js';
+import httpStatus from 'http-status';
+import ApiResponse from '../../core/utils/ApiResponse.js';
 
 /**
- * Gets a list of products with filtering and searching.
- * @param {import('express').Request} req - The Express request object.
- * @param {import('express').Response} res - The Express response object.
+ * @summary Get all products
+ * @route GET /api/products
+ * @access Public
  */
-export const getProducts = async (req, res) => {
+export const getProducts = async (req, res, next) => {
   try {
-    // Extract filters from query parameters
-    const { search, category, brand, featured, min_price, max_price } = req.query;
-
-    let categoryId;
-    if (category) {
-      const categoryRecord = await Product.findCategoryByName(category);
-      if (categoryRecord) {
-        categoryId = categoryRecord.id;
-      } else {
-        // If an invalid category name is provided, return no products.
-        return res.status(200).json([]);
-      }
-    }
-
-    const filters = {
-      search,
-      category_id: categoryId, // Use the resolved category ID for filtering
-      brand,
-      is_featured: featured === 'true',
-      min_price: min_price ? parseFloat(min_price) : undefined,
-      max_price: max_price ? parseFloat(max_price) : undefined,
-    };
-
-    const products = await Product.find(filters);
-    res.status(200).json(products);
+    const products = await productService.getProducts(req.query);
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, products, 'Products retrieved successfully.'));
   } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).json({ message: 'Error fetching products' });
+    next(error);
   }
 };
 
 /**
- * Gets a single product by its ID.
- * @param {import('express').Request} req - The Express request object.
- * @param {import('express').Response} res - The Express response object.
+ * @summary Get a single product by id
+ * @route GET /api/products/:id
+ * @access Public
  */
-export const getProductById = async (req, res) => {
+export const getProductById = async (req, res, next) => {
   try {
-    const id = parseInt(req.params.id, 10);
-
-    if (isNaN(id)) {
-      return res.status(400).json({ message: 'Invalid product ID.' });
-    }
-
-    const product = await Product.findById(id);
-
-    if (product) {
-      res.status(200).json(product);
-    } else {
-      res.status(404).json({ message: 'Product not found' });
-    }
+    const product = await productService.getProductById(req.params.id);
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, product, 'Product retrieved successfully.'));
   } catch (error) {
-    console.error(`Error fetching product with ID ${req.params.id}:`, error);
-    res.status(500).json({ message: 'Error fetching product' });
+    next(error);
   }
 };
 
 /**
- * Gets a list of all product categories.
- * @param {import('express').Request} req - The Express request object.
- * @param {import('express').Response} res - The Express response object.
+ * @summary Get all product categories
+ * @route GET /api/products/categories
+ * @access Public
  */
-export const getProductCategories = async (req, res) => {
+export const getProductCategories = async (req, res, next) => {
   try {
-    const categories = await Product.findAllCategories();
-    res.status(200).json(categories);
+    const categories = await productService.getProductCategories();
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, categories, 'Categories retrieved successfully.'));
   } catch (error) {
-    console.error('Error fetching product categories:', error);
-    res.status(500).json({ message: 'Error fetching categories' });
+    next(error);
   }
 };
