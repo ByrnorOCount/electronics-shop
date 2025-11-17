@@ -1,13 +1,23 @@
-import * as UserService from './user.service.js';
+import * as userService from "./user.service.js";
+import httpStatus from "http-status";
+import ApiResponse from "../../core/utils/ApiResponse.js";
 
 /**
  * Get user profile.
  * @route GET /api/users/me
  * @access Private
  */
-export const getUserProfile = async (req, res) => {
-  // The user object is attached to the request by the `protect` middleware
-  res.status(200).json(req.user);
+export const getUserProfile = async (req, res, next) => {
+  // The user object is attached to the request by the `authenticate` middleware
+  res
+    .status(httpStatus.OK)
+    .json(
+      new ApiResponse(
+        httpStatus.OK,
+        req.user,
+        "Profile retrieved successfully."
+      )
+    );
 };
 
 /**
@@ -15,36 +25,43 @@ export const getUserProfile = async (req, res) => {
  * @route PUT /api/users/me
  * @access Private
  */
-export const updateUserProfile = async (req, res) => {
+export const updateUserProfile = async (req, res, next) => {
   try {
-    // Only allow specific fields to be updated
-    const { first_name, last_name } = req.body;
-    const updateData = { first_name, last_name };
-    const result = await UserService.updateUser(req.user.id, updateData);
-    res.status(200).json(result);
+    const updatedUser = await userService.updateUser(req.user.id, req.body);
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          updatedUser,
+          "Profile updated successfully."
+        )
+      );
   } catch (error) {
-    console.error('Error updating profile:', error);
-    if (error.message.includes('No fields')) return res.status(400).json({ message: error.message });
-    res.status(500).json({ message: 'Server error during profile update.' });
+    next(error);
   }
 };
 
 /**
  * Change user password.
- * @route PUT /api/users/me/password
+ * @route POST /api/users/change-password
  * @access Private
  */
-export const changePassword = async (req, res) => {
-  const { currentPassword, newPassword } = req.body;
+export const changePassword = async (req, res, next) => {
   try {
-    const result = await UserService.changeUserPassword(req.user.id, currentPassword, newPassword);
-    res.status(200).json(result);
+    const { currentPassword, newPassword } = req.body;
+    await userService.changeUserPassword(
+      req.user.id,
+      currentPassword,
+      newPassword
+    );
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(httpStatus.OK, null, "Password changed successfully.")
+      );
   } catch (error) {
-    console.error('Error changing password:', error);
-    if (error.message.includes('incorrect')) {
-      return res.status(401).json({ message: error.message });
-    }
-    res.status(500).json({ message: 'Server error while changing password.' });
+    next(error);
   }
 };
 
@@ -53,47 +70,60 @@ export const changePassword = async (req, res) => {
  * @route POST /api/users/forgot-password
  * @access Public
  */
-export const forgotPassword = async (req, res) => {
+export const forgotPassword = async (req, res, next) => {
   try {
-    const result = await UserService.requestPasswordReset(req.body.email);
-    // Always return 200 to prevent email enumeration
-    res.status(200).json(result);
+    await userService.requestPasswordReset(req.body.email);
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          null,
+          "If a user with that email exists, a reset link has been sent."
+        )
+      );
   } catch (error) {
-    console.error('Error in forgot password:', error);
-    res.status(500).json({ message: 'Server error.' });
+    next(error);
   }
 };
 
 /**
  * Verify user's email using a token.
- * @route GET /api/users/verify-email/:token
+ * @route POST /api/users/verify-email
  * @access Public
  */
-export const verifyEmail = async (req, res) => {
+export const verifyEmail = async (req, res, next) => {
   try {
-    const result = await UserService.verifyUserEmail(req.params.token);
-    res.status(200).send(result);
+    await userService.verifyUserEmail(req.body.token);
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(httpStatus.OK, null, "Email verified successfully.")
+      );
   } catch (error) {
-    console.error('Error during email verification:', error);
-    if (error.message.includes('Invalid')) return res.status(400).json({ message: error.message });
-    res.status(500).json({ message: 'Server error during email verification.' });
+    next(error);
   }
 };
 
 /**
  * Reset password using a token.
- * @route POST /api/users/reset-password/:token
+ * @route POST /api/users/reset-password
  * @access Public
  */
-export const resetPassword = async (req, res) => {
-  const { token } = req.params;
-  const { password } = req.body;
+export const resetPassword = async (req, res, next) => {
   try {
-    const result = await UserService.resetUserPassword(token, password);
-    res.status(200).json(result);
+    const { token, password } = req.body;
+    await userService.resetUserPassword(token, password);
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          null,
+          "Password has been reset successfully."
+        )
+      );
   } catch (error) {
-    console.error('Error in reset password:', error);
-    if (error.message.includes('invalid or has expired')) return res.status(400).json({ message: error.message });
-    res.status(500).json({ message: 'Server error.' });
+    next(error);
   }
 };

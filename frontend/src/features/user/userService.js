@@ -1,4 +1,4 @@
-import api from '../../api/axios';
+import api from "../../api/axios";
 
 /**
  * Updates the logged-in user's profile information.
@@ -6,8 +6,8 @@ import api from '../../api/axios';
  * @returns {Promise<object>} A promise that resolves to the updated user object.
  */
 const updateUserProfile = async (userData) => {
-  const response = await api.put('/users/me', userData);
-  return response.data;
+  const response = await api.put("/users/me", userData);
+  return response.data.data;
 };
 
 /**
@@ -16,8 +16,8 @@ const updateUserProfile = async (userData) => {
  * @returns {Promise<object>} A promise that resolves to the success message.
  */
 const changePassword = async (passwordData) => {
-  const response = await api.put('/users/me/password', passwordData);
-  return response.data;
+  const response = await api.put("/users/me/password", passwordData);
+  return response.data.data;
 };
 
 const userService = {

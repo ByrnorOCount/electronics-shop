@@ -1,4 +1,4 @@
-import db from '../../config/db.js';
+import db from "../../config/db.js";
 
 /**
  * Finds a user by their email address.
@@ -6,7 +6,7 @@ import db from '../../config/db.js';
  * @returns {Promise<object|undefined>} The user object or undefined.
  */
 export const findByEmail = (email) => {
-    return db('users').where({ email }).first();
+  return db("users").where({ email }).first();
 };
 
 /**
@@ -16,7 +16,7 @@ export const findByEmail = (email) => {
  * @returns {Promise<object|undefined>} The user object or undefined.
  */
 export const findByEmailAndProvider = (email, provider) => {
-    return db('users').where({ email, provider }).first();
+  return db("users").where({ email, provider }).first();
 };
 
 /**
@@ -25,8 +25,8 @@ export const findByEmailAndProvider = (email, provider) => {
  * @returns {Promise<object>} The newly created user object.
  */
 export const create = async (userData) => {
-    const [user] = await db('users').insert(userData).returning('*');
-    return user;
+  const [user] = await db("users").insert(userData).returning("*");
+  return user;
 };
 
 /**
@@ -35,7 +35,7 @@ export const create = async (userData) => {
  * @returns {Promise<object|undefined>} The user object or undefined.
  */
 export const findById = (id) => {
-    return db('users').where({ id }).first();
+  return db("users").where({ id }).first();
 };
 
 /**
@@ -45,8 +45,11 @@ export const findById = (id) => {
  * @returns {Promise<object>} The updated user object.
  */
 export const update = async (id, updateData) => {
-    const [updatedUser] = await db('users').where({ id }).update(updateData).returning(['id', 'first_name', 'last_name', 'email', 'role']);
-    return updatedUser;
+  const [updatedUser] = await db("users")
+    .where({ id })
+    .update(updateData)
+    .returning(["id", "first_name", "last_name", "email", "role"]);
+  return updatedUser;
 };
 
 /**
@@ -55,7 +58,7 @@ export const update = async (id, updateData) => {
  * @returns {Promise<object|undefined>} The user object or undefined.
  */
 export const findByVerificationToken = (token) => {
-    return db('users').where({ email_verification_token: token }).first();
+  return db("users").where({ email_verification_token: token }).first();
 };
 
 /**
@@ -64,10 +67,10 @@ export const findByVerificationToken = (token) => {
  * @returns {Promise<number>} The number of updated rows.
  */
 export const verifyUser = (id) => {
-    return db('users').where({ id }).update({
-        is_verified: true,
-        email_verification_token: null,
-    });
+  return db("users").where({ id }).update({
+    is_verified: true,
+    email_verification_token: null,
+  });
 };
 
 /**
@@ -76,10 +79,10 @@ export const verifyUser = (id) => {
  * @returns {Promise<object|undefined>} The user object or undefined.
  */
 export const findByResetToken = (hashedToken) => {
-    return db('users')
-        .where({ password_reset_token: hashedToken })
-        .andWhere('password_reset_expires', '>', db.raw('NOW()'))
-        .first();
+  return db("users")
+    .where({ password_reset_token: hashedToken })
+    .andWhere("password_reset_expires", ">", db.raw("NOW()"))
+    .first();
 };
 
 /**
@@ -88,9 +91,11 @@ export const findByResetToken = (hashedToken) => {
  * @param {string} hashedToken - The hashed token to store.
  */
 export const setResetToken = (id, hashedToken) => {
-    return db('users').where({ id }).update({
-        password_reset_token: hashedToken,
-        password_reset_expires: db.raw("NOW() + INTERVAL '1 hour'"),
+  return db("users")
+    .where({ id })
+    .update({
+      password_reset_token: hashedToken,
+      password_reset_expires: db.raw("NOW() + INTERVAL '1 hour'"),
     });
 };
 
@@ -101,5 +106,5 @@ export const setResetToken = (id, hashedToken) => {
  * @returns {Promise<object|undefined>} The user object or undefined.
  */
 export const findByProvider = (provider, providerId) => {
-    return db('users').where({ provider, provider_id: providerId }).first();
+  return db("users").where({ provider, provider_id: providerId }).first();
 };

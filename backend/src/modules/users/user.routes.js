@@ -1,26 +1,29 @@
-import express from 'express';
-import {
-  getUserProfile,
-  updateUserProfile,
-  changePassword,
-  forgotPassword,
-  resetPassword,
-  verifyEmail,
-} from './user.controller.js';
-import {
-  authenticate,
-  isStaff,
-  isAdmin
-} from '../../core/middlewares/auth.middleware.js';
+import express from "express";
+import * as userController from "./user.controller.js";
+import * as userValidation from "./user.validation.js";
+import { authenticate } from "../../core/middlewares/auth.middleware.js";
+import validate from "../../core/middlewares/validation.middleware.js";
 
 const router = express.Router();
 
-router.get('/verify-email/:token', verifyEmail);
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password/:token', resetPassword);
+// Authenticated routes for user profile
+router.use(authenticate);
 
-// User Profile & Settings
-router.route('/me').get(authenticate, getUserProfile).put(authenticate, updateUserProfile);
-router.put('/me/password', authenticate, changePassword);
+// Public routes for account management
+router.post(
+  "/verify-email",
+  validate(userValidation.verifyEmail),
+  userController.verifyEmail
+);
+router.post(
+  "/forgot-password",
+  validate(userValidation.forgotPassword),
+  userController.forgotPassword
+);
+router.post(
+  "/reset-password",
+  validate(userValidation.resetPassword),
+  userController.resetPassword
+);
 
 export default router;
