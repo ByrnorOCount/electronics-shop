@@ -1,6 +1,7 @@
-import * as supportService from './support.service.js';
-import httpStatus from 'http-status';
-import ApiResponse from '../../core/utils/ApiResponse.js';
+import * as supportService from "./support.service.js";
+import httpStatus from "http-status";
+import ApiResponse from "../../core/utils/ApiResponse.js";
+import ApiError from "../../core/utils/ApiError.js";
 
 /**
  * @summary Submit a new support ticket
@@ -10,8 +11,20 @@ import ApiResponse from '../../core/utils/ApiResponse.js';
 export const submitTicket = async (req, res, next) => {
   try {
     const { subject, message } = req.body;
-    const newTicket = await supportService.submitTicket(req.user.id, subject, message);
-    res.status(httpStatus.CREATED).json(new ApiResponse(httpStatus.CREATED, newTicket, 'Ticket submitted successfully.'));
+    const newTicket = await supportService.submitTicket(
+      req.user.id,
+      subject,
+      message
+    );
+    res
+      .status(httpStatus.CREATED)
+      .json(
+        new ApiResponse(
+          httpStatus.CREATED,
+          newTicket,
+          "Ticket submitted successfully."
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -24,8 +37,22 @@ export const submitTicket = async (req, res, next) => {
  */
 export const getUserTickets = async (req, res, next) => {
   try {
-    const tickets = await supportService.getUserTickets(req.user.id);
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, tickets, 'Tickets retrieved successfully.'));
+    // Pass query params for potential future filtering/pagination
+    const tickets = await supportService.getUserTickets(req.user.id, req.query);
+    if (!tickets) {
+      return next(
+        new ApiError(httpStatus.NOT_FOUND, "No tickets found for this user.")
+      );
+    }
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          tickets,
+          "Tickets retrieved successfully."
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -38,8 +65,24 @@ export const getUserTickets = async (req, res, next) => {
  */
 export const getTicketById = async (req, res, next) => {
   try {
-    const ticket = await supportService.getTicketById(req.params.ticketId, req.user.id);
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, ticket, 'Ticket retrieved successfully.'));
+    const ticket = await supportService.getTicketById(
+      req.params.ticketId,
+      req.user.id,
+      req.query
+    );
+    if (!ticket) {
+      return next(
+        new ApiError(
+          httpStatus.NOT_FOUND,
+          "Ticket not found or you do not have permission to view it."
+        )
+      );
+    }
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(httpStatus.OK, ticket, "Ticket retrieved successfully.")
+      );
   } catch (error) {
     next(error);
   }
@@ -53,7 +96,11 @@ export const getTicketById = async (req, res, next) => {
 export const getFaqs = async (req, res, next) => {
   try {
     const faqs = await supportService.getFaqs();
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, faqs, 'FAQs retrieved successfully.'));
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(httpStatus.OK, faqs, "FAQs retrieved successfully.")
+      );
   } catch (error) {
     next(error);
   }

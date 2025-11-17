@@ -1,4 +1,4 @@
-import db from '../../config/db.js';
+import db from "../../config/db.js";
 
 /**
  * Creates a new support ticket.
@@ -6,19 +6,23 @@ import db from '../../config/db.js';
  * @returns {Promise<object>} The newly created ticket object.
  */
 export const create = async (ticketData) => {
-    const [newTicket] = await db('support_tickets').insert(ticketData).returning('*');
-    return newTicket;
+  const [newTicket] = await db("support_tickets")
+    .insert(ticketData)
+    .returning("*");
+  return newTicket;
 };
 
 /**
  * Finds all support tickets for a specific user.
  * @param {number} userId - The ID of the user.
+ * @param {object} filter - Knex filter object.
  * @returns {Promise<Array>} An array of the user's support tickets.
  */
-export const findByUserId = (userId) => {
-    return db('support_tickets')
-        .where({ user_id: userId })
-        .orderBy('created_at', 'desc');
+export const findByUserId = (userId, filter = {}) => {
+  return db("support_tickets")
+    .where({ user_id: userId })
+    .where(filter)
+    .orderBy("created_at", "desc");
 };
 
 /**
@@ -28,7 +32,5 @@ export const findByUserId = (userId) => {
  * @returns {Promise<object|undefined>} The ticket object or undefined if not found.
  */
 export const findByIdAndUserId = (ticketId, userId) => {
-    return db('support_tickets')
-        .where({ id: ticketId, user_id: userId })
-        .first();
+  return db("support_tickets").where({ id: ticketId, user_id: userId }).first();
 };
