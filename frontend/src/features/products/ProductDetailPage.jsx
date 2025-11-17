@@ -1,16 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { addItem } from '../cart/cartSlice';
-import { addToWishlistLocal, removeFromWishlistLocal } from '../wishlist/wishlistSlice';
-import { useApi } from '../../hooks/useApi';
-import { productService, cartService, wishlistService } from '../../api';
-import toast from 'react-hot-toast';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { addItem } from "../cart/cartSlice";
+import {
+  addToWishlistLocal,
+  removeFromWishlistLocal,
+} from "../wishlist/wishlistSlice";
+import { useApi } from "../../hooks/useApi";
+import { productService, cartService, wishlistService } from "../../api";
+import toast from "react-hot-toast";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
-  const { data: product, loading, error, request: fetchProduct } = useApi(productService.getProductById);
+  const {
+    data: product,
+    loading,
+    error,
+    request: fetchProduct,
+  } = useApi(productService.getProductById);
 
   useEffect(() => {
     // The `id` is a string from the URL, but our services expect a number.
@@ -26,7 +34,9 @@ const ProductDetailPage = () => {
   const { token } = useAppSelector((state) => state.auth);
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
   // Safely check if the product is wishlisted, even if product is not yet loaded.
-  const isWishlisted = product ? wishlistItems.some(item => item.id === product.id) : false;
+  const isWishlisted = product
+    ? wishlistItems.some((item) => item.id === product.id)
+    : false;
   const navigate = useNavigate();
   const [isWishlistHovered, setIsWishlistHovered] = useState(false);
 
@@ -45,15 +55,15 @@ const ProductDetailPage = () => {
           const backendItem = await cartService.addItemToCart(product.id, 1);
           // Dispatch again with the backend's cartItemId to keep Redux state in sync
           dispatch(addItem({ ...itemToAdd, cartItemId: backendItem.id }));
-          toast.success('Added to cart!');
+          toast.success("Added to cart!");
         } catch (error) {
           console.error("Failed to add item to backend cart:", error);
-          toast.error('Failed to add to cart.');
+          toast.error("Failed to add to cart.");
         }
       } else {
         // For guests, dispatch optimistically as before.
         dispatch(addItem(itemToAdd));
-        toast.success('Added to cart!');
+        toast.success("Added to cart!");
       }
     }
   };
@@ -63,8 +73,8 @@ const ProductDetailPage = () => {
 
     if (!token) {
       // Redirect to login if a guest tries to use the wishlist
-      toast.error('Please log in to use the wishlist.');
-      navigate('/login', { state: { from: `/products/${product.id}` } });
+      toast.error("Please log in to use the wishlist.");
+      navigate("/login", { state: { from: `/products/${product.id}` } });
       return;
     }
 
@@ -72,36 +82,49 @@ const ProductDetailPage = () => {
       if (isWishlisted) {
         await wishlistService.removeFromWishlist(product.id);
         dispatch(removeFromWishlistLocal(product.id));
-        toast.success('Removed from wishlist.');
+        toast.success("Removed from wishlist.");
       } else {
         // The local action needs the full product object to display it in the wishlist
         await wishlistService.addToWishlist(product.id);
         dispatch(addToWishlistLocal(product));
-        toast.success('Added to wishlist!');
+        toast.success("Added to wishlist!");
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Failed to update wishlist:", error);
-      toast.error('Failed to update wishlist.');
+      toast.error("Failed to update wishlist.");
     }
   };
 
   if (loading) return <div className="text-center p-8">Loading...</div>;
-  if (error) return <div className="text-center p-8 text-red-500">Product not found.</div>;
+  if (error)
+    return (
+      <div className="text-center p-8 text-red-500">Product not found.</div>
+    );
   // Don't render the component until the product has been fetched.
   if (!product) return null;
 
   return (
     <div className="container mx-auto p-8 mb-12">
       <div className="flex flex-col md:flex-row gap-8">
-        <img src={product.image_url || 'https://via.placeholder.com/400'} alt={product.name} className="w-full md:w-1/2 rounded-lg shadow-lg" />
+        <img
+          src={product.image_url || "https://via.placeholder.com/400"}
+          alt={product.name}
+          className="w-full md:w-1/2 rounded-lg shadow-lg"
+        />
         <div className="flex flex-col justify-center">
           <h1 className="text-4xl font-bold mb-2">{product.name}</h1>
-          <p className="text-2xl text-gray-800 mb-4">${Number(product.price).toFixed(2)}</p>
+          <p className="text-2xl text-gray-800 mb-4">
+            ${Number(product.price).toFixed(2)}
+          </p>
           <p className="text-gray-600 mb-6">{product.description}</p>
-          <p className="text-sm text-gray-500 mb-6">In Stock: {product.stock}</p>
+          <p className="text-sm text-gray-500 mb-6">
+            In Stock: {product.stock}
+          </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <button onClick={handleAddToCart} className="bg-green-600 text-white font-bold py-3 px-6 rounded hover:bg-green-700 transition duration-300 flex-1 text-center">
+            <button
+              onClick={handleAddToCart}
+              className="bg-green-600 text-white font-bold py-3 px-6 rounded hover:bg-green-700 transition duration-300 flex-1 text-center"
+            >
               Add to Cart
             </button>
             {isWishlisted ? (
@@ -111,7 +134,11 @@ const ProductDetailPage = () => {
                 onMouseLeave={() => setIsWishlistHovered(false)}
                 className="bg-red-400 text-white font-bold py-3 px-6 rounded hover:bg-red-500 transition duration-300 flex-1 text-center"
               >
-                <span className="inline-block w-42">{isWishlistHovered ? 'Remove from Wishlist' : 'Added to Wishlist'}</span>
+                <span className="inline-block w-42">
+                  {isWishlistHovered
+                    ? "Remove from Wishlist"
+                    : "Added to Wishlist"}
+                </span>
               </button>
             ) : (
               <button

@@ -1,18 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useApi } from '../../hooks/useApi';
-import ProductCard from './components/ProductCard';
-import ProductFilter from './components/ProductFilter';
-import { productService } from '../../api';
+import React, { useEffect, useState } from "react";
+import { useApi } from "../../hooks/useApi";
+import ProductCard from "./components/ProductCard";
+import ProductFilter from "./components/ProductFilter";
+import { productService } from "../../api";
 
 const ProductsPage = () => {
-  const { data: products, loading, error, request: fetchProducts } = useApi(productService.getProducts);
-  const { data: categories, request: fetchCategories } = useApi(productService.getProductCategories);
+  const {
+    data: products,
+    loading,
+    error,
+    request: fetchProducts,
+  } = useApi(productService.getProducts);
+  const { data: categories, request: fetchCategories } = useApi(
+    productService.getProductCategories
+  );
 
   const [filters, setFilters] = useState({
-    search: '',
-    category: '',
-    min_price: '',
-    max_price: '',
+    search: "",
+    category: "",
+    min_price: "",
+    max_price: "",
   });
 
   useEffect(() => {
@@ -30,13 +37,23 @@ const ProductsPage = () => {
     return () => clearTimeout(handler);
   }, [filters, fetchProducts]);
 
-  if (loading) return <div className="text-center p-8">Loading products...</div>;
-  if (error) return <div className="text-center p-8 text-red-500">Failed to fetch products. Please try again later.</div>;
+  if (loading)
+    return <div className="text-center p-8">Loading products...</div>;
+  if (error)
+    return (
+      <div className="text-center p-8 text-red-500">
+        Failed to fetch products. Please try again later.
+      </div>
+    );
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Our Products</h1>
-      <ProductFilter filters={filters} onFilterChange={setFilters} categories={categories || []} />
+      <ProductFilter
+        filters={filters}
+        onFilterChange={setFilters}
+        categories={categories || []}
+      />
       {products && products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (

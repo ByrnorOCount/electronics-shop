@@ -3,9 +3,9 @@
  * @returns { Promise<void> }
  */
 export function up(knex) {
-  return knex.schema.alterTable('notifications', (table) => {
+  return knex.schema.alterTable("notifications", (table) => {
     // Add a new string column to store a URL link for the notification.
-    table.string('link');
+    table.string("link");
   });
 }
 
@@ -14,7 +14,7 @@ export function up(knex) {
  * @returns { Promise<void> }
  */
 export function down(knex) {
-  return knex.schema.alterTable('notifications', (table) => {
-    table.dropColumn('link');
+  return knex.schema.alterTable("notifications", (table) => {
+    table.dropColumn("link");
   });
 }

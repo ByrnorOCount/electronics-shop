@@ -1,17 +1,17 @@
 // frontend/src/pages/LoginPage.jsx
-import React, { useState, useEffect } from 'react';
-import { useAppDispatch } from '../../store/hooks';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { setCredentials, loginUser } from './authSlice';
-import api from '../../api/axios';
-import toast from 'react-hot-toast';
-import GoogleLoginButton from './components/GoogleLoginButton';
-import FacebookLoginButton from './components/FacebookLoginButton';
+import React, { useState, useEffect } from "react";
+import { useAppDispatch } from "../../store/hooks";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import { setCredentials, loginUser } from "./authSlice";
+import api from "../../api/axios";
+import toast from "react-hot-toast";
+import GoogleLoginButton from "./components/GoogleLoginButton";
+import FacebookLoginButton from "./components/FacebookLoginButton";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
   const dispatch = useAppDispatch();
@@ -19,8 +19,8 @@ const LoginPage = () => {
   const location = useLocation();
 
   const searchParams = new URLSearchParams(location.search);
-  const registrationSuccess = searchParams.get('status') === 'registered';
-  const socialLoginSuccess = searchParams.get('status') === 'success';
+  const registrationSuccess = searchParams.get("status") === "registered";
+  const socialLoginSuccess = searchParams.get("status") === "success";
 
   useEffect(() => {
     // This effect runs when the component mounts. If the URL contains
@@ -29,15 +29,15 @@ const LoginPage = () => {
       const fetchUser = async () => {
         try {
           // The browser automatically sends the 'jwt' cookie with this request.
-          const response = await api.get('/users/me');
+          const response = await api.get("/users/me");
           const user = response.data;
           // The token is in an httpOnly cookie, so we don't have it here.
           // We pass a placeholder string to satisfy the Redux state.
-          dispatch(setCredentials({ token: 'social_login', user }));
+          dispatch(setCredentials({ token: "social_login", user }));
           toast.success(`Welcome back, ${user.first_name}!`);
-          navigate('/profile');
+          navigate("/profile");
         } catch (err) {
-          toast.error('Failed to fetch user profile after social login.');
+          toast.error("Failed to fetch user profile after social login.");
         }
       };
 
@@ -59,10 +59,10 @@ const LoginPage = () => {
       .unwrap() // transforms the returned Promise to either resolve with the payload or reject with the error
       .then((data) => {
         toast.success(`Welcome back, ${data.user.first_name}!`);
-        navigate('/profile');
+        navigate("/profile");
       })
       .catch((err) => {
-        toast.error(err || 'Login failed. Please check your credentials.');
+        toast.error(err || "Login failed. Please check your credentials.");
       });
   };
 
@@ -80,13 +80,30 @@ const LoginPage = () => {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700">Email</label>
-            <input type="email" name="email" onChange={handleChange} required className="w-full px-3 py-2 border rounded-lg" autoComplete="email" />
+            <input
+              type="email"
+              name="email"
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border rounded-lg"
+              autoComplete="email"
+            />
           </div>
           <div className="mb-6">
             <label className="block text-gray-700">Password</label>
-            <input type="password" name="password" onChange={handleChange} required className="w-full px-3 py-2 border rounded-lg" autoComplete="current-password" />
+            <input
+              type="password"
+              name="password"
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border rounded-lg"
+              autoComplete="current-password"
+            />
           </div>
-          <button type="submit" className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300">
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300"
+          >
             Login
           </button>
         </form>
@@ -102,8 +119,11 @@ const LoginPage = () => {
         <FacebookLoginButton />
 
         <p className="text-center text-sm text-gray-600 mt-4">
-          Don't have an account?{' '}
-          <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="font-medium text-indigo-600 hover:text-indigo-500"
+          >
             Register
           </Link>
         </p>

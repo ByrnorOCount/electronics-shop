@@ -3,9 +3,9 @@
  * @returns { Promise<void> }
  */
 export const up = async (knex) => {
-  await knex.schema.alterTable('orders', (table) => {
-    table.string('payment_method').notNullable().defaultTo('cod');
-    table.jsonb('payment_details').nullable();
+  await knex.schema.alterTable("orders", (table) => {
+    table.string("payment_method").notNullable().defaultTo("cod");
+    table.jsonb("payment_details").nullable();
   });
 };
 
@@ -14,8 +14,8 @@ export const up = async (knex) => {
  * @returns { Promise<void> }
  */
 export const down = async (knex) => {
-  await knex.schema.alterTable('orders', (table) => {
-    table.dropColumn('payment_method');
-    table.dropColumn('payment_details');
+  await knex.schema.alterTable("orders", (table) => {
+    table.dropColumn("payment_method");
+    table.dropColumn("payment_details");
   });
 };

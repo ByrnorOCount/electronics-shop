@@ -1,34 +1,34 @@
-import React, { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import Layout from './components/layout/Layout';
-import HomePage from './pages/home/HomePage';
-import api from './api/axios';
+import React, { useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import Layout from "./components/layout/Layout";
+import HomePage from "./pages/home/HomePage";
+import api from "./api/axios";
 
-import ProductsPage from './features/products/ProductsPage';
-import ProductDetailPage from './features/products/ProductDetailPage';
-import LoginPage from './features/auth/LoginPage';
-import RegisterPage from './features/auth/RegisterPage';
-import AboutPage from './pages/AboutPage';
-import CareersPage from './pages/CareersPage';
-import SupportPage from './pages/SupportPage';
-import WarrantyPage from './pages/WarrantyPage';
-import NotFoundPage from './pages/NotFoundPage';
+import ProductsPage from "./features/products/ProductsPage";
+import ProductDetailPage from "./features/products/ProductDetailPage";
+import LoginPage from "./features/auth/LoginPage";
+import RegisterPage from "./features/auth/RegisterPage";
+import AboutPage from "./pages/AboutPage";
+import CareersPage from "./pages/CareersPage";
+import SupportPage from "./pages/SupportPage";
+import WarrantyPage from "./pages/WarrantyPage";
+import NotFoundPage from "./pages/NotFoundPage";
 import CartPage from "./features/cart/CartPage";
-import WishlistPage from './features/wishlist/WishlistPage';
-import CheckoutPage from './features/checkout-orders/CheckoutPage';
-import OrderConfirmationPage from './features/checkout-orders/OrderConfirmationPage';
-import OrderHistoryPage from './features/checkout-orders/OrderHistoryPage';
-import SettingsPage from './features/user/SettingsPage';
-import NotificationsPage from './features/notifications/NotificationsPage';
-import ProfilePage from './features/user/ProfilePage';
+import WishlistPage from "./features/wishlist/WishlistPage";
+import CheckoutPage from "./features/checkout-orders/CheckoutPage";
+import OrderConfirmationPage from "./features/checkout-orders/OrderConfirmationPage";
+import OrderHistoryPage from "./features/checkout-orders/OrderHistoryPage";
+import SettingsPage from "./features/user/SettingsPage";
+import NotificationsPage from "./features/notifications/NotificationsPage";
+import ProfilePage from "./features/user/ProfilePage";
 // import AdminLayout from "./features/admin/components/AdminLayout";
 // import AdminDashboardPage from "./features/admin/AdminDashboardPage";
 // import AdminProductsPage from "./features/admin/AdminProductsPage";
 // import AdminOrdersPage from "./features/admin/AdminOrdersPage";
 // import AdminUsersPage from "./features/admin/AdminUsersPage";
-import ProtectedRoute from './features/auth/components/ProtectedRoute';
-import CartSyncManager from './features/cart/components/CartSyncManager';
+import ProtectedRoute from "./features/auth/components/ProtectedRoute";
+import CartSyncManager from "./features/cart/components/CartSyncManager";
 
 /**
  * Fetches the CSRF token from the backend to enable secure requests.
@@ -37,9 +37,9 @@ import CartSyncManager from './features/cart/components/CartSyncManager';
  */
 const initializeCsrf = async () => {
   try {
-    await api.get('/csrf-token');
+    await api.get("/csrf-token");
   } catch (error) {
-    console.error('Failed to fetch CSRF token:', error);
+    console.error("Failed to fetch CSRF token:", error);
   }
 };
 
@@ -61,21 +61,62 @@ function App() {
           <Route path="products/:id" element={<ProductDetailPage />} />
           <Route path="cart" element={<CartPage />} />
           {/* Checkout and order pages are protected */}
-          <Route path="/checkout" element={
-            <ProtectedRoute>
-              <CheckoutPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/order-confirmation" element={
-            <ProtectedRoute>
-              <OrderConfirmationPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/orders" element={<ProtectedRoute><OrderHistoryPage /></ProtectedRoute>} />
-          <Route path="/wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-          <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <CheckoutPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order-confirmation"
+            element={
+              <ProtectedRoute>
+                <OrderConfirmationPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <OrderHistoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wishlist"
+            element={
+              <ProtectedRoute>
+                <WishlistPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <NotificationsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route path="about" element={<AboutPage />} />
           <Route path="careers" element={<CareersPage />} />

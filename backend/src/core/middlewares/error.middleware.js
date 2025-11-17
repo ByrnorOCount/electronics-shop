@@ -1,5 +1,5 @@
-import httpStatus from 'http-status';
-import ApiError from '../utils/ApiError.js';
+import httpStatus from "http-status";
+import ApiError from "../utils/ApiError.js";
 
 /**
  * Middleware to handle 404 Not Found errors for any unhandled routes.
@@ -9,8 +9,11 @@ import ApiError from '../utils/ApiError.js';
  * @param {function} next - Express next middleware function.
  */
 export const notFound = (req, res, next) => {
-    const error = new ApiError(httpStatus.NOT_FOUND, `Not Found - ${req.originalUrl}`);
-    next(error);
+  const error = new ApiError(
+    httpStatus.NOT_FOUND,
+    `Not Found - ${req.originalUrl}`
+  );
+  next(error);
 };
 
 /**
@@ -23,19 +26,19 @@ export const notFound = (req, res, next) => {
  * @param {function} next - Express next middleware function.
  */
 export const errorHandler = (err, req, res, next) => {
-    const { statusCode, message } = err;
+  const { statusCode, message } = err;
 
-    if (process.env.NODE_ENV === 'development') {
-        console.error(err);
-    }
+  if (process.env.NODE_ENV === "development") {
+    console.error(err);
+  }
 
-    // The ApiError class handles setting the correct statusCode and message.
-    const response = {
-        success: false,
-        statusCode: statusCode || httpStatus.INTERNAL_SERVER_ERROR,
-        message: message || 'An unexpected error occurred',
-        ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
-    };
+  // The ApiError class handles setting the correct statusCode and message.
+  const response = {
+    success: false,
+    statusCode: statusCode || httpStatus.INTERNAL_SERVER_ERROR,
+    message: message || "An unexpected error occurred",
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+  };
 
-    res.status(response.statusCode).json(response);
+  res.status(response.statusCode).json(response);
 };

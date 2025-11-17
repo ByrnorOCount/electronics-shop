@@ -93,7 +93,7 @@ AuthResponse:
     token:
       type: string
     user:
-      $ref: '#/User'
+      $ref: "#/User"
 
 CartItem:
   type: object
@@ -167,7 +167,7 @@ Order:
     items:
       type: array
       items:
-        $ref: '#/OrderItem'
+        $ref: "#/OrderItem"
 
 CreateOrderRequest:
   type: object
@@ -244,7 +244,7 @@ DashboardMetrics:
     recentOrders:
       type: array
       items:
-        $ref: '#/Order'
+        $ref: "#/Order"
 
 Category:
   type: object

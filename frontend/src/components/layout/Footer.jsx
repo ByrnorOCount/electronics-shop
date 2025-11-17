@@ -17,15 +17,23 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-2">Company</h4>
             <ul className="space-y-1 text-gray-600 text-sm">
-              <li><Link to="/about">About</Link></li>
-              <li><Link to="/careers">Careers</Link></li>
+              <li>
+                <Link to="/about">About</Link>
+              </li>
+              <li>
+                <Link to="/careers">Careers</Link>
+              </li>
             </ul>
           </div>
           <div>
             <h4 className="font-semibold mb-2">Support</h4>
             <ul className="space-y-1 text-gray-600 text-sm">
-              <li><Link to="/support">Help center</Link></li>
-              <li><Link to="/support/warranty">Warranty</Link></li>
+              <li>
+                <Link to="/support">Help center</Link>
+              </li>
+              <li>
+                <Link to="/support/warranty">Warranty</Link>
+              </li>
             </ul>
           </div>
         </div>

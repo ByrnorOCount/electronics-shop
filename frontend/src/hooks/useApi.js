@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 /**
  * A custom hook to handle API calls.
@@ -11,21 +11,24 @@ export const useApi = (apiFunc) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const request = useCallback(async (...args) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await apiFunc(...args);
-      setData(result);
-      return result;
-    } catch (err) {
-      setError(err);
-      console.error("API call failed", err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiFunc]);
+  const request = useCallback(
+    async (...args) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const result = await apiFunc(...args);
+        setData(result);
+        return result;
+      } catch (err) {
+        setError(err);
+        console.error("API call failed", err);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiFunc]
+  );
 
   return {
     data,

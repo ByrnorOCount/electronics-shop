@@ -1,12 +1,10 @@
-import api from '../../api/axios';
+import api from "../../api/axios";
 
 /**
  * Template
  * @returns void
  */
 
-const adminService = {
-
-};
+const adminService = {};
 
 export default adminService;

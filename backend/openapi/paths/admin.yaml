@@ -1,4 +1,4 @@
-'admin/dashboard':
+"admin/dashboard":
   get:
     summary: Get dashboard metrics
     description: (Admin Only) Retrieves key metrics for the admin dashboard, such as total sales, user count, and recent orders.
@@ -8,18 +8,18 @@
     security:
       - bearerAuth: []
     responses:
-      '200':
+      "200":
         description: A summary of dashboard metrics.
         content:
           application/json:
             schema:
-              $ref: '../components/schemas.yaml#/DashboardMetrics'
-      '401':
+              $ref: "../components/schemas.yaml#/DashboardMetrics"
+      "401":
         description: Unauthorized.
-      '403':
+      "403":
         description: Forbidden. User is not an admin.
 
-'admin/categories':
+"admin/categories":
   get:
     summary: Get all categories
     description: (Admin Only) Retrieves a list of all product categories.
@@ -29,17 +29,17 @@
     security:
       - bearerAuth: []
     responses:
-      '200':
+      "200":
         description: A list of all categories.
         content:
           application/json:
             schema:
               type: array
               items:
-                $ref: '../components/schemas.yaml#/Category'
-      '401':
+                $ref: "../components/schemas.yaml#/Category"
+      "401":
         description: Unauthorized.
-      '403':
+      "403":
         description: Forbidden. User is not an admin.
   post:
     summary: Create a new category
@@ -54,22 +54,22 @@
       content:
         application/json:
           schema:
-            $ref: '../components/schemas.yaml#/NewCategory'
+            $ref: "../components/schemas.yaml#/NewCategory"
     responses:
-      '201':
+      "201":
         description: Category created successfully.
         content:
           application/json:
             schema:
-              $ref: '../components/schemas.yaml#/Category'
-      '400':
+              $ref: "../components/schemas.yaml#/Category"
+      "400":
         description: Bad Request (e.g., category name already exists).
-      '401':
+      "401":
         description: Unauthorized.
-      '403':
+      "403":
         description: Forbidden. User is not an admin.
 
-'admin/categories/{categoryId}':
+"admin/categories/{categoryId}":
   put:
     summary: Update a category
     description: (Admin Only) Updates the name or description of a category.
@@ -85,19 +85,19 @@
         schema:
           type: integer
     requestBody:
-      $ref: '../components/requestBodies.yaml#/CategoryUpdate'
+      $ref: "../components/requestBodies.yaml#/CategoryUpdate"
     responses:
-      '200':
+      "200":
         description: Category updated successfully.
         content:
           application/json:
             schema:
-              $ref: '../components/schemas.yaml#/Category'
-      '401':
+              $ref: "../components/schemas.yaml#/Category"
+      "401":
         description: Unauthorized.
-      '403':
+      "403":
         description: Forbidden. User is not an admin.
-      '404':
+      "404":
         description: Category not found.
   delete:
     summary: Delete a category
@@ -114,16 +114,16 @@
         schema:
           type: integer
     responses:
-      '204':
+      "204":
         description: Category deleted successfully.
-      '401':
+      "401":
         description: Unauthorized.
-      '403':
+      "403":
         description: Forbidden. User is not an admin.
-      '404':
+      "404":
         description: Category not found.
 
-'admin/users':
+"admin/users":
   get:
     summary: Get all users
     description: (Admin Only) Retrieves a list of all users in the system (customers, staff, and admins).
@@ -133,20 +133,20 @@
     security:
       - bearerAuth: []
     responses:
-      '200':
+      "200":
         description: A list of all users.
         content:
           application/json:
             schema:
               type: array
               items:
-                $ref: '../components/schemas.yaml#/User'
-      '401':
+                $ref: "../components/schemas.yaml#/User"
+      "401":
         description: Unauthorized.
-      '403':
+      "403":
         description: Forbidden. User is not an admin.
 
-'admin/users/{userId}':
+"admin/users/{userId}":
   put:
     summary: Update a user's role
     description: (Admin Only) Updates the role of a specific user.
@@ -161,19 +161,19 @@
         required: true
         schema:
           type: integer
-    requestBody: { $ref: '../components/requestBodies.yaml#/UpdateUserRole' }
+    requestBody: { $ref: "../components/requestBodies.yaml#/UpdateUserRole" }
     responses:
-      '200':
+      "200":
         description: User role updated successfully.
         content:
           application/json:
             schema:
-              $ref: '../components/schemas.yaml#/User'
-      '401':
+              $ref: "../components/schemas.yaml#/User"
+      "401":
         description: Unauthorized.
-      '403':
+      "403":
         description: Forbidden. User is not an admin.
-      '404':
+      "404":
         description: User not found.
 
   delete:
@@ -191,11 +191,11 @@
         schema:
           type: integer
     responses:
-      '204':
+      "204":
         description: User deleted successfully.
-      '401':
+      "401":
         description: Unauthorized.
-      '403':
+      "403":
         description: Forbidden. User is not an admin.
-      '404':
+      "404":
         description: User not found.

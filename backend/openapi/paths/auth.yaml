@@ -1,4 +1,4 @@
-'auth/register':
+"auth/register":
   post:
     summary: Register a new user
     description: Creates a new user account with the provided details.
@@ -11,18 +11,18 @@
       content:
         application/json:
           schema:
-            $ref: '../components/schemas.yaml#/NewUser'
+            $ref: "../components/schemas.yaml#/NewUser"
     responses:
-      '201':
+      "201":
         description: User registered successfully.
         content:
           application/json:
             schema:
-              $ref: '../components/schemas.yaml#/User'
-      '400':
+              $ref: "../components/schemas.yaml#/User"
+      "400":
         description: Bad Request (e.g., email already taken, invalid password).
 
-'auth/login':
+"auth/login":
   post:
     summary: Log in a user
     description: Authenticates a user and returns a JWT.
@@ -35,18 +35,18 @@
       content:
         application/json:
           schema:
-            $ref: '../components/schemas.yaml#/LoginCredentials'
+            $ref: "../components/schemas.yaml#/LoginCredentials"
     responses:
-      '200':
+      "200":
         description: Login successful.
         content:
           application/json:
             schema:
-              $ref: '../components/schemas.yaml#/AuthResponse'
-      '401':
+              $ref: "../components/schemas.yaml#/AuthResponse"
+      "401":
         description: Unauthorized (e.g., incorrect credentials).
 
-'auth/google':
+"auth/google":
   get:
     summary: Initiate Google OAuth2 login
     description: Redirects the user to Google's authentication page. After successful authentication, Google redirects the user back to the `/api/auth/google/callback` endpoint, which in turn redirects to the frontend application with a JWT. This endpoint is not meant to be called via AJAX/fetch; it should be used as the `href` for a link or button.
@@ -55,16 +55,16 @@
       - Authentication
     security: []
     responses:
-      '200':
+      "200":
         description: A successful response for clients that do not automatically follow redirects. The body may contain the redirect URL.
-      '302':
+      "302":
         description: Found. Redirecting to Google for authentication.
-      '400':
+      "400":
         description: Bad Request (e.g., misconfigured client-side redirect).
-      '500':
+      "500":
         description: Internal Server Error (e.g., OAuth provider misconfigured).
 
-'auth/google/callback':
+"auth/google/callback":
   get:
     summary: Google OAuth2 callback URL
     description: This endpoint is called by Google's servers after a user authenticates and should not be called directly by the client application. On success, it exchanges the code from Google for user profile information, creates or logs in the user, and redirects to the frontend application with a JWT. On failure, it redirects to the frontend login page.
@@ -84,16 +84,16 @@
           type: string
         description: The scopes granted by the user.
     responses:
-      '200':
+      "200":
         description: A successful response for clients that do not automatically follow redirects. The body may contain the JWT.
-      '302':
+      "302":
         description: Found. Redirecting to the frontend application.
-      '400':
+      "400":
         description: Bad Request (e.g., missing or invalid 'code' parameter).
-      '500':
+      "500":
         description: Internal Server Error (e.g., failed to exchange code for token).
 
-'auth/logout':
+"auth/logout":
   post:
     summary: Log out a user
     description: Logs out the current user. For JWT, this primarily involves the client deleting the token. This endpoint can be used to clear server-side session cookies if they exist (e.g., from social logins).
@@ -103,12 +103,12 @@
     security:
       - bearerAuth: []
     responses:
-      '200':
+      "200":
         description: Successfully logged out.
-      '401':
+      "401":
         description: Unauthorized if no user was logged in.
 
-'auth/facebook':
+"auth/facebook":
   get:
     summary: Initiate Facebook OAuth2 login
     description: Redirects the user to Facebook's authentication page. After successful authentication, Facebook redirects the user back to the `/api/auth/facebook/callback` endpoint.
@@ -117,16 +117,16 @@
       - Authentication
     security: []
     responses:
-      '200':
+      "200":
         description: A successful response for clients that do not automatically follow redirects. The body may contain the redirect URL.
-      '302':
+      "302":
         description: Found. Redirecting to Facebook for authentication.
-      '400':
+      "400":
         description: Bad Request (e.g., misconfigured client-side redirect).
-      '500':
+      "500":
         description: Internal Server Error (e.g., OAuth provider misconfigured).
 
-'auth/facebook/callback':
+"auth/facebook/callback":
   get:
     summary: Facebook OAuth2 callback URL
     description: This endpoint is called by Facebook's servers after a user authenticates. It handles user creation/login and redirects to the frontend with a JWT.
@@ -141,11 +141,11 @@
           type: string
         description: The authorization code provided by Facebook.
     responses:
-      '200':
+      "200":
         description: A successful response for clients that do not automatically follow redirects. The body may contain the JWT.
-      '302':
+      "302":
         description: Found. Redirecting to the frontend application.
-      '400':
+      "400":
         description: Bad Request (e.g., missing or invalid 'code' parameter).
-      '500':
+      "500":
         description: Internal Server Error (e.g., failed to exchange code for token).

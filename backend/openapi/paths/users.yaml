@@ -1,4 +1,4 @@
-'users/register':
+"users/register":
   post:
     summary: Register a new user
     description: Creates a new user account. Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character. An email will be sent to the user to verify their address before they can log in.
@@ -11,14 +11,14 @@
       content:
         application/json:
           schema:
-            $ref: '../components/schemas.yaml#/NewUser'
+            $ref: "../components/schemas.yaml#/NewUser"
     responses:
-      '201':
+      "201":
         description: Registration successful. A verification email has been sent.
-      '400':
+      "400":
         description: Invalid input (e.g., email already exists, weak password).
 
-'users/login':
+"users/login":
   post:
     summary: Log in a user
     description: Authenticates a user and returns a JWT.
@@ -31,18 +31,18 @@
       content:
         application/json:
           schema:
-            $ref: '../components/schemas.yaml#/LoginCredentials'
+            $ref: "../components/schemas.yaml#/LoginCredentials"
     responses:
-      '200':
+      "200":
         description: Login successful.
         content:
           application/json:
             schema:
-              $ref: '../components/schemas.yaml#/AuthResponse'
-      '401':
+              $ref: "../components/schemas.yaml#/AuthResponse"
+      "401":
         description: Invalid credentials.
 
-'users/verify-email/{token}':
+"users/verify-email/{token}":
   get:
     summary: Verify a user's email address
     description: Verifies a user's email using the token sent during registration.
@@ -58,12 +58,12 @@
           type: string
         description: The email verification token.
     responses:
-      '200':
+      "200":
         description: Email verified successfully. The user can now log in.
-      '400':
+      "400":
         description: Token is invalid or has expired.
 
-'users/forgot-password':
+"users/forgot-password":
   post:
     summary: Request a password reset
     description: Sends a password reset link to the user's email if the account exists.
@@ -74,14 +74,18 @@
     requestBody:
       required: true
       content:
-        application/json: { schema: { $ref: '../components/schemas.yaml#/ForgotPasswordRequest' } }
+        application/json:
+          {
+            schema:
+              { $ref: "../components/schemas.yaml#/ForgotPasswordRequest" },
+          }
     responses:
-      '200':
+      "200":
         description: A generic success message is always returned to prevent email enumeration.
-      '400':
+      "400":
         description: Bad Request (e.g., invalid email format).
 
-'users/reset-password/{token}':
+"users/reset-password/{token}":
   post:
     summary: Reset password with a token
     description: Sets a new password for a user using a valid reset token.
@@ -99,14 +103,18 @@
     requestBody:
       required: true
       content:
-        application/json: { schema: { $ref: '../components/schemas.yaml#/ResetPasswordRequest' } }
+        application/json:
+          {
+            schema:
+              { $ref: "../components/schemas.yaml#/ResetPasswordRequest" },
+          }
     responses:
-      '200':
+      "200":
         description: Password has been successfully reset.
-      '400':
+      "400":
         description: Token is invalid or expired, or password not provided.
 
-'users/me':
+"users/me":
   get:
     summary: Get current user's profile
     description: Retrieves the profile information for the currently authenticated user.
@@ -116,13 +124,13 @@
     security:
       - bearerAuth: []
     responses:
-      '200':
+      "200":
         description: The user's profile data.
         content:
           application/json:
             schema:
-              $ref: '../components/schemas.yaml#/User'
-      '401':
+              $ref: "../components/schemas.yaml#/User"
+      "401":
         description: Unauthorized.
   put:
     summary: Update current user's profile
@@ -133,16 +141,16 @@
     security:
       - bearerAuth: []
     requestBody:
-      $ref: '../components/requestBodies.yaml#/UserProfileUpdate'
+      $ref: "../components/requestBodies.yaml#/UserProfileUpdate"
     responses:
-      '200':
+      "200":
         description: Profile updated successfully.
-      '400':
+      "400":
         description: Bad Request (e.g., invalid data).
-      '401':
+      "401":
         description: Unauthorized.
 
-'users/me/password':
+"users/me/password":
   put:
     summary: Change current user's password
     description: Updates the password for the currently authenticated user. The new password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.
@@ -156,9 +164,9 @@
       content:
         application/json:
           schema:
-            $ref: '../components/schemas.yaml#/ChangePasswordRequest'
+            $ref: "../components/schemas.yaml#/ChangePasswordRequest"
     responses:
-      '200':
+      "200":
         description: Password changed successfully.
-      '400':
+      "400":
         description: Bad request (e.g., missing fields, weak new password).

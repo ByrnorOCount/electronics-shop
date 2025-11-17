@@ -1,6 +1,6 @@
-import db from '../../config/db.js';
-import { createNotification } from '../../modules/notifications/notification.service.js';
-import { sendOrderConfirmationEmail } from './email.service.js';
+import db from "../../config/db.js";
+import { createNotification } from "../../modules/notifications/notification.service.js";
+import { sendOrderConfirmationEmail } from "./email.service.js";
 
 /**
  * Creates an order in the database from a user's cart.
@@ -13,32 +13,44 @@ import { sendOrderConfirmationEmail } from './email.service.js';
  * @param {object} paymentDetails - Additional details from the payment gateway (e.g., transaction ID).
  * @returns {Promise<object>} The newly created order object.
  */
-export const createOrderFromCart = async (userId, shippingAddress, paymentMethod, paymentDetails = {}) => {
-  const user = await db('users').where({ id: userId }).first();
-  if (!user) throw new Error('User not found');
+export const createOrderFromCart = async (
+  userId,
+  shippingAddress,
+  paymentMethod,
+  paymentDetails = {}
+) => {
+  const user = await db("users").where({ id: userId }).first();
+  if (!user) throw new Error("User not found");
 
-  const cartItems = await db('cart_items')
-    .join('products', 'cart_items.product_id', 'products.id')
-    .where('cart_items.user_id', userId)
-    .select('products.id as productId', 'products.price', 'cart_items.quantity');
+  const cartItems = await db("cart_items")
+    .join("products", "cart_items.product_id", "products.id")
+    .where("cart_items.user_id", userId)
+    .select(
+      "products.id as productId",
+      "products.price",
+      "cart_items.quantity"
+    );
 
   if (cartItems.length === 0) {
-    throw new Error('Cannot create order with an empty cart.');
+    throw new Error("Cannot create order with an empty cart.");
   }
 
-  const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalAmount = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
   const newOrder = await db.transaction(async (trx) => {
-    const [order] = await trx('orders')
+    const [order] = await trx("orders")
       .insert({
         user_id: userId,
         total_amount: totalAmount,
         shipping_address: shippingAddress,
         payment_method: paymentMethod,
         payment_details: paymentDetails,
-        status: 'Pending',
+        status: "Pending",
       })
-      .returning('*');
+      .returning("*");
 
     const orderItems = cartItems.map((item) => ({
       order_id: order.id,
@@ -47,9 +59,13 @@ export const createOrderFromCart = async (userId, shippingAddress, paymentMethod
       price: item.price,
     }));
 
-    await trx('order_items').insert(orderItems);
-    await trx('cart_items').where('user_id', userId).del();
-    await createNotification(userId, `Your order #${order.id} has been placed successfully.`, trx);
+    await trx("order_items").insert(orderItems);
+    await trx("cart_items").where("user_id", userId).del();
+    await createNotification(
+      userId,
+      `Your order #${order.id} has been placed successfully.`,
+      trx
+    );
 
     return order;
   });

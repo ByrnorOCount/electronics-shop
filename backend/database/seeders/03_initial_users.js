@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 /**
  * @param { import("knex").Knex } knex
@@ -6,38 +6,38 @@ import bcrypt from 'bcrypt';
  */
 export async function seed(knex) {
   // Deletes ALL existing entries from the users table
-  await knex('users').del();
+  await knex("users").del();
 
   // Hash a common password
-  const hashedPassword = await bcrypt.hash('Password123!', 12);
+  const hashedPassword = await bcrypt.hash("Password123!", 12);
 
   // Inserts seed entries for users with different roles
-  await knex('users').insert([
+  await knex("users").insert([
     {
       id: 1,
-      first_name: 'Admin',
-      last_name: 'User',
-      email: 'admin@example.com',
+      first_name: "Admin",
+      last_name: "User",
+      email: "admin@example.com",
       password_hash: hashedPassword,
-      role: 'admin',
+      role: "admin",
       is_verified: true,
     },
     {
       id: 2,
-      first_name: 'Staff',
-      last_name: 'User',
-      email: 'staff@example.com',
+      first_name: "Staff",
+      last_name: "User",
+      email: "staff@example.com",
       password_hash: hashedPassword,
-      role: 'staff',
+      role: "staff",
       is_verified: true,
     },
     {
       id: 3,
-      first_name: 'John',
-      last_name: 'Doe',
-      email: 'john.doe@example.com',
+      first_name: "John",
+      last_name: "Doe",
+      email: "john.doe@example.com",
       password_hash: hashedPassword,
-      role: 'customer',
+      role: "customer",
       is_verified: true,
     },
   ]);
@@ -46,8 +46,13 @@ export async function seed(knex) {
   // This is good practice to avoid primary key conflicts if you manually insert users.
   // The exact command can vary slightly by SQL dialect (PostgreSQL vs. others).
   try {
-    await knex.raw('SELECT setval(\'users_id_seq\', (SELECT MAX(id) from "users"));');
+    await knex.raw(
+      "SELECT setval('users_id_seq', (SELECT MAX(id) from \"users\"));"
+    );
   } catch (error) {
-    console.error("Could not reset 'users_id_seq' sequence. This is expected if you are not using PostgreSQL.", error.message);
+    console.error(
+      "Could not reset 'users_id_seq' sequence. This is expected if you are not using PostgreSQL.",
+      error.message
+    );
   }
 }

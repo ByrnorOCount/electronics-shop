@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
 const FacebookLoginButton = () => {
-  const facebookLoginUrl = 'http://localhost:3001/api/auth/facebook';
+  const facebookLoginUrl = "http://localhost:3001/api/auth/facebook";
 
   return (
     <a

@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 let transporter;
 
@@ -11,7 +11,7 @@ async function getTransporter() {
     return transporter;
   }
 
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     // --- PRODUCTION TRANSPORTER ---
     // Replace with your actual email provider's settings (e.g., SendGrid, Mailgun)
     transporter = nodemailer.createTransport({
@@ -27,7 +27,7 @@ async function getTransporter() {
     // --- DEVELOPMENT TRANSPORTER (using Ethereal) ---
     const testAccount = await nodemailer.createTestAccount();
     transporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
+      host: "smtp.ethereal.email",
       port: 587,
       secure: false,
       auth: {
@@ -53,9 +53,14 @@ export const sendOrderConfirmationEmail = async (user, order) => {
     html: `<h1>Hi ${user.first_name},</h1><p>Thank you for your order! Your order #${order.id} for a total of $${order.total_amount} has been placed successfully.</p>`,
   });
 
-  if (process.env.NODE_ENV !== 'production') {
-    console.log(`\n--- ORDER CONFIRMATION --- \nUser: ${user.email}\nOrder ID: ${order.id}\nTotal: $${order.total_amount}\n--------------------------\n`);
-    console.log('Order confirmation email sent. Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  if (process.env.NODE_ENV !== "production") {
+    console.log(
+      `\n--- ORDER CONFIRMATION --- \nUser: ${user.email}\nOrder ID: ${order.id}\nTotal: $${order.total_amount}\n--------------------------\n`
+    );
+    console.log(
+      "Order confirmation email sent. Preview URL: %s",
+      nodemailer.getTestMessageUrl(info)
+    );
   }
 };
 
@@ -72,11 +77,14 @@ export const sendPasswordResetEmail = async (user, token) => {
   const info = await mailer.sendMail({
     from: '"Electronics Shop" <noreply@electronics-shop.com>',
     to: user.email,
-    subject: 'Your Password Reset Request',
+    subject: "Your Password Reset Request",
     html: `<h1>Hi ${user.first_name},</h1><p>You requested a password reset. Please click the following link to reset your password:</p><a href="${resetUrl}">${resetUrl}</a><p>This link will expire in 1 hour.</p>`,
   });
 
-  console.log('Password reset email sent. Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  console.log(
+    "Password reset email sent. Preview URL: %s",
+    nodemailer.getTestMessageUrl(info)
+  );
 };
 
 /**
@@ -92,12 +100,15 @@ export const sendVerificationEmail = async (user, token) => {
   const info = await mailer.sendMail({
     from: '"Electronics Shop" <noreply@electronics-shop.com>',
     to: user.email,
-    subject: 'Verify Your Email Address',
+    subject: "Verify Your Email Address",
     html: `<h1>Welcome, ${user.first_name}!</h1><p>Thank you for registering. Please click the link below to verify your email address:</p><a href="${verificationUrl}">${verificationUrl}</a>`,
   });
 
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('Verification email sent. Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  if (process.env.NODE_ENV !== "production") {
+    console.log(
+      "Verification email sent. Preview URL: %s",
+      nodemailer.getTestMessageUrl(info)
+    );
   }
 };
 
@@ -111,12 +122,17 @@ export const sendOtpEmail = async (user, otp) => {
   const info = await mailer.sendMail({
     from: '"Electronics Shop" <noreply@electronics-shop.com>',
     to: user.email,
-    subject: 'Your Checkout Verification Code',
+    subject: "Your Checkout Verification Code",
     html: `<h1>Hi ${user.first_name},</h1><p>Your One-Time Password (OTP) for checkout is:</p><h2>${otp}</h2><p>This code will expire in 10 minutes.</p>`,
   });
 
-  if (process.env.NODE_ENV !== 'production') {
-    console.log(`\n--- CHECKOUT OTP --- \nUser: ${user.email}\nOTP: ${otp}\n--------------------\n`);
-    console.log('OTP email sent. Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  if (process.env.NODE_ENV !== "production") {
+    console.log(
+      `\n--- CHECKOUT OTP --- \nUser: ${user.email}\nOTP: ${otp}\n--------------------\n`
+    );
+    console.log(
+      "OTP email sent. Preview URL: %s",
+      nodemailer.getTestMessageUrl(info)
+    );
   }
 };

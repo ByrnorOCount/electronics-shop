@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * A custom quantity input with + and - buttons.
@@ -30,9 +30,26 @@ export default function QuantityInput({ value, onChange, min = 1, max = 99 }) {
 
   return (
     <div className="flex items-center border rounded-md bg-white">
-      <button onClick={handleDecrement} className="px-3 py-1 text-lg font-semibold text-gray-600 hover:bg-gray-100 rounded-l-md" aria-label="Decrease quantity">-</button>
-      <input type="text" value={value} onChange={handleChange} className="w-12 text-center border-l border-r focus:outline-none" />
-      <button onClick={handleIncrement} className="px-3 py-1 text-lg font-semibold text-gray-600 hover:bg-gray-100 rounded-r-md" aria-label="Increase quantity">+</button>
+      <button
+        onClick={handleDecrement}
+        className="px-3 py-1 text-lg font-semibold text-gray-600 hover:bg-gray-100 rounded-l-md"
+        aria-label="Decrease quantity"
+      >
+        -
+      </button>
+      <input
+        type="text"
+        value={value}
+        onChange={handleChange}
+        className="w-12 text-center border-l border-r focus:outline-none"
+      />
+      <button
+        onClick={handleIncrement}
+        className="px-3 py-1 text-lg font-semibold text-gray-600 hover:bg-gray-100 rounded-r-md"
+        aria-label="Increase quantity"
+      >
+        +
+      </button>
     </div>
   );
 }

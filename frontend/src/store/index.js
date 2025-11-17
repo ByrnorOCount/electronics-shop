@@ -1,4 +1,4 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import {
   persistStore,
   persistReducer,
@@ -8,18 +8,18 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from 'redux-persist';
-import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
-import authReducer from '../features/auth/authSlice';
-import cartReducer from '../features/cart/cartSlice';
-import wishlistReducer from '../features/wishlist/wishlistSlice';
-import notificationReducer from '../features/notifications/notificationSlice';
+} from "redux-persist";
+import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
+import authReducer from "../features/auth/authSlice";
+import cartReducer from "../features/cart/cartSlice";
+import wishlistReducer from "../features/wishlist/wishlistSlice";
+import notificationReducer from "../features/notifications/notificationSlice";
 
 const persistConfig = {
-  key: 'root',
+  key: "root",
   storage,
   // Only persist the cart. The auth state is managed by tokens and shouldn't be persisted this way.
-  whitelist: ['cart'],
+  whitelist: ["cart"],
 };
 
 const rootReducer = combineReducers({
@@ -39,7 +39,7 @@ export const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: process.env.NODE_ENV !== "production",
 });
 
 export const persistor = persistStore(store);
