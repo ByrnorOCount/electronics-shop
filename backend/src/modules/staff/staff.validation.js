@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
 export const createProduct = {
-    body: Joi.object({
+    body: Joi.object().keys({
         name: Joi.string().required(),
         description: Joi.string().allow(null, ''),
         category_id: Joi.number().integer().allow(null),
@@ -13,10 +13,10 @@ export const createProduct = {
 };
 
 export const updateProduct = {
-    params: Joi.object({
+    params: Joi.object().keys({
         id: Joi.number().integer().required(),
     }),
-    body: Joi.object({
+    body: Joi.object().keys({
         name: Joi.string(),
         description: Joi.string().allow(null, ''),
         category_id: Joi.number().integer().allow(null),
@@ -24,29 +24,29 @@ export const updateProduct = {
         stock: Joi.number().integer().min(0),
         image_url: Joi.string().uri().allow(null, ''),
         is_featured: Joi.boolean(),
-    }).min(1), // Require at least one field to be updated
+    }).min(1),
 };
 
 export const deleteProduct = {
-    params: Joi.object({
+    params: Joi.object().keys({
         id: Joi.number().integer().required(),
     }),
 };
 
 export const updateOrderStatus = {
-    params: Joi.object({
+    params: Joi.object().keys({
         id: Joi.number().integer().required(),
     }),
-    body: Joi.object({
+    body: Joi.object().keys({
         status: Joi.string().required(),
     }),
 };
 
 export const replyToTicket = {
-    params: Joi.object({
+    params: Joi.object().keys({
         ticketId: Joi.number().integer().required(),
     }),
-    body: Joi.object({
+    body: Joi.object().keys({
         message: Joi.string().required(),
     }),
 };

@@ -1,17 +1,15 @@
+import * as staffService from './staff.service.js';
 import httpStatus from 'http-status';
-import { createNotification } from '../notifications/notification.service.js';
-import * as Staff from './staff.model.js';
-import ApiError from '../../core/utils/ApiError.js';
 import ApiResponse from '../../core/utils/ApiResponse.js';
 
 /**
- * Create a new product.
+ * @summary Create a new product
  * @route POST /api/staff/products
  * @access Staff
  */
 export const createProduct = async (req, res, next) => {
   try {
-    const newProduct = await Staff.createProduct(req.body);
+    const newProduct = await staffService.createProduct(req.body);
     res.status(httpStatus.CREATED).json(new ApiResponse(httpStatus.CREATED, newProduct, 'Product created successfully.'));
   } catch (error) {
     next(error);
@@ -19,17 +17,13 @@ export const createProduct = async (req, res, next) => {
 };
 
 /**
- * Update an existing product.
+ * @summary Update an existing product
  * @route PUT /api/staff/products/:id
  * @access Staff
  */
 export const updateProduct = async (req, res, next) => {
-  const { id } = req.params;
   try {
-    const updatedProduct = await Staff.updateProduct(id, req.body);
-    if (!updatedProduct) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Product not found.');
-    }
+    const updatedProduct = await staffService.updateProduct(req.params.id, req.body);
     res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedProduct, 'Product updated successfully.'));
   } catch (error) {
     next(error);
@@ -37,17 +31,13 @@ export const updateProduct = async (req, res, next) => {
 };
 
 /**
- * Delete a product.
+ * @summary Delete a product
  * @route DELETE /api/staff/products/:id
  * @access Staff
  */
 export const deleteProduct = async (req, res, next) => {
-  const { id } = req.params;
   try {
-    const deletedCount = await Staff.deleteProduct(id);
-    if (deletedCount === 0) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Product not found.');
-    }
+    await staffService.deleteProduct(req.params.id);
     res.status(httpStatus.NO_CONTENT).send();
   } catch (error) {
     next(error);
@@ -55,92 +45,70 @@ export const deleteProduct = async (req, res, next) => {
 };
 
 /**
- * Get all products (for staff view).
+ * @summary Get all products
  * @route GET /api/staff/products
  * @access Staff
  */
 export const getAllProducts = async (req, res, next) => {
   try {
-    const products = await Staff.findAllProducts();
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, products));
+    const products = await staffService.getAllProducts();
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, products, 'Products retrieved successfully.'));
   } catch (error) {
     next(error);
   }
 };
 
 /**
- * Get all orders from all users.
+ * @summary Get all orders
  * @route GET /api/staff/orders
  * @access Staff
  */
 export const getAllOrders = async (req, res, next) => {
   try {
-    const orders = await Staff.findAllOrders();
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, orders));
+    const orders = await staffService.getAllOrders();
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, orders, 'Orders retrieved successfully.'));
   } catch (error) {
     next(error);
   }
 };
 
 /**
- * Update the status of an order.
+ * @summary Update order status
  * @route PUT /api/staff/orders/:id
  * @access Staff
  */
 export const updateOrderStatus = async (req, res, next) => {
-  const { id } = req.params;
-  const { status } = req.body;
-
   try {
-    const updatedOrder = await Staff.updateOrderStatus(id, status);
-    if (!updatedOrder) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Order not found.');
-    }
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedOrder, 'Order status updated.'));
+    const updatedOrder = await staffService.updateOrderStatus(req.params.id, req.body.status);
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedOrder, 'Order status updated successfully.'));
   } catch (error) {
     next(error);
   }
 };
 
 /**
- * Get all support tickets from all users.
+ * @summary Get all support tickets
  * @route GET /api/staff/support-tickets
  * @access Staff
  */
 export const getAllSupportTickets = async (req, res, next) => {
   try {
-    const tickets = await Staff.findAllSupportTickets();
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, tickets));
+    const tickets = await staffService.getAllSupportTickets();
+    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, tickets, 'Support tickets retrieved successfully.'));
   } catch (error) {
     next(error);
   }
 };
 
 /**
- * Reply to a support ticket.
+ * @summary Reply to support ticket
  * @route POST /api/staff/support-tickets/:ticketId/reply
  * @access Staff
  */
 export const replyToTicket = async (req, res, next) => {
-  const { ticketId } = req.params;
-  const { message } = req.body;
-  const staffId = req.user.id;
-
   try {
-    const ticket = await Staff.findSupportTicketById(ticketId);
-    if (!ticket) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Support ticket not found.');
-    }
-
-    const newReply = await Staff.createSupportTicketReply({ ticket_id: ticketId, user_id: staffId, message });
-
-    // Optionally, update the ticket status to 'in_progress' or 'answered'
-    await Staff.updateSupportTicketStatus(ticketId, 'in_progress');
-
-    // Notify the user that their ticket has a new reply
-    await createNotification(ticket.user_id, `Your support ticket #${ticketId} has a new reply from staff.`);
-
-    res.status(httpStatus.CREATED).json(new ApiResponse(httpStatus.CREATED, newReply, 'Reply posted successfully.'));
+    const reply = await staffService.replyToTicket(req.params.ticketId, req.body.message, req.user.id);
+    res.status(httpStatus.CREATED).json(new ApiResponse(httpStatus.CREATED, reply, 'Reply posted successfully.'));
   } catch (error) {
     next(error);
   }
