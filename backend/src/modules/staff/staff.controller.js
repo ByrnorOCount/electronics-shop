@@ -1,6 +1,6 @@
-import * as staffService from './staff.service.js';
-import httpStatus from 'http-status';
-import ApiResponse from '../../core/utils/ApiResponse.js';
+import * as staffService from "./staff.service.js";
+import httpStatus from "http-status";
+import ApiResponse from "../../core/utils/ApiResponse.js";
 
 /**
  * @summary Create a new product
@@ -10,7 +10,15 @@ import ApiResponse from '../../core/utils/ApiResponse.js';
 export const createProduct = async (req, res, next) => {
   try {
     const newProduct = await staffService.createProduct(req.body);
-    res.status(httpStatus.CREATED).json(new ApiResponse(httpStatus.CREATED, newProduct, 'Product created successfully.'));
+    res
+      .status(httpStatus.CREATED)
+      .json(
+        new ApiResponse(
+          httpStatus.CREATED,
+          newProduct,
+          "Product created successfully."
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -23,8 +31,19 @@ export const createProduct = async (req, res, next) => {
  */
 export const updateProduct = async (req, res, next) => {
   try {
-    const updatedProduct = await staffService.updateProduct(req.params.id, req.body);
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedProduct, 'Product updated successfully.'));
+    const updatedProduct = await staffService.updateProduct(
+      req.params.id,
+      req.body
+    );
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          updatedProduct,
+          "Product updated successfully."
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -51,8 +70,16 @@ export const deleteProduct = async (req, res, next) => {
  */
 export const getAllProducts = async (req, res, next) => {
   try {
-    const products = await staffService.getAllProducts();
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, products, 'Products retrieved successfully.'));
+    const products = await staffService.getAllProducts(req.query);
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          products,
+          "All products retrieved successfully."
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -65,8 +92,16 @@ export const getAllProducts = async (req, res, next) => {
  */
 export const getAllOrders = async (req, res, next) => {
   try {
-    const orders = await staffService.getAllOrders();
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, orders, 'Orders retrieved successfully.'));
+    const orders = await staffService.getAllOrders(req.query);
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          orders,
+          "All orders retrieved successfully."
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -79,8 +114,19 @@ export const getAllOrders = async (req, res, next) => {
  */
 export const updateOrderStatus = async (req, res, next) => {
   try {
-    const updatedOrder = await staffService.updateOrderStatus(req.params.id, req.body.status);
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedOrder, 'Order status updated successfully.'));
+    const updatedOrder = await staffService.updateOrderStatus(
+      req.params.id,
+      req.body.status
+    );
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          updatedOrder,
+          "Order status updated successfully."
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -93,8 +139,16 @@ export const updateOrderStatus = async (req, res, next) => {
  */
 export const getAllSupportTickets = async (req, res, next) => {
   try {
-    const tickets = await staffService.getAllSupportTickets();
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, tickets, 'Support tickets retrieved successfully.'));
+    const tickets = await staffService.getAllSupportTickets(req.query);
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          tickets,
+          "All support tickets retrieved successfully."
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -107,8 +161,16 @@ export const getAllSupportTickets = async (req, res, next) => {
  */
 export const replyToTicket = async (req, res, next) => {
   try {
-    const reply = await staffService.replyToTicket(req.params.ticketId, req.body.message, req.user.id);
-    res.status(httpStatus.CREATED).json(new ApiResponse(httpStatus.CREATED, reply, 'Reply posted successfully.'));
+    const reply = await staffService.replyToTicket(
+      req.params.ticketId,
+      req.body.message,
+      req.user.id
+    );
+    res
+      .status(httpStatus.CREATED)
+      .json(
+        new ApiResponse(httpStatus.CREATED, reply, "Reply posted successfully.")
+      );
   } catch (error) {
     next(error);
   }

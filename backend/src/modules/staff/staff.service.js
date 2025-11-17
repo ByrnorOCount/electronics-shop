@@ -1,7 +1,7 @@
-import * as staffModel from './staff.model.js';
-import httpStatus from 'http-status';
-import ApiError from '../../core/utils/ApiError.js';
-import { createNotification } from '../notifications/notification.service.js';
+import * as staffModel from "./staff.model.js";
+import httpStatus from "http-status";
+import ApiError from "../../core/utils/ApiError.js";
+import { createNotification } from "../notifications/notification.service.js";
 
 /**
  * Create a new product
@@ -9,7 +9,7 @@ import { createNotification } from '../notifications/notification.service.js';
  * @returns {Promise<object>}
  */
 export const createProduct = async (productData) => {
-    return staffModel.createProduct(productData);
+  return staffModel.createProduct(productData);
 };
 
 /**
@@ -19,11 +19,11 @@ export const createProduct = async (productData) => {
  * @returns {Promise<object>}
  */
 export const updateProduct = async (productId, updateData) => {
-    const updated = await staffModel.updateProduct(productId, updateData);
-    if (!updated) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
-    }
-    return updated;
+  const updated = await staffModel.updateProduct(productId, updateData);
+  if (!updated) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Product not found");
+  }
+  return updated;
 };
 
 /**
@@ -32,64 +32,77 @@ export const updateProduct = async (productId, updateData) => {
  * @returns {Promise<number>} deleted rows
  */
 export const deleteProduct = async (productId) => {
-    const deletedCount = await staffModel.deleteProduct(productId);
-    if (deletedCount === 0) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
-    }
-    return deletedCount;
+  const deletedCount = await staffModel.deleteProduct(productId);
+  if (deletedCount === 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Product not found");
+  }
+  return deletedCount;
 };
 
 /**
  * Get all products (staff view)
+ * @param {object} options - Query options for pagination, sorting, etc.
  */
-export const getAllProducts = async () => {
-    return staffModel.findAllProducts();
+export const getAllProducts = async (options) => {
+  // Future: Add logic to handle pagination based on options.limit and options.page
+  return staffModel.findAllProducts(options);
 };
 
 /**
  * Get all orders
+ * @param {object} options - Query options for pagination, sorting, etc.
  */
-export const getAllOrders = async () => {
-    return staffModel.findAllOrders();
+export const getAllOrders = async (options) => {
+  return staffModel.findAllOrders(options);
 };
 
 /**
  * Update order status
  * @param {number|string} orderId
  * @param {string} status
+ * @returns {Promise<object>}
  */
 export const updateOrderStatus = async (orderId, status) => {
-    const updated = await staffModel.updateOrderStatus(orderId, status);
-    if (!updated) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
-    }
-    return updated;
+  const updated = await staffModel.updateOrderStatus(orderId, status);
+  if (!updated) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Order not found");
+  }
+  return updated;
 };
 
 /**
  * Get all support tickets
+ * @param {object} options - Query options for pagination, sorting, etc.
  */
-export const getAllSupportTickets = async () => {
-    return staffModel.findAllSupportTickets();
+export const getAllSupportTickets = async (options) => {
+  return staffModel.findAllSupportTickets(options);
 };
 
 /**
  * Reply to a support ticket
  * @param {number|string} ticketId
- * @param {string} message
  * @param {number|string} staffId
+ * @param {string} message
+ * @returns {Promise<object>}
  */
 export const replyToTicket = async (ticketId, message, staffId) => {
-    const ticket = await staffModel.findSupportTicketById(ticketId);
-    if (!ticket) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Support ticket not found');
-    }
+  const ticket = await staffModel.findSupportTicketById(ticketId);
+  if (!ticket) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Support ticket not found");
+  }
 
-    const newReply = await staffModel.createSupportTicketReply({ ticket_id: ticketId, user_id: staffId, message });
+  const newReply = await staffModel.createSupportTicketReply({
+    ticket_id: ticketId,
+    user_id: staffId,
+    message,
+  });
 
-    // Update ticket status and notify the user
-    await staffModel.updateSupportTicketStatus(ticketId, 'in_progress');
-    await createNotification(ticket.user_id, `Your support ticket #${ticketId} has a new reply from staff.`);
+  // Update ticket status and notify the user
+  await staffModel.updateSupportTicketStatus(ticketId, "in_progress");
+  await createNotification(
+    ticket.user_id,
+    `Your support ticket #${ticketId} has a new reply from staff.`
+  );
 
-    return newReply;
+  return newReply;
 };

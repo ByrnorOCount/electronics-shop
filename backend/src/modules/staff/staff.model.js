@@ -1,4 +1,4 @@
-import db from '../../config/db.js';
+import db from "../../config/db.js";
 
 /**
  * Creates a new product.
@@ -6,8 +6,8 @@ import db from '../../config/db.js';
  * @returns {Promise<object>} The newly created product object.
  */
 export const createProduct = async (productData) => {
-    const [newProduct] = await db('products').insert(productData).returning('*');
-    return newProduct;
+  const [newProduct] = await db("products").insert(productData).returning("*");
+  return newProduct;
 };
 
 /**
@@ -17,8 +17,11 @@ export const createProduct = async (productData) => {
  * @returns {Promise<object|undefined>} The updated product object or undefined if not found.
  */
 export const updateProduct = async (productId, updateData) => {
-    const [updatedProduct] = await db('products').where({ id: productId }).update(updateData).returning('*');
-    return updatedProduct;
+  const [updatedProduct] = await db("products")
+    .where({ id: productId })
+    .update(updateData)
+    .returning("*");
+  return updatedProduct;
 };
 
 /**
@@ -27,23 +30,39 @@ export const updateProduct = async (productId, updateData) => {
  * @returns {Promise<number>} The number of deleted rows.
  */
 export const deleteProduct = (productId) => {
-    return db('products').where({ id: productId }).del();
+  return db("products").where({ id: productId }).del();
 };
 
 /**
  * Finds all products.
- * @returns {Promise<Array>} An array of all product objects.
+ * @param {object} options - Query options.
+ * @returns {Promise<Array>} An array of product objects.
  */
-export const findAllProducts = () => {
-    return db('products').orderBy('id', 'asc');
+export const findAllProducts = (options = {}) => {
+  const query = db("products");
+  // Example sorting: ?sortBy=price:desc
+  const [field, order] = options.sortBy
+    ? options.sortBy.split(":")
+    : ["id", "asc"];
+  query.orderBy(field, order);
+  return query;
 };
 
 /**
  * Finds all orders.
- * @returns {Promise<Array>} An array of all order objects.
+ * @param {object} options - Query options.
+ * @returns {Promise<Array>} An array of order objects.
  */
-export const findAllOrders = () => {
-    return db('orders').orderBy('created_at', 'desc');
+export const findAllOrders = (options = {}) => {
+  const query = db("orders");
+  if (options.status) {
+    query.where("status", options.status);
+  }
+  const [field, order] = options.sortBy
+    ? options.sortBy.split(":")
+    : ["created_at", "desc"];
+  query.orderBy(field, order);
+  return query;
 };
 
 /**
@@ -53,16 +72,28 @@ export const findAllOrders = () => {
  * @returns {Promise<object|undefined>} The updated order object or undefined if not found.
  */
 export const updateOrderStatus = async (orderId, status) => {
-    const [updatedOrder] = await db('orders').where({ id: orderId }).update({ status }).returning('*');
-    return updatedOrder;
+  const [updatedOrder] = await db("orders")
+    .where({ id: orderId })
+    .update({ status })
+    .returning("*");
+  return updatedOrder;
 };
 
 /**
  * Finds all support tickets.
- * @returns {Promise<Array>} An array of all support ticket objects.
+ * @param {object} options - Query options.
+ * @returns {Promise<Array>} An array of support ticket objects.
  */
-export const findAllSupportTickets = () => {
-    return db('support_tickets').orderBy('created_at', 'desc');
+export const findAllSupportTickets = (options = {}) => {
+  const query = db("support_tickets");
+  if (options.status) {
+    query.where("status", options.status);
+  }
+  const [field, order] = options.sortBy
+    ? options.sortBy.split(":")
+    : ["created_at", "desc"];
+  query.orderBy(field, order);
+  return query;
 };
 
 /**
@@ -71,7 +102,7 @@ export const findAllSupportTickets = () => {
  * @returns {Promise<object|undefined>} The ticket object or undefined.
  */
 export const findSupportTicketById = (ticketId) => {
-    return db('support_tickets').where({ id: ticketId }).first();
+  return db("support_tickets").where({ id: ticketId }).first();
 };
 
 /**
@@ -80,8 +111,10 @@ export const findSupportTicketById = (ticketId) => {
  * @returns {Promise<object>} The newly created reply object.
  */
 export const createSupportTicketReply = async (replyData) => {
-    const [newReply] = await db('support_ticket_replies').insert(replyData).returning('*');
-    return newReply;
+  const [newReply] = await db("support_ticket_replies")
+    .insert(replyData)
+    .returning("*");
+  return newReply;
 };
 
 /**
@@ -91,5 +124,5 @@ export const createSupportTicketReply = async (replyData) => {
  * @returns {Promise<number>} The number of updated rows.
  */
 export const updateSupportTicketStatus = (ticketId, status) => {
-    return db('support_tickets').where({ id: ticketId }).update({ status });
+  return db("support_tickets").where({ id: ticketId }).update({ status });
 };

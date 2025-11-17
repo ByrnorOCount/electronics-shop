@@ -1,37 +1,52 @@
-import express from 'express';
-import * as staffController from './staff.controller.js';
-import * as staffValidation from './staff.validation.js';
-import { authenticate, isStaff } from '../../core/middlewares/auth.middleware.js';
-import validate from '../../core/middlewares/validation.middleware.js';
+import express from "express";
+import * as staffController from "./staff.controller.js";
+import * as staffValidation from "./staff.validation.js";
+import {
+  authenticate,
+  isStaff,
+} from "../../core/middlewares/auth.middleware.js";
+import validate from "../../core/middlewares/validation.middleware.js";
 
 const router = express.Router();
 
 router.use(authenticate, isStaff);
 
 router
-  .route('/products')
-  .post(validate(staffValidation.createProduct), staffController.createProduct)
-  .get(staffController.getAllProducts);
+  .route("/products")
+  .post(validate(staffValidation.createProduct), staffController.createProduct) // prettier-ignore
+  .get(
+    validate(staffValidation.getAllProducts),
+    staffController.getAllProducts
+  );
 
 router
-  .route('/products/:id')
+  .route("/products/:id")
   .put(validate(staffValidation.updateProduct), staffController.updateProduct)
-  .delete(validate(staffValidation.deleteProduct), staffController.deleteProduct);
+  .delete(
+    validate(staffValidation.deleteProduct),
+    staffController.deleteProduct
+  );
 
 router
-  .route('/orders')
-  .get(staffController.getAllOrders);
+  .route("/orders")
+  .get(validate(staffValidation.getAllOrders), staffController.getAllOrders);
 
 router
-  .route('/orders/:id')
-  .put(validate(staffValidation.updateOrderStatus), staffController.updateOrderStatus);
+  .route("/orders/:id")
+  .put(
+    validate(staffValidation.updateOrderStatus),
+    staffController.updateOrderStatus
+  );
 
 router
-  .route('/support-tickets')
-  .get(staffController.getAllSupportTickets);
+  .route("/support-tickets")
+  .get(
+    validate(staffValidation.getAllSupportTickets),
+    staffController.getAllSupportTickets
+  );
 
 router
-  .route('/support-tickets/:ticketId/reply')
+  .route("/support-tickets/:ticketId/reply")
   .post(validate(staffValidation.replyToTicket), staffController.replyToTicket);
 
 export default router;
