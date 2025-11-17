@@ -5,30 +5,38 @@ import { userService } from "../../api";
 import { setUser } from "../auth/authSlice";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import Icon from "../../components/ui/Icon";
 
 export default function SettingsPage() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
 
-  // --- Profile Update State & Logic ---
+  // --- Profile Update Form (using react-hook-form) ---
+  const {
+    register: registerProfile,
+    handleSubmit: handleProfileSubmit,
+    formState: { errors: profileErrors, isDirty: isProfileDirty },
+    reset: resetProfileForm,
+  } = useForm({
+    defaultValues: {
+      first_name: user?.first_name || "",
+      last_name: user?.last_name || "",
+      email: user?.email || "",
+    },
+  });
   const {
     loading: profileLoading,
     error: profileError,
     request: updateProfile,
   } = useApi(userService.updateUserProfile);
-  const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-  });
 
-  // --- Password Change State & Logic ---
+  // --- Password Change Form (using react-hook-form) ---
   const {
-    register,
-    handleSubmit: handlePasswordSubmit,
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit, // Renamed to avoid conflict
     formState: { errors: passwordErrors },
     reset: resetPasswordForm,
-    watch,
+    watch: watchPassword, // Renamed to avoid conflict
   } = useForm();
   const {
     loading: passwordLoading,
@@ -42,25 +50,19 @@ export default function SettingsPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
+    // When user data is loaded or changed, reset the form with the new default values.
     if (user) {
-      setFormData({
+      resetProfileForm({
         first_name: user.first_name || "",
         last_name: user.last_name || "",
         email: user.email || "",
       });
     }
-  }, [user]);
+  }, [user, resetProfileForm]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleProfileSubmit = async (e) => {
-    e.preventDefault();
-
+  const onProfileFormSubmit = async (data) => {
     try {
-      const response = await updateProfile(formData);
+      const response = await updateProfile(data);
       dispatch(setUser(response.user));
       toast.success("Profile updated successfully!");
     } catch (err) {
@@ -100,7 +102,7 @@ export default function SettingsPage() {
 
         {/* Profile Information Form */}
         <form
-          onSubmit={handleProfileSubmit}
+          onSubmit={handleProfileSubmit(onProfileFormSubmit)}
           className="space-y-6 border-b pb-8 mb-8"
         >
           <h3 className="text-lg font-medium text-gray-900">
@@ -117,11 +119,14 @@ export default function SettingsPage() {
               <input
                 type="text"
                 id="first_name"
-                name="first_name"
-                value={formData.first_name}
-                onChange={handleChange}
+                {...registerProfile("first_name")}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               />
+              {profileErrors.first_name && (
+                <p className="text-sm text-red-600 mt-1">
+                  {profileErrors.first_name.message}
+                </p>
+              )}
             </div>
             <div>
               <label
@@ -133,11 +138,14 @@ export default function SettingsPage() {
               <input
                 type="text"
                 id="last_name"
-                name="last_name"
-                value={formData.last_name}
-                onChange={handleChange}
+                {...registerProfile("last_name")}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               />
+              {profileErrors.last_name && (
+                <p className="text-sm text-red-600 mt-1">
+                  {profileErrors.last_name.message}
+                </p>
+              )}
             </div>
           </div>
           <div>
@@ -150,11 +158,19 @@ export default function SettingsPage() {
             <input
               type="email"
               id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
+              {...registerProfile("email", {
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: "Entered value does not match email format",
+                },
+              })}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
+            {profileErrors.email && (
+              <p className="text-sm text-red-600 mt-1">
+                {profileErrors.email.message}
+              </p>
+            )}
           </div>
           <div className="flex items-center justify-between">
             <div className="flex-grow">
@@ -164,7 +180,7 @@ export default function SettingsPage() {
             </div>
             <button
               type="submit"
-              disabled={profileLoading}
+              disabled={profileLoading || !isProfileDirty}
               className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed"
             >
               {profileLoading ? "Saving..." : "Save Changes"}
@@ -178,11 +194,13 @@ export default function SettingsPage() {
           className="space-y-6"
         >
           <h3 className="text-lg font-medium text-gray-900">Change Password</h3>
+          {/* Visually hidden username field for accessibility and password managers */}
           <input
-            type="hidden"
+            type="text"
             autoComplete="username"
             value={user?.email || ""}
             readOnly
+            className="sr-only"
           />
 
           <div>
@@ -196,7 +214,7 @@ export default function SettingsPage() {
               <input
                 type={showCurrentPassword ? "text" : "password"}
                 id="currentPassword"
-                {...register("currentPassword", {
+                {...registerPassword("currentPassword", {
                   required: "Current password is required",
                 })}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
@@ -207,7 +225,10 @@ export default function SettingsPage() {
                 onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
               >
-                {showCurrentPassword ? <EyeIcon /> : <EyeOffIcon />}
+                <Icon
+                  name={showCurrentPassword ? "eye" : "eye-off"}
+                  className="h-5 w-5"
+                />
               </button>
             </div>
             {passwordErrors.currentPassword && (
@@ -227,7 +248,7 @@ export default function SettingsPage() {
               <input
                 type={showNewPassword ? "text" : "password"}
                 id="newPassword"
-                {...register("newPassword", {
+                {...registerPassword("newPassword", {
                   required: "New password is required",
                   minLength: {
                     value: 8,
@@ -248,7 +269,10 @@ export default function SettingsPage() {
                 onClick={() => setShowNewPassword(!showNewPassword)}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
               >
-                {showNewPassword ? <EyeIcon /> : <EyeOffIcon />}
+                <Icon
+                  name={showNewPassword ? "eye" : "eye-off"}
+                  className="h-5 w-5"
+                />
               </button>
             </div>
             {passwordErrors.newPassword && (
@@ -268,10 +292,10 @@ export default function SettingsPage() {
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 id="confirmPassword"
-                {...register("confirmPassword", {
+                {...registerPassword("confirmPassword", {
                   required: "Please confirm your new password",
                   validate: (value) =>
-                    value === watch("newPassword") ||
+                    value === watchPassword("newPassword") ||
                     "The passwords do not match",
                 })}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
@@ -282,7 +306,10 @@ export default function SettingsPage() {
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
               >
-                {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}
+                <Icon
+                  name={showConfirmPassword ? "eye" : "eye-off"}
+                  className="h-5 w-5"
+                />
               </button>
             </div>
             {passwordErrors.confirmPassword && (
@@ -310,50 +337,3 @@ export default function SettingsPage() {
     </main>
   );
 }
-
-// Helper components for the icons
-const EyeIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-    />
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-    />
-  </svg>
-);
-
-const EyeOffIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a10.05 10.05 0 013.543-5.118m5.458-1.882A10.05 10.05 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.05 10.05 0 01-1.882 3.543M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-    />
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M3 3l18 18"
-    />
-  </svg>
-);
