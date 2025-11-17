@@ -1,42 +1,16 @@
 import React from "react";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
-import { removeItem, updateQuantity, clearCart, setCart } from "./cartSlice";
-import { cartService } from "../../api";
 import QuantityInput from "../../components/ui/QuantityInput";
 import OrderSummary from "./components/OrderSummary";
 import { Link } from "react-router-dom";
-import toast from "react-hot-toast";
+import { useCartActions } from "./useCartActions";
 
 export default function CartPage() {
-  const dispatch = useAppDispatch();
   const { items, status: cartStatus } = useAppSelector((state) => state.cart); // Get cart items and status
   const { token } = useAppSelector((state) => state.auth);
-
-  const handleQuantityChange = async (item, newQuantity) => {
-    if (token && item.cartItemId) {
-      try {
-        // Wait for the backend to confirm, then update Redux state.
-        await cartService.updateCartItemQuantity(item.cartItemId, newQuantity);
-        dispatch(updateQuantity({ id: item.id, qty: newQuantity }));
-        toast.success("Quantity updated.");
-      } catch (err) {
-        console.error("Failed to update quantity:", err);
-        toast.error("Failed to update quantity.");
-      }
-    } else {
-      // For guests, just update Redux state.
-      dispatch(updateQuantity({ id: item.id, qty: newQuantity }));
-      toast.success("Quantity updated.");
-    }
-  };
-
-  const handleRemoveItem = async (item) => {
-    dispatch(removeItem(item.id));
-    toast.success(`'${item.name}' removed from cart.`);
-    if (token && item.cartItemId) {
-      await cartService.removeCartItem(item.cartItemId);
-    }
-  };
+  // Abstracted logic for cart actions
+  const { updateQuantity: handleQuantityChange, removeItem: handleRemoveItem } =
+    useCartActions();
 
   // Show a loading indicator if the initial sync is happening or if we are fetching.
   if (cartStatus === "syncing" && token)
@@ -67,7 +41,7 @@ export default function CartPage() {
           <div className="lg:col-span-2 space-y-4">
             {items.map((it) => (
               <div
-                key={it.id}
+                key={it.cartItemId || it.id} // Use cartItemId for logged-in users for a more stable key
                 className="flex items-center gap-4 bg-white p-4 rounded-lg shadow-sm"
               >
                 <img
@@ -95,6 +69,7 @@ export default function CartPage() {
                 <QuantityInput
                   value={it.qty}
                   onChange={(newQty) => handleQuantityChange(it, newQty)}
+                  max={it.stock}
                 />
               </div>
             ))}

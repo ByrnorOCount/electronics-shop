@@ -151,6 +151,7 @@
 |   |   |   |   `-- Layout.jsx
 |   |   |   `-- ui
 |   |   |       |-- Button.jsx
+|   |   |       |-- Icon.jsx
 |   |   |       |-- Input.jsx
 |   |   |       |-- Modal.jsx
 |   |   |       |-- QuantityInput.jsx
@@ -177,9 +178,10 @@
 |   |   |   |   |-- CartPage.jsx
 |   |   |   |   |-- cartService.js
 |   |   |   |   |-- cartSlice.js
-|   |   |   |   `-- components
-|   |   |   |       |-- CartSyncManager.jsx
-|   |   |   |       `-- OrderSummary.jsx
+|   |   |   |   |-- components
+|   |   |   |   |   |-- CartSyncManager.jsx
+|   |   |   |   |   `-- OrderSummary.jsx
+|   |   |   |   `-- useCartActions.js
 |   |   |   |-- checkout-orders
 |   |   |   |   |-- CheckoutPage.jsx
 |   |   |   |   |-- OrderConfirmationPage.jsx
@@ -231,4 +233,4 @@
 |-- package-lock.json
 `-- package.json
 
-54 directories, 177 files
+54 directories, 179 files

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { addItem } from "../cart/cartSlice";
 import {
   addToWishlistLocal,
   removeFromWishlistLocal,
 } from "../wishlist/wishlistSlice";
 import { useApi } from "../../hooks/useApi";
-import { productService, cartService, wishlistService } from "../../api";
+import { productService, wishlistService } from "../../api";
 import toast from "react-hot-toast";
+import { useCartActions } from "../cart/useCartActions";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -19,6 +19,7 @@ const ProductDetailPage = () => {
     error,
     request: fetchProduct,
   } = useApi(productService.getProductById);
+  const { addItem: addItemToCart } = useCartActions();
 
   useEffect(() => {
     // The `id` is a string from the URL, but our services expect a number.
@@ -41,31 +42,10 @@ const ProductDetailPage = () => {
   const [isWishlistHovered, setIsWishlistHovered] = useState(false);
 
   const handleAddToCart = async () => {
-    if (product) {
-      const itemToAdd = {
-        id: product.id,
-        name: product.name,
-        price: Number(product.price),
-        qty: 1,
-        img: product.image_url,
-        stock: product.stock,
-      };
-      if (token) {
-        try {
-          const backendItem = await cartService.addItemToCart(product.id, 1);
-          // Dispatch again with the backend's cartItemId to keep Redux state in sync
-          dispatch(addItem({ ...itemToAdd, cartItemId: backendItem.id }));
-          toast.success("Added to cart!");
-        } catch (error) {
-          console.error("Failed to add item to backend cart:", error);
-          toast.error("Failed to add to cart.");
-        }
-      } else {
-        // For guests, dispatch optimistically as before.
-        dispatch(addItem(itemToAdd));
-        toast.success("Added to cart!");
-      }
-    }
+    if (!product) return;
+    // The useCartActions hook handles all logic for guests vs. logged-in users.
+    // It also provides user feedback via toasts.
+    addItemToCart(product);
   };
 
   const handleWishlistToggle = async () => {
