@@ -1,21 +1,22 @@
 import express from 'express';
-import {
-  submitTicket,
-  getUserTickets,
-  getTicketById,
-  getFaqs
-} from './support.controller.js';
-import { authenticate } from '../../core/middlewares/auth.middleware.js';
+import * as supportController from './support.controller.js';
+import * as supportValidation from './support.validation.js';
+import validate from '../../core/middlewares/validation.middleware.js';
+import { authenticate, isStaff } from '../../core/middlewares/auth.middleware.js';
 
 const router = express.Router();
 
 // Route for FAQs (public)
-router.route('/faq').get(getFaqs);
+router.route('/faq').get(supportController.getFaqs);
 
-// Routes for support tickets (protected)
-router.route('/').post(authenticate, submitTicket).get(authenticate, getUserTickets);
+// All subsequent routes are for authenticated staff members
+router.use(authenticate, isStaff);
 
-// Route for a single support ticket
-router.route('/:ticketId').get(authenticate, getTicketById);
+router
+  .route('/')
+  .post(validate(supportValidation.submitTicket), supportController.submitTicket)
+  .get(supportController.getUserTickets);
+
+router.route('/:ticketId').get(validate(supportValidation.getTicketById), supportController.getTicketById);
 
 export default router;
