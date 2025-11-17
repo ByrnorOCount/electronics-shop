@@ -1,4 +1,4 @@
-import db from '../../config/db.js';
+import db from "../../config/db.js";
 
 /**
  * Create an item
@@ -6,8 +6,10 @@ import db from '../../config/db.js';
  * @returns {Promise<object>}
  */
 export const create = async (itemBody) => {
-    const [newItem] = await db('items_table_name').insert(itemBody).returning('*');
-    return newItem;
+  const [newItem] = await db("items_table_name")
+    .insert(itemBody)
+    .returning("*");
+  return newItem;
 };
 
 /**
@@ -16,6 +18,6 @@ export const create = async (itemBody) => {
  * @returns {Promise<Array>}
  */
 export const findAll = (filter) => {
-    // Example: return db('items_table_name').where(filter);
-    return db('items_table_name').select('*');
+  // Example: return db('items_table_name').where(filter);
+  return db("items_table_name").select("*");
 };

@@ -1,14 +1,14 @@
-import * as adminModel from './admin.model.js';
-import ApiError from '../../core/utils/ApiError.js';
-import httpStatus from 'http-status';
+import * as adminModel from "./admin.model.js";
+import ApiError from "../../core/utils/ApiError.js";
+import httpStatus from "http-status";
 
 /**
  * Get dashboard analytics data
  * @returns {Promise<Object>}
  */
 export const getDashboardMetrics = async () => {
-    const data = await adminModel.getDashboardMetrics();
-    return data;
+  const data = await adminModel.getDashboardMetrics();
+  return data;
 };
 
 /**
@@ -17,9 +17,9 @@ export const getDashboardMetrics = async () => {
  * @returns {Promise<Array>}
  */
 export const getAllUsers = async (filters) => {
-    // The model function doesn't currently use filters, but we pass it for future-proofing
-    const users = await adminModel.findAllUsers(filters);
-    return users;
+  // The model function doesn't currently use filters, but we pass it for future-proofing
+  const users = await adminModel.findAllUsers(filters);
+  return users;
 };
 
 /**
@@ -29,11 +29,11 @@ export const getAllUsers = async (filters) => {
  * @returns {Promise<Object>}
  */
 export const updateUserRole = async (userId, role) => {
-    const updatedUser = await adminModel.updateUserRole(userId, role);
-    if (!updatedUser) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-    }
-    return updatedUser;
+  const updatedUser = await adminModel.updateUserRole(userId, role);
+  if (!updatedUser) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+  return updatedUser;
 };
 
 /**
@@ -43,13 +43,16 @@ export const updateUserRole = async (userId, role) => {
  * @returns {Promise<void>}
  */
 export const deleteUser = async (userIdToDelete, currentAdminId) => {
-    if (Number(userIdToDelete) === currentAdminId) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot delete your own admin account.');
-    }
-    const deletedCount = await adminModel.deleteUser(userIdToDelete);
-    if (deletedCount === 0) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
-    }
+  if (Number(userIdToDelete) === currentAdminId) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "Cannot delete your own admin account."
+    );
+  }
+  const deletedCount = await adminModel.deleteUser(userIdToDelete);
+  if (deletedCount === 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found.");
+  }
 };
 
 /**
@@ -58,8 +61,8 @@ export const deleteUser = async (userIdToDelete, currentAdminId) => {
  * @returns {Promise<Object>}
  */
 export const createCategory = async (categoryData) => {
-    const newCategory = await adminModel.createCategory(categoryData);
-    return newCategory;
+  const newCategory = await adminModel.createCategory(categoryData);
+  return newCategory;
 };
 
 /**
@@ -67,8 +70,8 @@ export const createCategory = async (categoryData) => {
  * @returns {Promise<Array>}
  */
 export const getAllCategories = async () => {
-    const categories = await adminModel.findAllCategories();
-    return categories;
+  const categories = await adminModel.findAllCategories();
+  return categories;
 };
 
 /**
@@ -78,11 +81,14 @@ export const getAllCategories = async () => {
  * @returns {Promise<Object>}
  */
 export const updateCategory = async (categoryId, updateData) => {
-    const updatedCategory = await adminModel.updateCategory(categoryId, updateData);
-    if (!updatedCategory) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Category not found.');
-    }
-    return updatedCategory;
+  const updatedCategory = await adminModel.updateCategory(
+    categoryId,
+    updateData
+  );
+  if (!updatedCategory) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Category not found.");
+  }
+  return updatedCategory;
 };
 
 /**
@@ -91,8 +97,8 @@ export const updateCategory = async (categoryId, updateData) => {
  * @returns {Promise<void>}
  */
 export const deleteCategory = async (categoryId) => {
-    const deletedCount = await adminModel.deleteCategory(categoryId);
-    if (deletedCount === 0) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Category not found.');
-    }
+  const deletedCount = await adminModel.deleteCategory(categoryId);
+  if (deletedCount === 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Category not found.");
+  }
 };

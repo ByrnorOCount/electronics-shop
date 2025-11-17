@@ -1,6 +1,6 @@
-import * as adminService from './admin.service.js';
-import httpStatus from 'http-status';
-import ApiResponse from '../../core/utils/ApiResponse.js';
+import * as adminService from "./admin.service.js";
+import httpStatus from "http-status";
+import ApiResponse from "../../core/utils/ApiResponse.js";
 
 /**
  * Get all users in the system.
@@ -10,7 +10,11 @@ import ApiResponse from '../../core/utils/ApiResponse.js';
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await adminService.getAllUsers(req.query);
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, users, 'Users retrieved successfully'));
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(httpStatus.OK, users, "Users retrieved successfully")
+      );
   } catch (error) {
     next(error);
   }
@@ -27,7 +31,15 @@ export const updateUserRole = async (req, res, next) => {
 
   try {
     const updatedUser = await adminService.updateUserRole(userId, role);
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedUser, 'User role updated successfully'));
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          updatedUser,
+          "User role updated successfully"
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -56,7 +68,15 @@ export const deleteUser = async (req, res, next) => {
 export const getDashboardMetrics = async (req, res, next) => {
   try {
     const metrics = await adminService.getDashboardMetrics();
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, metrics, 'Dashboard metrics retrieved successfully'));
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          metrics,
+          "Dashboard metrics retrieved successfully"
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -70,8 +90,19 @@ export const getDashboardMetrics = async (req, res, next) => {
 export const createCategory = async (req, res, next) => {
   const { name, description } = req.body;
   try {
-    const newCategory = await adminService.createCategory({ name, description });
-    res.status(httpStatus.CREATED).json(new ApiResponse(httpStatus.CREATED, newCategory, 'Category created successfully'));
+    const newCategory = await adminService.createCategory({
+      name,
+      description,
+    });
+    res
+      .status(httpStatus.CREATED)
+      .json(
+        new ApiResponse(
+          httpStatus.CREATED,
+          newCategory,
+          "Category created successfully"
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -85,7 +116,15 @@ export const createCategory = async (req, res, next) => {
 export const getAllCategories = async (req, res, next) => {
   try {
     const categories = await adminService.getAllCategories();
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, categories, 'Categories retrieved successfully'));
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          categories,
+          "Categories retrieved successfully"
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -100,8 +139,19 @@ export const updateCategory = async (req, res, next) => {
   const { categoryId } = req.params;
   const { name, description } = req.body;
   try {
-    const updatedCategory = await adminService.updateCategory(categoryId, { name, description });
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedCategory, 'Category updated successfully'));
+    const updatedCategory = await adminService.updateCategory(categoryId, {
+      name,
+      description,
+    });
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          updatedCategory,
+          "Category updated successfully"
+        )
+      );
   } catch (error) {
     next(error);
   }

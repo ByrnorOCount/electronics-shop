@@ -1,16 +1,16 @@
-import Joi from 'joi';
+import Joi from "joi";
 
 export const createItem = {
-    body: Joi.object().keys({
-        name: Joi.string().required(),
-        // Add other fields here
-    }),
+  body: Joi.object().keys({
+    name: Joi.string().required(),
+    // Add other fields here
+  }),
 };
 
 export const getAllItems = {
-    query: Joi.object().keys({
-        sortBy: Joi.string(),
-        limit: Joi.number().integer(),
-        page: Joi.number().integer(),
-    }),
+  query: Joi.object().keys({
+    sortBy: Joi.string(),
+    limit: Joi.number().integer(),
+    page: Joi.number().integer(),
+  }),
 };

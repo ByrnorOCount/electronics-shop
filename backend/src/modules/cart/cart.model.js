@@ -1,4 +1,4 @@
-import db from '../../config/db.js';
+import db from "../../config/db.js";
 
 /**
  * Finds all items in a user's cart, joining with product details.
@@ -6,18 +6,18 @@ import db from '../../config/db.js';
  * @returns {Promise<Array>} A promise that resolves to an array of cart items.
  */
 export const findByUserId = (userId) => {
-    return db('cart_items')
-        .join('products', 'cart_items.product_id', 'products.id')
-        .where('cart_items.user_id', userId)
-        .select(
-            'cart_items.id',
-            'products.id as product_id',
-            'products.name',
-            'products.price',
-            'products.image_url',
-            'cart_items.quantity'
-        )
-        .orderBy('cart_items.id', 'asc');
+  return db("cart_items")
+    .join("products", "cart_items.product_id", "products.id")
+    .where("cart_items.user_id", userId)
+    .select(
+      "cart_items.id",
+      "products.id as product_id",
+      "products.name",
+      "products.price",
+      "products.image_url",
+      "cart_items.quantity"
+    )
+    .orderBy("cart_items.id", "asc");
 };
 
 /**
@@ -26,18 +26,18 @@ export const findByUserId = (userId) => {
  * @returns {Promise<object|undefined>} The cart item with product details.
  */
 export const findById = (itemId) => {
-    return db('cart_items')
-        .join('products', 'cart_items.product_id', 'products.id')
-        .where('cart_items.id', itemId)
-        .select(
-            'cart_items.id',
-            'products.id as product_id',
-            'products.name',
-            'products.price',
-            'products.image_url',
-            'cart_items.quantity'
-        )
-        .first();
+  return db("cart_items")
+    .join("products", "cart_items.product_id", "products.id")
+    .where("cart_items.id", itemId)
+    .select(
+      "cart_items.id",
+      "products.id as product_id",
+      "products.name",
+      "products.price",
+      "products.image_url",
+      "cart_items.quantity"
+    )
+    .first();
 };
 
 /**
@@ -47,7 +47,9 @@ export const findById = (itemId) => {
  * @returns {Promise<object|undefined>} The cart item or undefined if not found.
  */
 export const findOne = (userId, productId) => {
-    return db('cart_items').where({ user_id: userId, product_id: productId }).first();
+  return db("cart_items")
+    .where({ user_id: userId, product_id: productId })
+    .first();
 };
 
 /**
@@ -58,10 +60,10 @@ export const findOne = (userId, productId) => {
  * @returns {Promise<object>} The newly created cart item.
  */
 export const create = async (userId, productId, quantity) => {
-    const [newItem] = await db('cart_items')
-        .insert({ user_id: userId, product_id: productId, quantity })
-        .returning('*');
-    return newItem;
+  const [newItem] = await db("cart_items")
+    .insert({ user_id: userId, product_id: productId, quantity })
+    .returning("*");
+  return newItem;
 };
 
 /**
@@ -72,13 +74,13 @@ export const create = async (userId, productId, quantity) => {
  * @returns {Promise<number>} The number of updated rows.
  */
 export const update = (itemId, quantity, userId) => {
-    return db('cart_items')
-        .where({ id: itemId, user_id: userId }) // Enforce ownership
-        .update({
-            quantity,
-            updated_at: db.fn.now()
-        })
-        .returning('*');
+  return db("cart_items")
+    .where({ id: itemId, user_id: userId }) // Enforce ownership
+    .update({
+      quantity,
+      updated_at: db.fn.now(),
+    })
+    .returning("*");
 };
 
 /**
@@ -88,7 +90,7 @@ export const update = (itemId, quantity, userId) => {
  * @returns {Promise<number>} The number of deleted rows.
  */
 export const remove = (itemId, userId) => {
-    return db('cart_items').where({ id: itemId, user_id: userId }).del();
+  return db("cart_items").where({ id: itemId, user_id: userId }).del();
 };
 
 /**
@@ -98,18 +100,18 @@ export const remove = (itemId, userId) => {
  * @returns {Promise<void>}
  */
 export const replace = (userId, items) => {
-    return db.transaction(async (trx) => {
-        // 1. Clear the user's existing cart.
-        await trx('cart_items').where({ user_id: userId }).del();
+  return db.transaction(async (trx) => {
+    // 1. Clear the user's existing cart.
+    await trx("cart_items").where({ user_id: userId }).del();
 
-        // 2. If there are items to sync, insert them.
-        if (items.length > 0) {
-            const itemsToInsert = items.map(item => ({
-                user_id: userId,
-                product_id: item.productId,
-                quantity: item.quantity,
-            }));
-            await trx('cart_items').insert(itemsToInsert);
-        }
-    });
+    // 2. If there are items to sync, insert them.
+    if (items.length > 0) {
+      const itemsToInsert = items.map((item) => ({
+        user_id: userId,
+        product_id: item.productId,
+        quantity: item.quantity,
+      }));
+      await trx("cart_items").insert(itemsToInsert);
+    }
+  });
 };

@@ -1,6 +1,6 @@
-import * as cartModel from './cart.model.js';
-import httpStatus from 'http-status';
-import ApiError from '../../core/utils/ApiError.js';
+import * as cartModel from "./cart.model.js";
+import httpStatus from "http-status";
+import ApiError from "../../core/utils/ApiError.js";
 
 /**
  * Get all items in a user's cart.
@@ -8,7 +8,7 @@ import ApiError from '../../core/utils/ApiError.js';
  * @returns {Promise<Array>}
  */
 export const getCartByUserId = async (userId) => {
-    return cartModel.findByUserId(userId);
+  return cartModel.findByUserId(userId);
 };
 
 /**
@@ -19,18 +19,22 @@ export const getCartByUserId = async (userId) => {
  * @returns {Promise<{item: object, wasCreated: boolean}>}
  */
 export const addItemToCart = async (userId, productId, quantity) => {
-    const existingItem = await cartModel.findOne(userId, productId);
+  const existingItem = await cartModel.findOne(userId, productId);
 
-    if (existingItem) {
-        const newQuantity = existingItem.quantity + quantity;
-        const [updatedItem] = await cartModel.update(existingItem.id, newQuantity, userId);
-        const itemWithDetails = await cartModel.findById(updatedItem.id);
-        return { item: itemWithDetails, wasCreated: false };
-    } else {
-        const newItem = await cartModel.create(userId, productId, quantity);
-        const itemWithDetails = await cartModel.findById(newItem.id);
-        return { item: itemWithDetails, wasCreated: true };
-    }
+  if (existingItem) {
+    const newQuantity = existingItem.quantity + quantity;
+    const [updatedItem] = await cartModel.update(
+      existingItem.id,
+      newQuantity,
+      userId
+    );
+    const itemWithDetails = await cartModel.findById(updatedItem.id);
+    return { item: itemWithDetails, wasCreated: false };
+  } else {
+    const newItem = await cartModel.create(userId, productId, quantity);
+    const itemWithDetails = await cartModel.findById(newItem.id);
+    return { item: itemWithDetails, wasCreated: true };
+  }
 };
 
 /**
@@ -41,11 +45,14 @@ export const addItemToCart = async (userId, productId, quantity) => {
  * @returns {Promise<object>}
  */
 export const updateCartItem = async (userId, itemId, quantity) => {
-    const [updatedItem] = await cartModel.update(itemId, quantity, userId);
-    if (!updatedItem) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Cart item not found or you do not have permission to update it.');
-    }
-    return updatedItem;
+  const [updatedItem] = await cartModel.update(itemId, quantity, userId);
+  if (!updatedItem) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      "Cart item not found or you do not have permission to update it."
+    );
+  }
+  return updatedItem;
 };
 
 /**
@@ -55,10 +62,13 @@ export const updateCartItem = async (userId, itemId, quantity) => {
  * @returns {Promise<void>}
  */
 export const removeCartItem = async (userId, itemId) => {
-    const deletedCount = await cartModel.remove(itemId, userId);
-    if (deletedCount === 0) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Cart item not found or you do not have permission to delete it.');
-    }
+  const deletedCount = await cartModel.remove(itemId, userId);
+  if (deletedCount === 0) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      "Cart item not found or you do not have permission to delete it."
+    );
+  }
 };
 
 /**
@@ -68,14 +78,14 @@ export const removeCartItem = async (userId, itemId) => {
  * @returns {Promise<Array>} The full, updated cart.
  */
 export const syncUserCart = async (userId, items) => {
-    // The body can be an array directly, or an object { items: [...] }
-    const itemsToSync = Array.isArray(items) ? items : items.items;
+  // The body can be an array directly, or an object { items: [...] }
+  const itemsToSync = Array.isArray(items) ? items : items.items;
 
-    if (!itemsToSync) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid sync data provided.');
-    }
+  if (!itemsToSync) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid sync data provided.");
+  }
 
-    await cartModel.replace(userId, itemsToSync);
-    const updatedCart = await cartModel.findByUserId(userId);
-    return updatedCart;
+  await cartModel.replace(userId, itemsToSync);
+  const updatedCart = await cartModel.findByUserId(userId);
+  return updatedCart;
 };

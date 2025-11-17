@@ -1,6 +1,6 @@
-import * as templateModel from './template.model.js';
-import httpStatus from 'http-status';
-import ApiError from '../../core/utils/ApiError.js';
+import * as templateModel from "./template.model.js";
+import httpStatus from "http-status";
+import ApiError from "../../core/utils/ApiError.js";
 
 /**
  * Create an item
@@ -8,8 +8,8 @@ import ApiError from '../../core/utils/ApiError.js';
  * @returns {Promise<object>}
  */
 export const createItem = async (itemBody) => {
-    // Add any business logic here (e.g., check for duplicates)
-    return templateModel.create(itemBody);
+  // Add any business logic here (e.g., check for duplicates)
+  return templateModel.create(itemBody);
 };
 
 /**
@@ -22,7 +22,7 @@ export const createItem = async (itemBody) => {
  * @returns {Promise<Array>}
  */
 export const getAllItems = async (filter, options) => {
-    // Add pagination/sorting logic if needed
-    const items = await templateModel.findAll(filter);
-    return items;
+  // Add pagination/sorting logic if needed
+  const items = await templateModel.findAll(filter);
+  return items;
 };

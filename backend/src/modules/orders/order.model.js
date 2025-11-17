@@ -1,4 +1,4 @@
-import db from '../../config/db.js';
+import db from "../../config/db.js";
 
 /**
  * Updates a user's record with an OTP hash and expiration.
@@ -7,12 +7,12 @@ import db from '../../config/db.js';
  * @returns {Promise<void>}
  */
 export const saveOtpForUser = (userId, otpHash) => {
-    return db('users')
-        .where({ id: userId })
-        .update({
-            otp_hash: otpHash,
-            otp_expires: db.raw("NOW() + INTERVAL '10 minutes'"),
-        });
+  return db("users")
+    .where({ id: userId })
+    .update({
+      otp_hash: otpHash,
+      otp_expires: db.raw("NOW() + INTERVAL '10 minutes'"),
+    });
 };
 
 /**
@@ -21,7 +21,7 @@ export const saveOtpForUser = (userId, otpHash) => {
  * @returns {Promise<object|undefined>} The user object or undefined.
  */
 export const findUserById = (userId) => {
-    return db('users').where({ id: userId }).first();
+  return db("users").where({ id: userId }).first();
 };
 
 /**
@@ -30,7 +30,7 @@ export const findUserById = (userId) => {
  * @returns {Promise<Array>} An array of cart items.
  */
 export const findCartItemsByUserId = (userId) => {
-    return db('cart_items').where({ user_id: userId });
+  return db("cart_items").where({ user_id: userId });
 };
 
 /**
@@ -39,21 +39,21 @@ export const findCartItemsByUserId = (userId) => {
  * @returns {Promise<object|undefined>} An order object with its items, or undefined.
  */
 export const findOrderByIdWithItems = async (orderId) => {
-    const order = await db('orders').where({ id: orderId }).first();
+  const order = await db("orders").where({ id: orderId }).first();
 
-    if (!order) {
-        return undefined;
-    }
+  if (!order) {
+    return undefined;
+  }
 
-    const items = await db('order_items')
-        .join('products', 'order_items.product_id', 'products.id')
-        .where('order_items.order_id', orderId)
-        .select('order_items.*', 'products.name', 'products.image_url');
+  const items = await db("order_items")
+    .join("products", "order_items.product_id", "products.id")
+    .where("order_items.order_id", orderId)
+    .select("order_items.*", "products.name", "products.image_url");
 
-    return {
-        ...order,
-        items,
-    };
+  return {
+    ...order,
+    items,
+  };
 };
 /**
  * Finds all orders for a user, including their items.
@@ -61,22 +61,24 @@ export const findOrderByIdWithItems = async (orderId) => {
  * @returns {Promise<Array>} An array of order objects with their items.
  */
 export const findOrdersByUserIdWithItems = async (userId) => {
-    const orders = await db('orders').where({ user_id: userId }).orderBy('created_at', 'desc');
+  const orders = await db("orders")
+    .where({ user_id: userId })
+    .orderBy("created_at", "desc");
 
-    if (orders.length === 0) {
-        return [];
-    }
+  if (orders.length === 0) {
+    return [];
+  }
 
-    const orderIds = orders.map((o) => o.id);
-    const items = await db('order_items')
-        .join('products', 'order_items.product_id', 'products.id')
-        .whereIn('order_items.order_id', orderIds)
-        .select('order_items.*', 'products.name', 'products.image_url');
+  const orderIds = orders.map((o) => o.id);
+  const items = await db("order_items")
+    .join("products", "order_items.product_id", "products.id")
+    .whereIn("order_items.order_id", orderIds)
+    .select("order_items.*", "products.name", "products.image_url");
 
-    return orders.map((order) => ({
-        ...order,
-        items: items.filter((item) => item.order_id === order.id),
-    }));
+  return orders.map((order) => ({
+    ...order,
+    items: items.filter((item) => item.order_id === order.id),
+  }));
 };
 
 /**
@@ -84,5 +86,7 @@ export const findOrdersByUserIdWithItems = async (userId) => {
  * @param {number} userId - The ID of the user.
  */
 export const clearUserOtp = (userId) => {
-    return db('users').where({ id: userId }).update({ otp_hash: null, otp_expires: null });
+  return db("users")
+    .where({ id: userId })
+    .update({ otp_hash: null, otp_expires: null });
 };

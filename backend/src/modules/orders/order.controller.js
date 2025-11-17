@@ -1,8 +1,8 @@
-import Stripe from 'stripe';
-import * as orderService from './order.service.js';
-import httpStatus from 'http-status';
-import ApiResponse from '../../core/utils/ApiResponse.js';
-import { createOrderFromCart } from '../../core/integrations/payment.service.js';
+import Stripe from "stripe";
+import * as orderService from "./order.service.js";
+import httpStatus from "http-status";
+import ApiResponse from "../../core/utils/ApiResponse.js";
+import { createOrderFromCart } from "../../core/integrations/payment.service.js";
 
 // TODO: Add additional payment methods beside Stripe in the future
 
@@ -14,7 +14,15 @@ import { createOrderFromCart } from '../../core/integrations/payment.service.js'
 export const generateCheckoutOtp = async (req, res) => {
   try {
     await orderService.generateAndSendOtp(req.user);
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, null, 'An OTP has been sent to your email.'));
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          null,
+          "An OTP has been sent to your email."
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -30,7 +38,10 @@ export const createPaymentSession = async (req, res, next) => {
   const userId = req.user.id;
 
   try {
-    const paymentData = await orderService.createOnlinePaymentSession(paymentMethod, userId);
+    const paymentData = await orderService.createOnlinePaymentSession(
+      paymentMethod,
+      userId
+    );
     res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, paymentData));
   } catch (error) {
     next(error);
@@ -47,8 +58,20 @@ export const createOrder = async (req, res, next) => {
   const userId = req.user.id;
 
   try {
-    const finalOrder = await orderService.createCodOrder(userId, shippingAddress, otp);
-    res.status(httpStatus.CREATED).json(new ApiResponse(httpStatus.CREATED, finalOrder, 'Order created successfully'));
+    const finalOrder = await orderService.createCodOrder(
+      userId,
+      shippingAddress,
+      otp
+    );
+    res
+      .status(httpStatus.CREATED)
+      .json(
+        new ApiResponse(
+          httpStatus.CREATED,
+          finalOrder,
+          "Order created successfully"
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -62,7 +85,9 @@ export const createOrder = async (req, res, next) => {
 export const getOrders = async (req, res, next) => {
   try {
     const ordersWithItems = await orderService.getOrdersForUser(req.user.id);
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, ordersWithItems));
+    res
+      .status(httpStatus.OK)
+      .json(new ApiResponse(httpStatus.OK, ordersWithItems));
   } catch (error) {
     next(error);
   }
@@ -76,37 +101,41 @@ export const getOrders = async (req, res, next) => {
 export const handlePaymentWebhook = async (req, res) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   // --- Stripe Webhook Handling ---
-  const stripeSignature = req.headers['stripe-signature'];
+  const stripeSignature = req.headers["stripe-signature"];
   if (stripeSignature) {
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
     let event;
 
     try {
-      event = stripe.webhooks.constructEvent(req.body, stripeSignature, endpointSecret);
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        stripeSignature,
+        endpointSecret
+      );
     } catch (err) {
       console.log(`⚠️  Webhook signature verification failed.`, err.message);
       return res.sendStatus(400);
     }
 
     // Handle the checkout.session.completed event
-    if (event.type === 'checkout.session.completed') {
+    if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       const { userId } = session.metadata;
       // NOTE: In a real app, you'd get the shipping address from session.shipping_details
       // or pass it in metadata if you collected it before creating the session.
-      const shippingAddress = session.shipping_details?.address ?
-        Object.values(session.shipping_details.address).join(', ') :
-        'Address from Stripe';
+      const shippingAddress = session.shipping_details?.address
+        ? Object.values(session.shipping_details.address).join(", ")
+        : "Address from Stripe";
 
       try {
-        await createOrderFromCart(Number(userId), shippingAddress, 'stripe', {
+        await createOrderFromCart(Number(userId), shippingAddress, "stripe", {
           transactionId: session.payment_intent,
         });
         console.log(`✅ Order created for user ${userId} via Stripe.`);
       } catch (error) {
-        console.error('Failed to create order from Stripe webhook:', error);
+        console.error("Failed to create order from Stripe webhook:", error);
         // You might want to send an alert here
-        return res.status(500).json({ message: 'Error processing order.' });
+        return res.status(500).json({ message: "Error processing order." });
       }
     }
 
@@ -114,5 +143,5 @@ export const handlePaymentWebhook = async (req, res) => {
     return;
   }
 
-  res.status(400).json({ message: 'Unrecognized webhook source.' });
+  res.status(400).json({ message: "Unrecognized webhook source." });
 };

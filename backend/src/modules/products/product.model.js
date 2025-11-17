@@ -1,4 +1,4 @@
-import db from '../../config/db.js';
+import db from "../../config/db.js";
 
 /**
  * Fetches a list of products from the database.
@@ -13,10 +13,10 @@ import db from '../../config/db.js';
  * @returns {Promise<Array>} A promise that resolves to an array of products.
  */
 export const find = async (filters = {}) => {
-  const query = db('products');
+  const query = db("products");
 
   if (filters.search) {
-    query.where('name', 'ilike', `%${filters.search}%`);
+    query.where("name", "ilike", `%${filters.search}%`);
   }
 
   if (filters.category_id) {
@@ -32,14 +32,14 @@ export const find = async (filters = {}) => {
   }
 
   if (filters.min_price) {
-    query.where('price', '>=', filters.min_price);
+    query.where("price", ">=", filters.min_price);
   }
 
   if (filters.max_price) {
-    query.where('price', '<=', filters.max_price);
+    query.where("price", "<=", filters.max_price);
   }
 
-  return query.select('*');
+  return query.select("*");
 };
 
 /**
@@ -48,7 +48,7 @@ export const find = async (filters = {}) => {
  * @returns {Promise<object|undefined>} A promise that resolves to the product object or undefined if not found.
  */
 export const findById = async (id) => {
-  return db('products').where({ id }).first();
+  return db("products").where({ id }).first();
 };
 
 /**
@@ -56,7 +56,7 @@ export const findById = async (id) => {
  * @returns {Promise<Array>} A promise that resolves to an array of category objects.
  */
 export const findAllCategories = () => {
-  return db('categories').orderBy('name', 'asc');
+  return db("categories").orderBy("name", "asc");
 };
 
 /**
@@ -65,5 +65,5 @@ export const findAllCategories = () => {
  * @returns {Promise<object|undefined>} The category object or undefined.
  */
 export const findCategoryByName = (name) => {
-  return db('categories').where({ name }).first();
+  return db("categories").where({ name }).first();
 };

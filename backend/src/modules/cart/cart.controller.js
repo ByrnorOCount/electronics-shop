@@ -1,6 +1,6 @@
-import * as cartService from './cart.service.js';
-import httpStatus from 'http-status';
-import ApiResponse from '../../core/utils/ApiResponse.js';
+import * as cartService from "./cart.service.js";
+import httpStatus from "http-status";
+import ApiResponse from "../../core/utils/ApiResponse.js";
 
 /**
  * Get all items in the user's cart.
@@ -26,10 +26,16 @@ export const addItemToCart = async (req, res, next) => {
   const userId = req.user.id;
 
   try {
-    const { item, wasCreated } = await cartService.addItemToCart(userId, productId, quantity);
+    const { item, wasCreated } = await cartService.addItemToCart(
+      userId,
+      productId,
+      quantity
+    );
 
     const statusCode = wasCreated ? httpStatus.CREATED : httpStatus.OK;
-    const message = wasCreated ? 'Item added to cart.' : 'Item quantity updated in cart.';
+    const message = wasCreated
+      ? "Item added to cart."
+      : "Item quantity updated in cart.";
 
     res.status(statusCode).json(new ApiResponse(statusCode, item, message));
   } catch (error) {
@@ -47,7 +53,15 @@ export const syncCart = async (req, res, next) => {
 
   try {
     const updatedCart = await cartService.syncUserCart(userId, req.body);
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedCart, 'Cart synchronized successfully.'));
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          updatedCart,
+          "Cart synchronized successfully."
+        )
+      );
   } catch (error) {
     next(error);
   }
@@ -64,8 +78,14 @@ export const updateCartItem = async (req, res, next) => {
   const userId = req.user.id;
 
   try {
-    const updatedItem = await cartService.updateCartItem(userId, itemId, quantity);
-    res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, updatedItem, 'Cart item updated.'));
+    const updatedItem = await cartService.updateCartItem(
+      userId,
+      itemId,
+      quantity
+    );
+    res
+      .status(httpStatus.OK)
+      .json(new ApiResponse(httpStatus.OK, updatedItem, "Cart item updated."));
   } catch (error) {
     next(error);
   }
