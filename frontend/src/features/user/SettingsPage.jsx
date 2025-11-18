@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
-import { useApi } from "../../hooks/useApi";
-import { userService } from "../../api";
-import { setUser } from "../auth/authSlice";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import Icon from "../../components/ui/Icon";
-import logger from "../../utils/logger";
+import { useUserActions } from "./useUserActions";
 
 export default function SettingsPage() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const { updateProfile, changePassword, isLoading, error } = useUserActions();
 
   // --- Profile Update Form (using react-hook-form) ---
   const {
@@ -25,11 +22,6 @@ export default function SettingsPage() {
       email: user?.email || "",
     },
   });
-  const {
-    isLoading: profileLoading,
-    error: profileError,
-    request: updateProfile,
-  } = useApi(userService.updateUserProfile);
 
   // --- Password Change Form (using react-hook-form) ---
   const {
@@ -39,11 +31,6 @@ export default function SettingsPage() {
     reset: resetPasswordForm,
     watch: watchPassword, // Renamed to avoid conflict
   } = useForm();
-  const {
-    isLoading: passwordLoading,
-    error: passwordError,
-    request: changePassword,
-  } = useApi(userService.changePassword);
 
   // State for password visibility toggles
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -62,26 +49,16 @@ export default function SettingsPage() {
   }, [user, resetProfileForm]);
 
   const onProfileFormSubmit = async (data) => {
-    try {
-      const response = await updateProfile(data);
-      dispatch(setUser(response.user));
-      toast.success("Profile updated successfully!");
-    } catch (err) {
-      logger.error("Failed to update profile:", err);
-      toast.error(err.message || "Failed to update profile.");
-    }
+    await updateProfile(data);
   };
 
   const onPasswordFormSubmit = async (data) => {
-    try {
-      await changePassword({
-        currentPassword: data.currentPassword,
-        newPassword: data.newPassword,
-      });
-      toast.success("Password changed successfully!");
+    const success = await changePassword({
+      currentPassword: data.currentPassword,
+      newPassword: data.newPassword,
+    });
+    if (success) {
       resetPasswordForm();
-    } catch (err) {
-      logger.error("Failed to change password:", err);
     }
   };
 
@@ -175,16 +152,14 @@ export default function SettingsPage() {
           </div>
           <div className="flex items-center justify-between">
             <div className="flex-grow">
-              {profileError && (
-                <p className="text-sm text-red-600">{profileError.message}</p>
-              )}
+              {error && <p className="text-sm text-red-600">{error.message}</p>}
             </div>
             <button
               type="submit"
-              disabled={profileLoading || !isProfileDirty}
+              disabled={isLoading || !isProfileDirty}
               className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed"
             >
-              {profileLoading ? "Saving..." : "Save Changes"}
+              {isLoading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>
@@ -321,16 +296,14 @@ export default function SettingsPage() {
           </div>
           <div className="flex items-center justify-between">
             <div className="flex-grow">
-              {passwordError && (
-                <p className="text-sm text-red-600">{passwordError.message}</p>
-              )}
+              {error && <p className="text-sm text-red-600">{error.message}</p>}
             </div>
             <button
               type="submit"
-              disabled={passwordLoading}
+              disabled={isLoading}
               className="px-6 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              {passwordLoading ? "Saving..." : "Change Password"}
+              {isLoading ? "Saving..." : "Change Password"}
             </button>
           </div>
         </form>
