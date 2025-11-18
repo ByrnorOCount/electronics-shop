@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import toast from "react-hot-toast";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { registerUser } from "./authSlice";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAppSelector } from "../../store/hooks";
+import { useAuthActions } from "./useAuthActions";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -11,25 +10,18 @@ const RegisterPage = () => {
     email: "",
     password: "",
   });
-
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { status, error } = useAppSelector((state) => state.auth);
+  const { register } = useAuthActions();
+  const { status } = useAppSelector((state) => state.auth);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(registerUser(formData))
-      .unwrap()
-      .then(() => {
-        navigate("/login?status=registered");
-      })
-      .catch((err) => {
-        toast.error(err || "Registration failed. Please try again.");
-      });
+    register(formData).catch(() => {
+      // Optional: Handle component-specific error logic here if needed
+    });
   };
 
   return (

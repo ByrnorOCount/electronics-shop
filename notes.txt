@@ -102,11 +102,9 @@ feature has slice file: service file returns response.data
 feature doesn't: service file returns response.data.data
 modules should follow _template module
 
-Can you add filtering options to the "Your Tickets" section on the support page (e.g., filter by status: open, closed)?
-Now, can you show me how to catch and log uncaught exceptions and unhandled promise rejections in `server.js`?
-The support tickets on the support page are static. Can you make them clickable to view a detailed page for each ticket?
+Filtering options to the "Your Tickets" section on the support page (e.g., filter by status: open, closed)
+The support tickets on the support page are static. Make them clickable to view a detailed page for each ticket
 
-useAuthActions
 useOrderActions
 useSupportActions
 useUserActions

@@ -1,10 +1,11 @@
 // frontend/src/pages/LoginPage.jsx
 import React, { useState, useEffect } from "react";
 import { useAppDispatch } from "../../store/hooks";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import { setCredentials, loginUser } from "./authSlice";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import { setCredentials } from "./authSlice";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
+import { useAuthActions } from "./useAuthActions";
 import GoogleLoginButton from "./components/GoogleLoginButton";
 import FacebookLoginButton from "./components/FacebookLoginButton";
 
@@ -15,7 +16,8 @@ const LoginPage = () => {
   });
 
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const { login } = useAuthActions();
+  const navigate = useNavigate(); // Still needed for social login redirect
   const location = useLocation();
 
   const searchParams = new URLSearchParams(location.search);
@@ -53,17 +55,11 @@ const LoginPage = () => {
   };
 
   // Login form using EMAIL/PASSWORD (remains the same)
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser(formData)) // dispatch the loginUser async thunk
-      .unwrap() // transforms the returned Promise to either resolve with the payload or reject with the error
-      .then((data) => {
-        toast.success(`Welcome back, ${data.user.first_name}!`);
-        navigate("/profile");
-      })
-      .catch((err) => {
-        toast.error(err || "Login failed. Please check your credentials.");
-      });
+    login(formData).catch(() => {
+      // Optional: Handle component-specific error logic here if needed
+    });
   };
 
   return (
