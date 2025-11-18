@@ -3,6 +3,7 @@ import * as orderService from "./order.service.js";
 import httpStatus from "http-status";
 import ApiResponse from "../../core/utils/ApiResponse.js";
 import { createOrderFromCart } from "../../core/integrations/payment.service.js";
+import logger from "../../config/logger.js";
 
 // TODO: Add additional payment methods beside Stripe in the future
 
@@ -114,7 +115,7 @@ export const handlePaymentWebhook = async (req, res) => {
         endpointSecret
       );
     } catch (err) {
-      console.log(`⚠️  Webhook signature verification failed.`, err.message);
+      logger.warn(`⚠️  Webhook signature verification failed.`, err.message);
       return res.sendStatus(400);
     }
 
@@ -132,9 +133,9 @@ export const handlePaymentWebhook = async (req, res) => {
         await createOrderFromCart(Number(userId), shippingAddress, "stripe", {
           transactionId: session.payment_intent,
         });
-        console.log(`✅ Order created for user ${userId} via Stripe.`);
+        logger.info(`✅ Order created for user ${userId} via Stripe.`);
       } catch (error) {
-        console.error("Failed to create order from Stripe webhook:", error);
+        logger.error("Failed to create order from Stripe webhook:", error);
         // You might want to send an alert here
         return res.status(500).json({ message: "Error processing order." });
       }

@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import logger from "../../config/logger.js";
 
 let transporter;
 
@@ -54,10 +55,10 @@ export const sendOrderConfirmationEmail = async (user, order) => {
   });
 
   if (process.env.NODE_ENV !== "production") {
-    console.log(
+    logger.log(
       `\n--- ORDER CONFIRMATION --- \nUser: ${user.email}\nOrder ID: ${order.id}\nTotal: $${order.total_amount}\n--------------------------\n`
     );
-    console.log(
+    logger.log(
       "Order confirmation email sent. Preview URL: %s",
       nodemailer.getTestMessageUrl(info)
     );
@@ -81,10 +82,13 @@ export const sendPasswordResetEmail = async (user, token) => {
     html: `<h1>Hi ${user.first_name},</h1><p>You requested a password reset. Please click the following link to reset your password:</p><a href="${resetUrl}">${resetUrl}</a><p>This link will expire in 1 hour.</p>`,
   });
 
-  console.log(
-    "Password reset email sent. Preview URL: %s",
-    nodemailer.getTestMessageUrl(info)
-  );
+  if (process.env.NODE_ENV !== "production") {
+    logger.info(
+      `Password reset email sent. Preview URL: ${nodemailer.getTestMessageUrl(
+        info
+      )}`
+    );
+  }
 };
 
 /**
@@ -105,9 +109,10 @@ export const sendVerificationEmail = async (user, token) => {
   });
 
   if (process.env.NODE_ENV !== "production") {
-    console.log(
-      "Verification email sent. Preview URL: %s",
-      nodemailer.getTestMessageUrl(info)
+    logger.info(
+      `Verification email sent. Preview URL: ${nodemailer.getTestMessageUrl(
+        info
+      )}`
     );
   }
 };
@@ -127,12 +132,11 @@ export const sendOtpEmail = async (user, otp) => {
   });
 
   if (process.env.NODE_ENV !== "production") {
-    console.log(
+    logger.info(
       `\n--- CHECKOUT OTP --- \nUser: ${user.email}\nOTP: ${otp}\n--------------------\n`
     );
-    console.log(
-      "OTP email sent. Preview URL: %s",
-      nodemailer.getTestMessageUrl(info)
+    logger.info(
+      `OTP email sent. Preview URL: ${nodemailer.getTestMessageUrl(info)}`
     );
   }
 };

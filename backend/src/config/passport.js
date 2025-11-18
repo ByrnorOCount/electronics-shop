@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as FacebookStrategy } from "passport-facebook";
 import db from "./db.js";
+import logger from "./logger.js";
 
 /**
  * A generic function to find or create a user from a social provider.
@@ -69,7 +70,7 @@ const findOrCreateUser = async (provider, profile, done) => {
 
     return done(null, newUser);
   } catch (error) {
-    console.error(`Error in Passport ${provider} Strategy:`, error);
+    logger.error(`Error in Passport ${provider} Strategy:`, error);
     return done(error, null);
   }
 };

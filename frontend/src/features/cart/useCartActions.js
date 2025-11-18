@@ -51,7 +51,7 @@ export const useCartActions = () => {
       try {
         await cartService.removeCartItem(item.cartItemId);
       } catch (error) {
-        console.error("Failed to remove item on server:", error);
+        logger.error("Failed to remove item on server:", error);
         toast.error("Failed to sync item removal.");
         // Optional: Revert the change by re-adding the item to Redux.
       }

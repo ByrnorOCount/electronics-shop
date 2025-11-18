@@ -1,23 +1,48 @@
 import app from "./app.js";
 import db from "./config/db.js";
+import logger from "./config/logger.js";
 
 const PORT = process.env.PORT || 3001;
 
+let server;
+
 const startServer = async () => {
   try {
-    // 1. Start the Express server and listen for incoming requests immediately.
-    const server = app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    server = app.listen(PORT, () => {
+      logger.info(`🚀 Server running on http://localhost:${PORT}`);
     });
 
     // 2. After the server is listening, test the database connection.
     // This prevents a slow DB connection from blocking the server startup.
     await db.raw("SELECT 1");
-    console.log("✅ Database connection successful.");
+    logger.info("✅ Database connection successful.");
   } catch (error) {
-    console.error("❌ Failed to start server or connect to database:", error);
+    logger.error("❌ Failed to start server or connect to database:", error);
     process.exit(1);
   }
 };
 
 startServer();
+
+const unexpectedErrorHandler = (error) => {
+  logger.error("UNHANDLED ERROR:", error);
+  if (server) {
+    server.close(() => {
+      logger.info("Server closed due to unhandled error.");
+      process.exit(1);
+    });
+  } else {
+    process.exit(1);
+  }
+};
+
+// Listen for uncaught exceptions (synchronous errors)
+process.on("uncaughtException", unexpectedErrorHandler);
+
+// Listen for unhandled promise rejections (asynchronous errors)
+process.on("unhandledRejection", (reason) => {
+  // The 'reason' for a rejection can be any value, not just an Error object.
+  // We wrap it in an error to ensure a consistent stack trace for logging.
+  const error = new Error(`UNHANDLED REJECTION: ${reason}`);
+  unexpectedErrorHandler(error);
+});

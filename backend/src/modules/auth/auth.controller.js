@@ -1,6 +1,7 @@
 import * as authService from "./auth.service.js";
 import httpStatus from "http-status";
 import ApiResponse from "../../core/utils/ApiResponse.js";
+import logger from "../../config/logger.js";
 
 /**
  * @route POST /api/auth/register
@@ -63,7 +64,7 @@ export const socialAuthCallback = async (req, res, next) => {
     res.redirect(process.env.FRONTEND_URL);
   } catch (error) {
     // If anything goes wrong, redirect to the login page with an error.
-    console.error("Social login error:", error);
+    logger.error("Social login error:", error);
     res.redirect(`${process.env.FRONTEND_URL}/login?error=social_login_failed`);
   }
 };

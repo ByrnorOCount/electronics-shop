@@ -1,6 +1,7 @@
 import httpStatus from "http-status";
 import crypto from "crypto";
 import ApiError from "../utils/ApiError.js";
+import logger from "../../config/logger.js";
 
 const excludedRoutes = [
   "/api/auth/login",
@@ -47,7 +48,7 @@ export const csrfProtection = (req, res, next) => {
     );
   } catch (error) {
     // This will catch errors if buffers have different lengths or if tokens don't match
-    console.error(
+    logger.warn(
       `CSRF Token Mismatch: Cookie=${tokenFromCookie}, Header=${tokenFromHeader}`
     );
     return next(new ApiError(httpStatus.FORBIDDEN, "Invalid CSRF token."));
