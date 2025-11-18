@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
-import OrderSummary from "./components/OrderSummary";
+import OrderDetails from "./components/OrderDetails";
 import { useApi } from "../../hooks/useApi";
-import orderService from "./orderService";
+import { orderService } from "../../api";
 import toast from "react-hot-toast";
 
 export default function OrderConfirmationPage() {
@@ -70,7 +70,7 @@ export default function OrderConfirmationPage() {
         </div>
 
         <div className="border-t pt-6">
-          <OrderSummary order={order} />
+          <OrderDetails order={order} />
         </div>
       </div>
     </main>

@@ -1,35 +1,20 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../store/hooks";
-import CartSummary from "./components/OrderSummary";
-import orderService from "./orderService";
+import CartSummary from "../cart/components/CartSummary";
 import Button from "../../components/ui/Button";
-import { clearCart } from "../cart/cartSlice";
 import toast from "react-hot-toast";
+import { useOrderActions } from "./useOrderActions";
 
 export default function CheckoutPage() {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const [shippingAddress, setShippingAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod"); // 'cod', 'stripe'
   const [otp, setOtp] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleGenerateOtp = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      await orderService.generateOtp();
-      toast.success("An OTP has been sent to your email.");
-    } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Failed to send OTP. Please try again."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    createOrder,
+    generateOtp: handleGenerateOtp,
+    isLoading,
+    error,
+  } = useOrderActions();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,35 +23,16 @@ export default function CheckoutPage() {
       return;
     }
 
-    setLoading(true);
-    setError("");
-
-    try {
-      if (paymentMethod === "cod") {
-        if (!otp) {
-          setLoading(false);
-          toast.error("Please enter the OTP sent to your email.");
-          return;
-        }
-        const { order } = await orderService.createCodOrder(
-          shippingAddress,
-          otp
-        );
-        dispatch(clearCart()); // Clear the cart in Redux state
-        navigate("/order-confirmation", { state: { order } });
-      } else {
-        // Handle online payments
-        const { url } = await orderService.createPaymentSession(paymentMethod);
-        // Redirect user to the payment provider's page
-        window.location.href = url;
-      }
-    } catch (err) {
-      toast.error(
-        err.response?.data?.message || "An unexpected error occurred."
-      );
-    } finally {
-      setLoading(false);
+    if (paymentMethod === "cod" && !otp) {
+      toast.error("Please enter the OTP sent to your email.");
+      return;
     }
+
+    await createOrder({
+      shippingAddress,
+      paymentMethod,
+      otp,
+    });
   };
 
   return (
@@ -151,21 +117,21 @@ export default function CheckoutPage() {
                 <Button
                   type="button"
                   onClick={handleGenerateOtp}
-                  disabled={loading}
+                  disabled={isLoading}
                 >
-                  {loading ? "Sending..." : "Get OTP"}
+                  {isLoading ? "Sending..." : "Get OTP"}
                 </Button>
               </div>
             </div>
           )}
 
-          {/* Error and Notification Messages */}
+          {/* Error Messages */}
           {error && !toast.isActive("error-toast") && (
             <p className="text-red-500 text-sm">{error}</p>
           )}
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading
               ? "Processing..."
               : paymentMethod === "cod"
               ? "Place Order"

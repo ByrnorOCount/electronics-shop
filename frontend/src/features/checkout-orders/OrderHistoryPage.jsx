@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useApi } from "../../hooks/useApi";
-import orderService from "./orderService";
-import OrderSummary from "./components/OrderSummary";
+import { orderService } from "../../api";
+import OrderDetails from "./components/OrderDetails";
 import toast from "react-hot-toast";
 import logger from "../../utils/logger";
 
@@ -54,7 +54,7 @@ const OrderItem = ({ order }) => {
       </button>
       {isOpen && (
         <div className="p-4 border-t bg-gray-50">
-          <OrderSummary order={order} />
+          <OrderDetails order={order} />
         </div>
       )}
     </div>
