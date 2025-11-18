@@ -11,7 +11,7 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [shippingAddress, setShippingAddress] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("cod"); // 'cod', 'stripe', 'vnpay'
+  const [paymentMethod, setPaymentMethod] = useState("cod"); // 'cod', 'stripe'
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -102,7 +102,7 @@ export default function CheckoutPage() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
             <div className="space-y-2">
-              {["cod", "stripe", "vnpay"].map((method) => (
+              {["cod", "stripe"].map((method) => (
                 <label
                   key={method}
                   className="flex items-center gap-3 p-3 border rounded-md has-[:checked]:bg-indigo-50 has-[:checked]:border-indigo-500"

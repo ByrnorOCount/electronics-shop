@@ -63,7 +63,7 @@
 "orders/create-payment-session":
   post:
     summary: Create a payment session for online payments
-    description: Initiates a payment session with an online provider like Stripe or VNPay. Returns a URL for the user to complete the payment. An order is created via webhook upon successful payment.
+    description: Initiates a payment session with an online provider like Stripe. Returns a URL for the user to complete the payment. An order is created via webhook upon successful payment.
     operationId: createPaymentSession
     tags:
       - Orders

@@ -9,7 +9,7 @@ import { sendOrderConfirmationEmail } from "./email.service.js";
  *
  * @param {number} userId - The ID of the user placing the order.
  * @param {string} shippingAddress - The shipping address for the order.
- * @param {string} paymentMethod - The payment method used (e.g., 'cod', 'stripe', 'vnpay').
+ * @param {string} paymentMethod - The payment method used (e.g., 'cod', 'stripe').
  * @param {object} paymentDetails - Additional details from the payment gateway (e.g., transaction ID).
  * @returns {Promise<object>} The newly created order object.
  */

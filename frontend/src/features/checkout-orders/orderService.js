@@ -25,8 +25,8 @@ const createCodOrder = async (shippingAddress, otp) => {
 };
 
 /**
- * Creates a payment session for online payment providers like Stripe or VNPay.
- * @param {'stripe' | 'vnpay'} paymentMethod The selected online payment method.
+ * Creates a payment session for online payment providers like Stripe.
+ * @param {'stripe'} paymentMethod The selected online payment method (e.g., 'stripe').
  * @returns {Promise<{url: string}>} A promise that resolves to an object containing the payment URL.
  */
 const createPaymentSession = async (paymentMethod) => {

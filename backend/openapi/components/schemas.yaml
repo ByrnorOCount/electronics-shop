@@ -192,7 +192,7 @@ CreatePaymentSessionRequest:
     paymentMethod:
       type: string
       description: The online payment provider to use.
-      enum: [stripe, vnpay]
+      enum: [stripe]
       example: stripe
 
 SupportTicket:

@@ -29,12 +29,13 @@ export const generateCheckoutOtp = async (req, res) => {
 };
 
 /**
- * Create a payment session for online payments (Stripe, VNPay).
+ * Create a payment session for online payments (Stripe).
  * @route POST /api/orders/create-payment-session
  * @access Private
  */
 export const createPaymentSession = async (req, res, next) => {
-  const { paymentMethod } = req.body; // 'stripe' or 'vnpay'
+  // 'stripe'
+  const { paymentMethod } = req.body; // 'stripe'
   const userId = req.user.id;
 
   try {
@@ -94,7 +95,7 @@ export const getOrders = async (req, res, next) => {
 };
 
 /**
- * Handles incoming webhooks from payment providers (Stripe, VNPay).
+ * Handles incoming webhooks from payment providers (Stripe).
  * @route POST /api/orders/webhook
  * @access Public (verified by signature/hash)
  */

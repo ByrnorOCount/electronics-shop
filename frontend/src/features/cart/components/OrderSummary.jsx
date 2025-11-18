@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { useAppSelector } from '../../../store/hooks';
+import React, { useMemo } from "react";
+import { Link } from "react-router-dom";
+import { useAppSelector } from "../../../store/hooks";
 
 /**
  * A component that displays the cart's subtotal and a checkout button.
@@ -14,17 +14,25 @@ export default function OrderSummary({ order }) {
 
   // Determine the source of items and totals
   const isFromOrder = !!order;
-  const items = isFromOrder ? order.items.map(item => ({ ...item, id: item.product_id, qty: item.quantity, img: item.image_url })) : cartItems;
-  const subtotal = isFromOrder ? order.total_amount : items.reduce((sum, it) => sum + Number(it.price) * it.qty, 0);
-  
+  const items = isFromOrder
+    ? order.items.map((item) => ({
+        ...item,
+        id: item.product_id,
+        qty: item.quantity,
+        img: item.image_url,
+      }))
+    : cartItems;
+  const subtotal = isFromOrder
+    ? order.total_amount
+    : items.reduce((sum, it) => sum + Number(it.price) * it.qty, 0);
+
   // For live cart, calculate estimates. For past orders, these are not needed.
-  const shipping = !isFromOrder && subtotal > 0 ? 5.00 : 0;
+  const shipping = !isFromOrder && subtotal > 0 ? 5.0 : 0;
   const tax = !isFromOrder ? subtotal * 0.05 : 0;
   const total = isFromOrder ? order.total_amount : subtotal + shipping + tax;
   const paymentMethodDisplay = {
-    cod: 'Cash on Delivery',
-    stripe: 'Stripe (Online)',
-    vnpay: 'VNPay (Online)',
+    cod: "Cash on Delivery",
+    stripe: "Stripe (Online)",
   };
 
   // The checkout link depends on whether the user is logged in.
@@ -32,9 +40,24 @@ export default function OrderSummary({ order }) {
     if (isFromOrder) return null; // Don't show a checkout button for a past order
 
     if (token) {
-      return <Link to="/checkout" className="w-full text-center block bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700">Proceed to Checkout</Link>;
+      return (
+        <Link
+          to="/checkout"
+          className="w-full text-center block bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700"
+        >
+          Proceed to Checkout
+        </Link>
+      );
     }
-    return <Link to="/login" state={{ from: '/cart' }} className="w-full text-center block bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700">Login to Continue</Link>;
+    return (
+      <Link
+        to="/login"
+        state={{ from: "/cart" }}
+        className="w-full text-center block bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700"
+      >
+        Login to Continue
+      </Link>
+    );
   }, [token, isFromOrder]);
 
   return (
@@ -42,16 +65,28 @@ export default function OrderSummary({ order }) {
       <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
       {/* Item List */}
-      <div className={`space-y-4 mb-4 ${isFromOrder ? '' : 'max-h-60 overflow-y-auto pr-2'}`}>
+      <div
+        className={`space-y-4 mb-4 ${
+          isFromOrder ? "" : "max-h-60 overflow-y-auto pr-2"
+        }`}
+      >
         {items.map((item) => (
           <div key={item.id} className="flex items-center gap-4">
-            <img src={item.img} alt={item.name} className="w-16 h-16 object-cover rounded" />
+            <img
+              src={item.img}
+              alt={item.name}
+              className="w-16 h-16 object-cover rounded"
+            />
             <div className="flex-1 text-sm">
               <p className="font-medium">{item.name}</p>
               <p className="text-gray-500">Qty: {item.qty}</p>
-              {item.stock !== undefined && !isFromOrder && <p className="text-xs text-gray-500">In Stock: {item.stock}</p>}
+              {item.stock !== undefined && !isFromOrder && (
+                <p className="text-xs text-gray-500">In Stock: {item.stock}</p>
+              )}
             </div>
-            <span className="font-medium text-sm">${(Number(item.price) * item.qty).toFixed(2)}</span>
+            <span className="font-medium text-sm">
+              ${(Number(item.price) * item.qty).toFixed(2)}
+            </span>
           </div>
         ))}
       </div>
@@ -65,11 +100,16 @@ export default function OrderSummary({ order }) {
             </div>
             <div className="text-sm">
               <p className="font-semibold">Payment Method:</p>
-              <p className="text-gray-600">{paymentMethodDisplay[order.payment_method] || order.payment_method}</p>
+              <p className="text-gray-600">
+                {paymentMethodDisplay[order.payment_method] ||
+                  order.payment_method}
+              </p>
             </div>
             <div className="text-sm">
               <p className="font-semibold">Order Placed:</p>
-              <p className="text-gray-600">{new Date(order.created_at).toLocaleString()}</p>
+              <p className="text-gray-600">
+                {new Date(order.created_at).toLocaleString()}
+              </p>
             </div>
           </>
         ) : (
@@ -90,7 +130,7 @@ export default function OrderSummary({ order }) {
         )}
       </div>
       <div className="flex justify-between font-bold text-lg my-4 pt-4 border-t">
-        <span>{isFromOrder ? 'Order Total' : 'Order total'}</span>
+        <span>{isFromOrder ? "Order Total" : "Order total"}</span>
         <span>${Number(total).toFixed(2)}</span>
       </div>
       {CheckoutButton}

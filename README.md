@@ -231,7 +231,7 @@ The following features are identified for future development cycles to enhance t
 
 ### 7.2 Advanced E-Commerce Features
 
-- **Payment Gateway Integration:** Integrate with payment APIs (e.g., VNPay, Stripe) to enable online payments.
+- **Payment Gateway Integration:** Integrate with payment APIs (e.g., Stripe) to enable online payments.
 - **Shipping API Integration:** Connect with shipping providers (e.g., Giao Hàng Nhanh) for real-time shipping quotes and tracking.
 
 ### 7.3 Advanced Administrator Dashboard

@@ -39,8 +39,8 @@ const createStripeSession = async (cartItems, userId) => {
       quantity: item.quantity,
     })),
     mode: "payment",
-    success_url: `${process.env.VNPAY_RETURN_URL}?success=true`,
-    cancel_url: `${process.env.VNPAY_RETURN_URL}?success=false`,
+    success_url: `${process.env.FRONTEND_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.FRONTEND_URL}/checkout/cancel`,
     metadata: { userId },
   });
   return { url: session.url };
@@ -51,8 +51,8 @@ const paymentStrategies = {
 };
 
 /**
- * Create a payment session for online payments.
- * @param {string} paymentMethod - 'stripe' or 'vnpay'.
+ * Create a payment session for online payments (e.g., Stripe).
+ * @param {string} paymentMethod - 'stripe'.
  * @param {number} userId
  * @param {string} ipAddr
  * @returns {Promise<object>}
