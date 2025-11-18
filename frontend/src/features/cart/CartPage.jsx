@@ -1,7 +1,7 @@
 import React from "react";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import QuantityInput from "../../components/ui/QuantityInput";
-import OrderSummary from "./components/OrderSummary";
+import OrderSummary from "../checkout-orders/components/OrderSummary";
 import { Link } from "react-router-dom";
 import { useCartActions } from "./useCartActions";
 

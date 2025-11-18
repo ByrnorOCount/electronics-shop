@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
-import OrderSummary from "../cart/components/OrderSummary";
+import OrderSummary from "./components/OrderSummary";
 import { useApi } from "../../hooks/useApi";
 import orderService from "./orderService";
 import toast from "react-hot-toast";

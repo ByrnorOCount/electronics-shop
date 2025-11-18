@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useApi } from "../../hooks/useApi";
 import orderService from "./orderService";
-import OrderSummary from "../cart/components/OrderSummary";
+import OrderSummary from "./components/OrderSummary";
 import toast from "react-hot-toast";
 import logger from "../../utils/logger";
 
