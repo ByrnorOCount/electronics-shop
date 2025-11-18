@@ -41,41 +41,7 @@ export default function Header() {
           </Link>
         </nav>
         <div className="flex items-center gap-4">
-          {token ? (
-            <Link
-              to="/profile"
-              title="My Account"
-              className="flex items-center"
-            >
-              <Icon
-                name="user-account"
-                className="h-6 w-6 text-gray-700 hover:text-indigo-600"
-              />
-            </Link>
-          ) : (
-            <Link to="/login" title="Sign In" className="flex items-center">
-              <Icon
-                name="sign-in"
-                className="h-6 w-6 text-gray-700 hover:text-indigo-600"
-              />
-            </Link>
-          )}
-
-          {token && (
-            <>
-              <NotificationDropdown />
-              <Link
-                to="/wishlist"
-                className="relative flex items-center"
-                title="My Wishlist"
-              >
-                <Icon
-                  name="wishlist"
-                  className="h-6 w-6 text-gray-700 hover:text-indigo-600"
-                />
-              </Link>
-            </>
-          )}
+          {/* Cart always appears for guests */}
           <Link
             to="/cart"
             className="relative flex items-center"
@@ -91,6 +57,44 @@ export default function Header() {
               </span>
             )}
           </Link>
+          {token ? (
+            <>
+              <NotificationDropdown />
+              <Link
+                to="/wishlist"
+                className="relative flex items-center"
+                title="My Wishlist"
+              >
+                <Icon
+                  name="wishlist"
+                  className="h-6 w-6 text-gray-700 hover:text-indigo-600"
+                />
+              </Link>
+              <Link
+                to="/orders"
+                className="relative flex items-center"
+                title="Order History"
+              >
+                <Icon
+                  name="orders"
+                  className="h-6 w-6 text-gray-700 hover:text-indigo-600"
+                />
+              </Link>
+              <Link to="/profile" title="My Account">
+                <Icon
+                  name="user-account"
+                  className="h-6 w-6 text-gray-700 hover:text-indigo-600"
+                />
+              </Link>
+            </>
+          ) : (
+            <Link to="/login" title="Sign In" className="flex items-center">
+              <Icon
+                name="sign-in"
+                className="h-6 w-6 text-gray-700 hover:text-indigo-600"
+              />
+            </Link>
+          )}
         </div>
       </div>
     </header>

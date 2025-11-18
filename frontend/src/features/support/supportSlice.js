@@ -3,8 +3,11 @@ import { supportService } from "../../api";
 
 const initialState = {
   tickets: [],
+  faqs: [],
   status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null,
+  faqStatus: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
+  faqError: null,
 };
 
 // Async thunk for submitting a new ticket
@@ -43,6 +46,24 @@ export const getUserTickets = createAsyncThunk(
   }
 );
 
+// Async thunk for fetching FAQs
+export const getFaqs = createAsyncThunk(
+  "support/getFaqs",
+  async (_, thunkAPI) => {
+    try {
+      return await supportService.getFaqs();
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 const supportSlice = createSlice({
   name: "support",
   initialState,
@@ -63,6 +84,17 @@ const supportSlice = createSlice({
       .addCase(submitTicket.fulfilled, (state, action) => {
         // Add the new ticket to the beginning of the list
         state.tickets.unshift(action.payload);
+      })
+      .addCase(getFaqs.pending, (state) => {
+        state.faqStatus = "loading";
+      })
+      .addCase(getFaqs.fulfilled, (state, action) => {
+        state.faqStatus = "succeeded";
+        state.faqs = action.payload;
+      })
+      .addCase(getFaqs.rejected, (state, action) => {
+        state.faqStatus = "failed";
+        state.faqError = action.payload;
       });
   },
 });

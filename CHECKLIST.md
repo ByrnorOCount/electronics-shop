@@ -200,7 +200,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] `CartSummary` (OrderSummary.jsx)
 - [x] `NotificationDropdown`
 - [x] `Toast/Snackbar System` (for user feedback like "Profile updated successfully")
-- [ ] `SupportModal`
+- [x] `SupportModal` (not needed, implemented directly inside /support)
 
 ---
 
@@ -213,7 +213,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] **Checkout Flow:** COD checkout with OTP verification.
 - [x] **Order History:** Fetch and render past orders.
 - [x] **Notifications:** Display new alerts in real-time or via polling.
-- [ ] **Support System:** Allow message submission and viewing.
+- [x] **Support System:** Allow message submission and viewing.
 - [ ] **Role-based Access:** Protect pages by role (user, staff, admin).
 - [ ] **Responsiveness (NFR5):** Ensure full mobile and tablet support.
 

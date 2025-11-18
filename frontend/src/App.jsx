@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Routes, Route, Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Layout from "./components/layout/Layout";
 import HomePage from "./pages/home/HomePage";
@@ -65,75 +65,78 @@ function App() {
       <CartSyncManager />
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="products" element={<ProductsPage />} />
-          <Route path="products/:id" element={<ProductDetailPage />} />
-          <Route path="cart" element={<CartPage />} />
-          {/* Checkout and order pages are protected */}
-          <Route
-            path="/checkout"
-            element={
-              <ProtectedRoute>
-                <CheckoutPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/order-confirmation"
-            element={
-              <ProtectedRoute>
-                <OrderConfirmationPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/orders"
-            element={
-              <ProtectedRoute>
-                <OrderHistoryPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/wishlist"
-            element={
-              <ProtectedRoute>
-                <WishlistPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <SettingsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/notifications"
-            element={
-              <ProtectedRoute>
-                <NotificationsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
+        {/* The root Outlet no longer needs to provide context for the modal */}
+        <Route path="/" element={<Outlet />}>
+          <Route element={<Layout />}>
+            <Route index element={<HomePage />} />
+            <Route path="products" element={<ProductsPage />} />
+            <Route path="products/:id" element={<ProductDetailPage />} />
+            <Route path="cart" element={<CartPage />} />
+            {/* Checkout and order pages are protected */}
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedRoute>
+                  <CheckoutPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/order-confirmation"
+              element={
+                <ProtectedRoute>
+                  <OrderConfirmationPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute>
+                  <OrderHistoryPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/wishlist"
+              element={
+                <ProtectedRoute>
+                  <WishlistPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <SettingsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <NotificationsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route path="about" element={<AboutPage />} />
-          <Route path="careers" element={<CareersPage />} />
-          <Route path="support" element={<SupportPage />} />
-          <Route path="support/warranty" element={<WarrantyPage />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
+            <Route path="about" element={<AboutPage />} />
+            <Route path="careers" element={<CareersPage />} />
+            <Route path="support" element={<SupportPage />} />
+            <Route path="support/warranty" element={<WarrantyPage />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+          </Route>
         </Route>
 
         {/* Admin routes */}

@@ -19,9 +19,19 @@ const getUserTickets = async () => {
   return response.data.data;
 };
 
+/**
+ * Fetches all frequently asked questions.
+ * @returns {Promise<Array>} A list of FAQs.
+ */
+const getFaqs = async () => {
+  const response = await api.get("/support/faq");
+  return response.data.data;
+};
+
 const supportService = {
   submitTicket,
   getUserTickets,
+  getFaqs,
 };
 
 export default supportService;

@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { submitTicket, getUserTickets } from "./supportSlice";
+import { getUserTickets, submitTicket } from "./supportSlice";
+import Spinner from "../../components/ui/Spinner";
+import FaqSection from "./components/FaqSection";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
-import Spinner from "../../components/ui/Spinner";
+import toast from "react-hot-toast";
 
 const SupportPage = () => {
+  const [showTicketForm, setShowTicketForm] = useState(false);
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const { tickets, status, error } = useAppSelector((state) => state.support);
-
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -20,29 +23,49 @@ const SupportPage = () => {
     }
   }, [user, dispatch]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!subject || !message) {
-      // Basic validation feedback
-      alert("Please fill out both subject and message.");
+      toast.error("Please fill out both subject and message.");
       return;
     }
-    dispatch(submitTicket({ subject, message }));
-    setSubject("");
-    setMessage("");
+
+    setIsSubmitting(true);
+    try {
+      await dispatch(submitTicket({ subject, message })).unwrap();
+      toast.success("Support ticket submitted successfully!");
+      setSubject("");
+      setMessage("");
+      setShowTicketForm(false); // Hide form after submission
+    } catch (error) {
+      toast.error(
+        `Failed to submit ticket: ${error.message || "Please try again."}`
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!user) {
     return (
-      <div className="container mx-auto p-8 text-center">
-        <h1 className="text-3xl font-bold mb-4">Support Center</h1>
-        <p className="text-lg text-gray-700 mb-6">
-          Please{" "}
-          <Link to="/login" className="text-indigo-600 hover:underline">
-            log in
-          </Link>{" "}
-          to submit and view your support tickets.
-        </p>
+      <div className="container mx-auto p-4 md:p-8 max-w-6xl mb-12">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">Support Center</h1>
+          <p className="text-lg text-gray-700 mb-6">
+            Please{" "}
+            <Link to="/login" className="text-indigo-600 hover:underline">
+              log in
+            </Link>{" "}
+            to submit and view your support tickets.
+          </p>
+        </div>
+
+        <div className="max-w-2xl mx-auto mt-12">
+          <h2 className="text-2xl font-bold mb-4 text-center">
+            Frequently Asked Questions
+          </h2>
+          <FaqSection />
+        </div>
       </div>
     );
   }
@@ -51,53 +74,74 @@ const SupportPage = () => {
     <div className="container mx-auto p-4 md:p-8 max-w-6xl mb-12">
       <h1 className="text-4xl font-bold mb-6">Support Center</h1>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* New Ticket Form */}
-        <div className="lg:col-span-1 bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-4">Create a New Ticket</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label
-                htmlFor="subject"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Subject
-              </label>
-              <Input
-                type="text"
-                id="subject"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                placeholder="e.g., Issue with my order"
-                required
-              />
-            </div>
-            <div className="mb-6">
-              <label
-                htmlFor="message"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Message
-              </label>
-              <textarea
-                id="message"
-                rows="5"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Please describe your issue in detail..."
-                required
-              ></textarea>
-            </div>
-            <Button type="submit" className="w-full">
-              Submit Ticket
-            </Button>
-          </form>
+      <div className="grid lg:grid-cols-5 gap-12">
+        <div className="lg:col-span-2 order-2 lg:order-1">
+          {" "}
+          {/* FAQ section takes 2 columns, moved to order 1 on large screens */}
+          <h2 className="text-2xl font-bold mb-4">
+            Frequently Asked Questions
+          </h2>
+          <FaqSection />
         </div>
 
-        {/* Ticket History */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-4">Your Tickets</h2>
+        <div className="lg:col-span-3 order-1 lg:order-2">
+          {" "}
+          {/* Ticket section takes 3 columns, moved to order 2 on large screens */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+            <h2 className="text-2xl font-bold">Your Support Tickets</h2>
+            {user && (
+              <Button
+                onClick={() => setShowTicketForm(!showTicketForm)}
+                className="w-full sm:w-auto"
+                variant="primary"
+              >
+                {showTicketForm ? "Hide Form" : "Submit a Ticket"}
+              </Button>
+            )}
+          </div>
+          {showTicketForm && (
+            <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+              <h3 className="text-xl font-semibold mb-4">Submit New Ticket</h3>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="support-subject"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Subject
+                  </label>
+                  <Input
+                    type="text"
+                    id="support-subject"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    placeholder="e.g., Issue with my order"
+                    required
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="support-message"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Message
+                  </label>
+                  <textarea
+                    id="support-message"
+                    rows="5"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Please describe your issue in detail..."
+                    required
+                  ></textarea>
+                </div>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Submitting..." : "Submit Ticket"}
+                </Button>
+              </form>
+            </div>
+          )}
           {status === "loading" && (
             <div className="flex justify-center">
               <Spinner />
@@ -109,7 +153,7 @@ const SupportPage = () => {
           {status === "succeeded" && (
             <>
               {tickets.length === 0 ? (
-                <p className="text-gray-600">
+                <p className="text-gray-600 bg-gray-50 p-4 rounded-md">
                   You have not submitted any support tickets yet.
                 </p>
               ) : (
@@ -117,7 +161,7 @@ const SupportPage = () => {
                   {tickets.map((ticket) => (
                     <div
                       key={ticket.id}
-                      className="border border-gray-200 p-4 rounded-md"
+                      className="border border-gray-200 p-4 rounded-md bg-white shadow-sm"
                     >
                       <div className="flex justify-between items-start">
                         <div>
