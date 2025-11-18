@@ -2,6 +2,9 @@
 |-- CHECKLIST.md
 |-- backend
 |   |-- database
+|   |   |-- docs
+|   |   |   |-- database_schema.plantuml
+|   |   |   `-- schema.sql
 |   |   |-- knexfile.js
 |   |   |-- migrations
 |   |   |   |-- 20251005120000_create_initial_tables.js
@@ -25,6 +28,9 @@
 |   |       |-- 05_initial_orders.js
 |   |       |-- 06_initial_support_tickets.js
 |   |       `-- 07_initial_notifications.js
+|   |-- logs
+|   |   |-- all.log
+|   |   `-- error.log
 |   |-- openapi
 |   |   |-- components
 |   |   |   |-- requestBodies.yaml
@@ -43,104 +49,104 @@
 |   |       |-- users.yaml
 |   |       `-- wishlist.yaml
 |   |-- package.json
-|   |-- src
-|   |   |-- app.js
-|   |   |-- config
-|   |   |   |-- db.js
-|   |   |   `-- passport.js
-|   |   |-- core
-|   |   |   |-- integrations
-|   |   |   |   |-- email.service.js
-|   |   |   |   `-- payment.service.js
-|   |   |   |-- middlewares
-|   |   |   |   |-- auth.middleware.js
-|   |   |   |   |-- csrf.middleware.js
-|   |   |   |   |-- error.middleware.js
-|   |   |   |   `-- validation.middleware.js
-|   |   |   `-- utils
-|   |   |       |-- ApiError.js
-|   |   |       |-- ApiResponse.js
-|   |   |       `-- generateToken.js
-|   |   |-- modules
-|   |   |   |-- _template
-|   |   |   |   |-- template.controller.js
-|   |   |   |   |-- template.model.js
-|   |   |   |   |-- template.routes.js
-|   |   |   |   |-- template.service.js
-|   |   |   |   `-- template.validation.js
-|   |   |   |-- admin
-|   |   |   |   |-- admin.controller.js
-|   |   |   |   |-- admin.model.js
-|   |   |   |   |-- admin.routes.js
-|   |   |   |   |-- admin.service.js
-|   |   |   |   `-- admin.validation.js
-|   |   |   |-- auth
-|   |   |   |   |-- auth.controller.js
-|   |   |   |   |-- auth.model.js
-|   |   |   |   |-- auth.routes.js
-|   |   |   |   |-- auth.service.js
-|   |   |   |   `-- auth.validation.js
-|   |   |   |-- cart
-|   |   |   |   |-- cart.controller.js
-|   |   |   |   |-- cart.model.js
-|   |   |   |   |-- cart.routes.js
-|   |   |   |   |-- cart.service.js
-|   |   |   |   `-- cart.validation.js
-|   |   |   |-- notifications
-|   |   |   |   |-- notification.controller.js
-|   |   |   |   |-- notification.model.js
-|   |   |   |   |-- notification.routes.js
-|   |   |   |   |-- notification.service.js
-|   |   |   |   `-- notification.validation.js
-|   |   |   |-- orders
-|   |   |   |   |-- order.controller.js
-|   |   |   |   |-- order.model.js
-|   |   |   |   |-- order.routes.js
-|   |   |   |   |-- order.service.js
-|   |   |   |   `-- order.validation.js
-|   |   |   |-- products
-|   |   |   |   |-- product.controller.js
-|   |   |   |   |-- product.model.js
-|   |   |   |   |-- product.routes.js
-|   |   |   |   |-- product.service.js
-|   |   |   |   `-- product.validation.js
-|   |   |   |-- staff
-|   |   |   |   |-- staff.controller.js
-|   |   |   |   |-- staff.model.js
-|   |   |   |   |-- staff.routes.js
-|   |   |   |   |-- staff.service.js
-|   |   |   |   `-- staff.validation.js
-|   |   |   |-- support
-|   |   |   |   |-- support.controller.js
-|   |   |   |   |-- support.model.js
-|   |   |   |   |-- support.routes.js
-|   |   |   |   |-- support.service.js
-|   |   |   |   `-- support.validation.js
-|   |   |   |-- users
-|   |   |   |   |-- user.controller.js
-|   |   |   |   |-- user.model.js
-|   |   |   |   |-- user.routes.js
-|   |   |   |   |-- user.service.js
-|   |   |   |   `-- user.validation.js
-|   |   |   `-- wishlist
-|   |   |       |-- wishlist.controller.js
-|   |   |       |-- wishlist.model.js
-|   |   |       |-- wishlist.routes.js
-|   |   |       |-- wishlist.service.js
-|   |   |       `-- wishlist.validation.js
-|   |   |-- routes.js
-|   |   `-- server.js
-|   `-- tests
+|   `-- src
+|       |-- app.js
+|       |-- config
+|       |   |-- db.js
+|       |   |-- logger.js
+|       |   `-- passport.js
+|       |-- core
+|       |   |-- integrations
+|       |   |   |-- email.service.js
+|       |   |   `-- payment.service.js
+|       |   |-- middlewares
+|       |   |   |-- auth.middleware.js
+|       |   |   |-- csrf.middleware.js
+|       |   |   |-- error.middleware.js
+|       |   |   `-- validation.middleware.js
+|       |   `-- utils
+|       |       |-- ApiError.js
+|       |       |-- ApiResponse.js
+|       |       `-- generateToken.js
+|       |-- modules
+|       |   |-- _template
+|       |   |   |-- template.controller.js
+|       |   |   |-- template.model.js
+|       |   |   |-- template.routes.js
+|       |   |   |-- template.service.js
+|       |   |   `-- template.validation.js
+|       |   |-- admin
+|       |   |   |-- admin.controller.js
+|       |   |   |-- admin.model.js
+|       |   |   |-- admin.routes.js
+|       |   |   |-- admin.service.js
+|       |   |   `-- admin.validation.js
+|       |   |-- auth
+|       |   |   |-- auth.controller.js
+|       |   |   |-- auth.model.js
+|       |   |   |-- auth.routes.js
+|       |   |   |-- auth.service.js
+|       |   |   `-- auth.validation.js
+|       |   |-- cart
+|       |   |   |-- cart.controller.js
+|       |   |   |-- cart.model.js
+|       |   |   |-- cart.routes.js
+|       |   |   |-- cart.service.js
+|       |   |   `-- cart.validation.js
+|       |   |-- notifications
+|       |   |   |-- notification.controller.js
+|       |   |   |-- notification.model.js
+|       |   |   |-- notification.routes.js
+|       |   |   |-- notification.service.js
+|       |   |   `-- notification.validation.js
+|       |   |-- orders
+|       |   |   |-- order.controller.js
+|       |   |   |-- order.model.js
+|       |   |   |-- order.routes.js
+|       |   |   |-- order.service.js
+|       |   |   `-- order.validation.js
+|       |   |-- products
+|       |   |   |-- product.controller.js
+|       |   |   |-- product.model.js
+|       |   |   |-- product.routes.js
+|       |   |   |-- product.service.js
+|       |   |   `-- product.validation.js
+|       |   |-- staff
+|       |   |   |-- staff.controller.js
+|       |   |   |-- staff.model.js
+|       |   |   |-- staff.routes.js
+|       |   |   |-- staff.service.js
+|       |   |   `-- staff.validation.js
+|       |   |-- support
+|       |   |   |-- support.controller.js
+|       |   |   |-- support.model.js
+|       |   |   |-- support.routes.js
+|       |   |   |-- support.service.js
+|       |   |   `-- support.validation.js
+|       |   |-- users
+|       |   |   |-- user.controller.js
+|       |   |   |-- user.model.js
+|       |   |   |-- user.routes.js
+|       |   |   |-- user.service.js
+|       |   |   `-- user.validation.js
+|       |   `-- wishlist
+|       |       |-- wishlist.controller.js
+|       |       |-- wishlist.model.js
+|       |       |-- wishlist.routes.js
+|       |       |-- wishlist.service.js
+|       |       `-- wishlist.validation.js
+|       |-- routes.js
+|       `-- server.js
 |-- frontend
 |   |-- index.html
 |   |-- package.json
 |   |-- postcss.config.mjs
 |   |-- public
 |   |   |-- favicon.ico
+|   |   |-- images
 |   |   `-- logo.svg
 |   |-- src
 |   |   |-- App.jsx
-|   |   |-- AppInitializer.jsx
 |   |   |-- api
 |   |   |   |-- axios.js
 |   |   |   `-- index.js
@@ -154,6 +160,7 @@
 |   |   |       |-- Button.jsx
 |   |   |       |-- Icon.jsx
 |   |   |       |-- Input.jsx
+|   |   |       |-- ItemList.jsx
 |   |   |       |-- Modal.jsx
 |   |   |       |-- QuantityInput.jsx
 |   |   |       `-- Spinner.jsx
@@ -171,23 +178,27 @@
 |   |   |   |   |-- RegisterPage.jsx
 |   |   |   |   |-- authService.js
 |   |   |   |   |-- authSlice.js
-|   |   |   |   `-- components
-|   |   |   |       |-- FacebookLoginButton.jsx
-|   |   |   |       |-- GoogleLoginButton.jsx
-|   |   |   |       `-- ProtectedRoute.jsx
+|   |   |   |   |-- components
+|   |   |   |   |   |-- FacebookLoginButton.jsx
+|   |   |   |   |   |-- GoogleLoginButton.jsx
+|   |   |   |   |   `-- ProtectedRoute.jsx
+|   |   |   |   `-- useAuthActions.js
 |   |   |   |-- cart
 |   |   |   |   |-- CartPage.jsx
 |   |   |   |   |-- cartService.js
 |   |   |   |   |-- cartSlice.js
 |   |   |   |   |-- components
-|   |   |   |   |   |-- CartSyncManager.jsx
-|   |   |   |   |   `-- OrderSummary.jsx
+|   |   |   |   |   |-- CartSummary.jsx
+|   |   |   |   |   `-- CartSyncManager.jsx
 |   |   |   |   `-- useCartActions.js
 |   |   |   |-- checkout-orders
 |   |   |   |   |-- CheckoutPage.jsx
 |   |   |   |   |-- OrderConfirmationPage.jsx
 |   |   |   |   |-- OrderHistoryPage.jsx
-|   |   |   |   `-- orderService.js
+|   |   |   |   |-- components
+|   |   |   |   |   `-- OrderDetails.jsx
+|   |   |   |   |-- orderService.js
+|   |   |   |   `-- useOrderActions.js
 |   |   |   |-- notifications
 |   |   |   |   |-- NotificationsPage.jsx
 |   |   |   |   |-- components
@@ -204,12 +215,20 @@
 |   |   |   |   `-- productService.js
 |   |   |   |-- staff
 |   |   |   |-- support
+|   |   |   |   |-- SupportPage.jsx
+|   |   |   |   |-- components
+|   |   |   |   |   `-- FaqSection.jsx
+|   |   |   |   |-- supportService.js
+|   |   |   |   |-- supportSlice.js
+|   |   |   |   `-- useSupportActions.js
 |   |   |   |-- user
 |   |   |   |   |-- ProfilePage.jsx
 |   |   |   |   |-- SettingsPage.jsx
+|   |   |   |   |-- useUserActions.js
 |   |   |   |   `-- userService.js
 |   |   |   `-- wishlist
 |   |   |       |-- WishlistPage.jsx
+|   |   |       |-- useWishlistActions.js
 |   |   |       |-- wishlistService.js
 |   |   |       `-- wishlistSlice.js
 |   |   |-- hooks
@@ -219,7 +238,6 @@
 |   |   |   |-- AboutPage.jsx
 |   |   |   |-- CareersPage.jsx
 |   |   |   |-- NotFoundPage.jsx
-|   |   |   |-- SupportPage.jsx
 |   |   |   |-- WarrantyPage.jsx
 |   |   |   `-- home
 |   |   |       |-- Hero.jsx
@@ -228,10 +246,14 @@
 |   |   |-- store
 |   |   |   |-- hooks.js
 |   |   |   `-- index.js
-|   |   `-- styles
-|   |       `-- global.css
+|   |   |-- styles
+|   |   |   `-- global.css
+|   |   `-- utils
+|   |       `-- logger.js
 |   `-- vite.config.js
+|-- notes.txt
 |-- package-lock.json
-`-- package.json
+|-- package.json
+`-- tree.txt
 
-54 directories, 180 files
+59 directories, 197 files

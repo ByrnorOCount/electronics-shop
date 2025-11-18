@@ -104,7 +104,3 @@ modules should follow _template module
 
 Filtering options to the "Your Tickets" section on the support page (e.g., filter by status: open, closed)
 The support tickets on the support page are static. Make them clickable to view a detailed page for each ticket
-
-useSupportActions
-useUserActions
-useWishlistActions
