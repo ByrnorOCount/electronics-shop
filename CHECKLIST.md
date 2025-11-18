@@ -175,7 +175,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [X] `HomePage`, `ProductsPage`, `ProductDetailPage`
 - [x] `CartPage`, `WishlistPage`, `CheckoutPage`
 - [x] `OrderHistoryPage`, `LoginPage`, `RegisterPage`
-- [ ] `AccountPage`, `SettingsPage`, `SupportPage`
+- [x] `AccountPage`, `SettingsPage`, `SupportPage`
 
 #### Staff
 
@@ -197,7 +197,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] `ProductCard`
 - [x] `Header`, `Footer`
 - [x] `WishlistButton` (Functionality integrated directly into `ProductCard` and `ProductDetailPage`)
-- [x] `CartSummary`
+- [x] `CartSummary` (OrderSummary.jsx)
 - [x] `NotificationDropdown`
 - [x] `Toast/Snackbar System` (for user feedback like "Profile updated successfully")
 - [ ] `SupportModal`
@@ -255,8 +255,8 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ### **Reliability**
 
-- [ ] Implement error logging (Winston or similar).
-- [ ] Graceful API error responses.
+- [x] Implement error logging (Winston or similar).
+- [x] Graceful API error responses. (Now with logging!)
 
 ### **Testing**
 

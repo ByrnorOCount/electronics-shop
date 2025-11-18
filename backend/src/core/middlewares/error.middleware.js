@@ -1,5 +1,6 @@
 import httpStatus from "http-status";
 import ApiError from "../utils/ApiError.js";
+import logger from "../../config/logger.js";
 
 /**
  * Middleware to handle 404 Not Found errors for any unhandled routes.
@@ -26,17 +27,19 @@ export const notFound = (req, res, next) => {
  * @param {function} next - Express next middleware function.
  */
 export const errorHandler = (err, req, res, next) => {
-  const { statusCode, message } = err;
+  let { statusCode, message } = err;
 
-  if (process.env.NODE_ENV === "development") {
-    console.error(err);
+  if (!err.isOperational) {
+    statusCode = httpStatus.INTERNAL_SERVER_ERROR;
+    message = "An unexpected error occurred";
   }
 
-  // The ApiError class handles setting the correct statusCode and message.
+  logger.error(err.message, { stack: err.stack });
+
   const response = {
     success: false,
-    statusCode: statusCode || httpStatus.INTERNAL_SERVER_ERROR,
-    message: message || "An unexpected error occurred",
+    statusCode,
+    message,
     ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
   };
 
