@@ -20,8 +20,8 @@ export default function NotificationDropdown() {
 
   const {
     data,
-    error,
-    loading,
+    isLoading,
+    isError,
     request: fetchNotifications,
   } = useApi(notificationService.getNotifications);
   const { request: markRead } = useApi(notificationService.markAsRead);
@@ -108,15 +108,15 @@ export default function NotificationDropdown() {
             </button>
           </div>
           <div className="max-h-96 overflow-y-auto">
-            {loading && (
+            {isLoading && (
               <p className="p-4 text-center text-gray-500">Loading...</p>
             )}
-            {error && (
+            {isError && (
               <p className="p-4 text-center text-red-500">
                 Failed to load notifications.
               </p>
             )}
-            {!loading && notifications.length === 0 && (
+            {!isLoading && notifications.length === 0 && (
               <p className="p-4 text-center text-gray-500">
                 You have no notifications.
               </p>

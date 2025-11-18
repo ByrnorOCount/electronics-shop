@@ -7,8 +7,8 @@ import toast from "react-hot-toast";
 export default function NotificationsPage() {
   const {
     data,
-    loading,
-    error,
+    isLoading,
+    isError,
     request: fetchNotifications,
   } = useApi(notificationService.getNotifications);
   const { request: markAsReadRequest } = useApi(notificationService.markAsRead);
@@ -30,10 +30,10 @@ export default function NotificationsPage() {
   }, [data]);
 
   useEffect(() => {
-    if (error) {
+    if (isError) {
       toast.error("Failed to load notifications.");
     }
-  }, [error]);
+  }, [isError]);
 
   const handleMarkAsRead = async (id) => {
     await markAsReadRequest(id);
@@ -55,17 +55,17 @@ export default function NotificationsPage() {
         <h1 className="text-3xl font-bold">Notifications</h1>
         <button
           onClick={handleMarkAllAsRead}
-          disabled={loading || notifications.every((n) => n.is_read)}
+          disabled={isLoading || notifications.every((n) => n.is_read)}
           className="px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-100 rounded-md hover:bg-indigo-200 disabled:bg-gray-100 disabled:text-gray-400"
         >
           Mark all as read
         </button>
       </div>
 
-      {loading && (
+      {isLoading && (
         <p className="text-center text-gray-500">Loading notifications...</p>
       )}
-      {!loading && notifications.length === 0 && (
+      {!isLoading && notifications.length === 0 && (
         <div className="text-center bg-white p-12 rounded-lg shadow-sm">
           <p className="text-gray-600">You have no notifications.</p>
         </div>

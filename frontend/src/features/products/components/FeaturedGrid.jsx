@@ -7,7 +7,12 @@ import { productService } from "../../../api";
 import { useApi } from "../../../hooks/useApi";
 
 export default function FeaturedGrid() {
-  const { data: products, loading, error, request: fetchFeaturedProducts } = useApi(productService.getFeaturedProducts);
+  const {
+    data: products,
+    isLoading,
+    isError,
+    request: fetchFeaturedProducts,
+  } = useApi(productService.getFeaturedProducts);
 
   useEffect(() => {
     fetchFeaturedProducts();
@@ -15,10 +20,22 @@ export default function FeaturedGrid() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (loading) return <p className="text-center text-gray-500">Loading featured products...</p>;
-  if (error) return <p className="text-center text-red-500">Error: Could not load featured products.</p>;
+  if (isLoading)
+    return (
+      <p className="text-center text-gray-500">Loading featured products...</p>
+    );
+  if (isError)
+    return (
+      <p className="text-center text-red-500">
+        Error: Could not load featured products.
+      </p>
+    );
   if (!products || products.length === 0) {
-    return <p className="text-center text-gray-500">No featured products available at the moment.</p>;
+    return (
+      <p className="text-center text-gray-500">
+        No featured products available at the moment.
+      </p>
+    );
   }
 
   return (

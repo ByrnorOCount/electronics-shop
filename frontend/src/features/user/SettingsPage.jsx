@@ -25,7 +25,7 @@ export default function SettingsPage() {
     },
   });
   const {
-    loading: profileLoading,
+    isLoading: profileLoading,
     error: profileError,
     request: updateProfile,
   } = useApi(userService.updateUserProfile);
@@ -39,7 +39,7 @@ export default function SettingsPage() {
     watch: watchPassword, // Renamed to avoid conflict
   } = useForm();
   const {
-    loading: passwordLoading,
+    isLoading: passwordLoading,
     error: passwordError,
     request: changePassword,
   } = useApi(userService.changePassword);

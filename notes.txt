@@ -1,40 +1,3 @@
-online-shop/
-│── backend/              # Express.js backend (API, auth, DB)
-│   ├── database/
-│   │   ├── migrations/   # SQL migration files (schema changes, table creation, etc.)
-│   │   ├── seeders/      # Data seed files (test data, default users, products, etc.)
-│   │   ├── index.js
-│   │   └── knexfile.js
-│   ├── src/
-│   │   ├── config/       # DB connection, env configs
-│   │   ├── models/       # Database models (Product, User, Order)
-│   │   ├── controllers/  # Request logic (products, users, orders)
-│   │   ├── routes/       # Express routes (REST endpoints)
-│   │   ├── middlewares/  # Auth, logging, validation
-│   │   ├── services/     # Business logic (payment, email, etc.)
-│   │   ├── utils/        # Helpers (formatting, error handling)
-│   │   └── index.js      # Entry point (starts Express server)
-│   ├── tests/            # Backend unit/integration tests
-│   ├── package.json
-│   └── .env              # Environment vars for backend
-│
-│── frontend/             # React frontend (UI)
-│   ├── public/           # Static assets (logo, images, icons)
-│   ├── src/
-│   │   ├── components/   # Reusable UI components
-│   │   ├── pages/        # Page-level views (Home, Product, Cart, Checkout)
-│   │   ├── hooks/        # Custom React hooks
-│   │   ├── context/      # Global state (AuthContext, CartContext)
-│   │   ├── services/     # API calls to backend (fetch wrapper, axios)
-│   │   ├── styles/       # CSS/Tailwind/global styles
-│   │   └── main.jsx      # App entry point
-│   ├── package.json
-│   └── .env              # Environment vars for frontend (API URL, etc.)
-│
-│── .gitignore
-│── package.json          # contains "workspaces": ["backend", "frontend"]
-└── README.md
-
 Workflow
 
 Backend (Express API)
@@ -86,7 +49,6 @@ npm run preview # Preview production build
 For root combined dev (both frontend + backend at once):
 npm run dev
 
-
 Define the Schema First (The Migration)
 Apply the Schema Immediately
 Write Code That Obeys the Contract (Seeds, Models, etc.)
@@ -130,7 +92,6 @@ export function down(knex) {
 Run the migration:
 npx knex migrate:latest --cwd ./database
 
-
 postman/curl testing
 apis for everything
 
@@ -139,8 +100,6 @@ then 3 weeks later match frontend with backend/database
 
 diagrams
 use case tables
-
-
 
 làm thêm một bảng chức năng (các chức năng làm thì để bth còn để phát triển lên đồ án thì đánh màu)
 
@@ -199,3 +158,9 @@ KILL tiny-csrf NO MORE I HATE tiny-csrf USE DOUBLE SUBMIT COOKIE CSRF
 feature has slice file: service file returns response.data
 feature doesn't: service file returns response.data.data
 modules should follow _template module
+
+Review the `useApi` hook and suggest improvements for handling different states like idle, loading, success, and error more explicitly.
+useAuthActions
+useOrderActions
+useUserActions
+useWishlistActions

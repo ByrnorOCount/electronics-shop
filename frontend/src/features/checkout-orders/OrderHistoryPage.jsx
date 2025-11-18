@@ -63,8 +63,8 @@ const OrderItem = ({ order }) => {
 export default function OrderHistoryPage() {
   const {
     data: orders,
-    loading,
-    error,
+    isLoading,
+    isError,
     request: fetchOrders,
   } = useApi(orderService.getOrderHistory);
 
@@ -73,9 +73,9 @@ export default function OrderHistoryPage() {
   }, [fetchOrders]);
 
   let content;
-  if (loading) {
+  if (isLoading) {
     content = <p>Loading your order history...</p>;
-  } else if (error) {
+  } else if (isError) {
     console.error("Failed to load order history:", error);
     toast.error("Could not load your order history.");
     content = (

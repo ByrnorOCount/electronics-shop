@@ -7,8 +7,8 @@ import { productService } from "../../api";
 const ProductsPage = () => {
   const {
     data: products,
-    loading,
-    error,
+    isLoading,
+    isError,
     request: fetchProducts,
   } = useApi(productService.getProducts);
   const { data: categories, request: fetchCategories } = useApi(
@@ -37,9 +37,9 @@ const ProductsPage = () => {
     return () => clearTimeout(handler);
   }, [filters, fetchProducts]);
 
-  if (loading)
+  if (isLoading)
     return <div className="text-center p-8">Loading products...</div>;
-  if (error)
+  if (isError)
     return (
       <div className="text-center p-8 text-red-500">
         Failed to fetch products. Please try again later.

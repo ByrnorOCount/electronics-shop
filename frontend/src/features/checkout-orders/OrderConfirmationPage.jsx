@@ -11,8 +11,8 @@ export default function OrderConfirmationPage() {
 
   const {
     data: orders,
-    loading,
-    error,
+    isLoading,
+    isError,
     request: fetchOrders,
   } = useApi(orderService.getOrderHistory);
 
@@ -23,21 +23,21 @@ export default function OrderConfirmationPage() {
       fetchOrders();
     }
 
-    if (error) {
+    if (isError) {
       toast.error("Could not retrieve order details.");
     }
-  }, [initialOrder, fetchOrders]);
+  }, [initialOrder, fetchOrders, isError]);
 
   // Determine which order to display: the one from state, or the most recent from the fetch.
   const order = initialOrder || (orders && orders[0]);
 
-  if (loading) {
+  if (isLoading && !initialOrder) {
     return (
       <main className="flex-grow max-w-2xl mx-auto px-4 py-12 text-center">
         <p>Loading your order details...</p>
       </main>
     );
-  } else if (error || !order) {
+  } else if (isError || !order) {
     return (
       <main className="flex-grow max-w-2xl mx-auto px-4 py-12 text-center">
         <h1 className="text-2xl font-bold mb-4">No Order Information</h1>

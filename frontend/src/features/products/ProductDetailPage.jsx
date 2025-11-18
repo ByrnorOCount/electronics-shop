@@ -15,11 +15,17 @@ const ProductDetailPage = () => {
   const dispatch = useAppDispatch();
   const {
     data: product,
-    loading,
-    error,
+    isLoading,
+    isError,
     request: fetchProduct,
   } = useApi(productService.getProductById);
   const { addItem: addItemToCart } = useCartActions();
+  const { isLoading: isAddingToWishlist, request: addToWishlistRequest } =
+    useApi(wishlistService.addToWishlist);
+  const {
+    isLoading: isRemovingFromWishlist,
+    request: removeFromWishlistRequest,
+  } = useApi(wishlistService.removeFromWishlist);
 
   useEffect(() => {
     // The `id` is a string from the URL, but our services expect a number.
@@ -60,12 +66,12 @@ const ProductDetailPage = () => {
 
     try {
       if (isWishlisted) {
-        await wishlistService.removeFromWishlist(product.id);
+        await removeFromWishlistRequest(product.id);
         dispatch(removeFromWishlistLocal(product.id));
         toast.success("Removed from wishlist.");
       } else {
         // The local action needs the full product object to display it in the wishlist
-        await wishlistService.addToWishlist(product.id);
+        await addToWishlistRequest(product.id);
         dispatch(addToWishlistLocal(product));
         toast.success("Added to wishlist!");
       }
@@ -75,8 +81,10 @@ const ProductDetailPage = () => {
     }
   };
 
-  if (loading) return <div className="text-center p-8">Loading...</div>;
-  if (error)
+  const isWishlistLoading = isAddingToWishlist || isRemovingFromWishlist;
+
+  if (isLoading) return <div className="text-center p-8">Loading...</div>;
+  if (isError)
     return (
       <div className="text-center p-8 text-red-500">Product not found.</div>
     );
@@ -112,10 +120,13 @@ const ProductDetailPage = () => {
                 onClick={handleWishlistToggle}
                 onMouseEnter={() => setIsWishlistHovered(true)}
                 onMouseLeave={() => setIsWishlistHovered(false)}
-                className="bg-red-400 text-white font-bold py-3 px-6 rounded hover:bg-red-500 transition duration-300 flex-1 text-center"
+                disabled={isWishlistLoading}
+                className="bg-red-400 text-white font-bold py-3 px-6 rounded hover:bg-red-500 transition duration-300 flex-1 text-center disabled:bg-gray-400"
               >
                 <span className="inline-block w-42">
-                  {isWishlistHovered
+                  {isWishlistLoading
+                    ? "Updating..."
+                    : isWishlistHovered
                     ? "Remove from Wishlist"
                     : "Added to Wishlist"}
                 </span>
@@ -123,7 +134,8 @@ const ProductDetailPage = () => {
             ) : (
               <button
                 onClick={handleWishlistToggle}
-                className="bg-red-600 text-white font-bold py-3 px-6 rounded hover:bg-red-700 transition duration-300 flex-1 text-center"
+                disabled={isWishlistLoading}
+                className="bg-red-600 text-white font-bold py-3 px-6 rounded hover:bg-red-700 transition duration-300 flex-1 text-center disabled:bg-gray-400"
               >
                 <span className="inline-block w-40">Add to Wishlist</span>
               </button>
