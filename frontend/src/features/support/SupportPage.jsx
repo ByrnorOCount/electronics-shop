@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { getUserTickets, submitTicket } from "./supportSlice";
+import { getUserTickets } from "./supportSlice";
 import Spinner from "../../components/ui/Spinner";
 import FaqSection from "./components/FaqSection";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import toast from "react-hot-toast";
+import { useSupportActions } from "./useSupportActions";
 
 const SupportPage = () => {
   const [showTicketForm, setShowTicketForm] = useState(false);
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const { tickets, status, error } = useAppSelector((state) => state.support);
@@ -23,26 +21,26 @@ const SupportPage = () => {
     }
   }, [user, dispatch]);
 
+  // --- Ticket Submission Form ---
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const {
+    submitTicket,
+    isLoading: isSubmitting,
+    error: submissionError,
+  } = useSupportActions();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!subject || !message) {
       toast.error("Please fill out both subject and message.");
       return;
     }
-
-    setIsSubmitting(true);
-    try {
-      await dispatch(submitTicket({ subject, message })).unwrap();
-      toast.success("Support ticket submitted successfully!");
+    const success = await submitTicket({ subject, message });
+    if (success) {
       setSubject("");
       setMessage("");
       setShowTicketForm(false); // Hide form after submission
-    } catch (error) {
-      toast.error(
-        `Failed to submit ticket: ${error.message || "Please try again."}`
-      );
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
