@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import {
-  addToWishlistLocal,
-  removeFromWishlistLocal,
-} from "../wishlist/wishlistSlice";
+import { useParams, useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../store/hooks";
 import { useApi } from "../../hooks/useApi";
-import { productService, wishlistService } from "../../api";
+import { productService } from "../../api";
 import toast from "react-hot-toast";
 import { useCartActions } from "../cart/useCartActions";
-import logger from "../../utils/logger";
+import { useWishlistActions } from "../wishlist/useWishlistActions";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
-  const dispatch = useAppDispatch();
   const {
     data: product,
     isLoading,
@@ -21,12 +16,11 @@ const ProductDetailPage = () => {
     request: fetchProduct,
   } = useApi(productService.getProductById);
   const { addItem: addItemToCart } = useCartActions();
-  const { isLoading: isAddingToWishlist, request: addToWishlistRequest } =
-    useApi(wishlistService.addToWishlist);
   const {
-    isLoading: isRemovingFromWishlist,
-    request: removeFromWishlistRequest,
-  } = useApi(wishlistService.removeFromWishlist);
+    addItem: addToWishlist,
+    removeItem: removeFromWishlist,
+    isLoading: isWishlistLoading,
+  } = useWishlistActions();
 
   useEffect(() => {
     // The `id` is a string from the URL, but our services expect a number.
@@ -65,24 +59,15 @@ const ProductDetailPage = () => {
       return;
     }
 
-    try {
-      if (isWishlisted) {
-        await removeFromWishlistRequest(product.id);
-        dispatch(removeFromWishlistLocal(product.id));
-        toast.success("Removed from wishlist.");
-      } else {
-        // The local action needs the full product object to display it in the wishlist
-        await addToWishlistRequest(product.id);
-        dispatch(addToWishlistLocal(product));
-        toast.success("Added to wishlist!");
-      }
-    } catch (error) {
-      logger.error("Failed to update wishlist:", error);
-      toast.error("Failed to update wishlist.");
+    if (isWishlisted) {
+      removeFromWishlist(product.id);
+    } else {
+      // The hook handles adding the full product object
+      addToWishlist(product);
     }
   };
 
-  const isWishlistLoading = isAddingToWishlist || isRemovingFromWishlist;
+  const isCurrentlyLoading = isWishlistLoading(product?.id);
 
   if (isLoading) return <div className="text-center p-8">Loading...</div>;
   if (isError)
@@ -121,11 +106,11 @@ const ProductDetailPage = () => {
                 onClick={handleWishlistToggle}
                 onMouseEnter={() => setIsWishlistHovered(true)}
                 onMouseLeave={() => setIsWishlistHovered(false)}
-                disabled={isWishlistLoading}
+                disabled={isCurrentlyLoading}
                 className="bg-red-400 text-white font-bold py-3 px-6 rounded hover:bg-red-500 transition duration-300 flex-1 text-center disabled:bg-gray-400"
               >
                 <span className="inline-block w-42">
-                  {isWishlistLoading
+                  {isCurrentlyLoading
                     ? "Updating..."
                     : isWishlistHovered
                     ? "Remove from Wishlist"
@@ -135,7 +120,7 @@ const ProductDetailPage = () => {
             ) : (
               <button
                 onClick={handleWishlistToggle}
-                disabled={isWishlistLoading}
+                disabled={isCurrentlyLoading}
                 className="bg-red-600 text-white font-bold py-3 px-6 rounded hover:bg-red-700 transition duration-300 flex-1 text-center disabled:bg-gray-400"
               >
                 <span className="inline-block w-40">Add to Wishlist</span>
