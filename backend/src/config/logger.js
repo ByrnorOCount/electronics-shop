@@ -31,16 +31,17 @@ const format = winston.format.combine(
   )
 );
 
-const transports = [
-  // In development, log to the console
-  new winston.transports.Console(),
-  // In production, log errors to a file
-  new winston.transports.File({
-    filename: "logs/error.log",
-    level: "error",
-  }),
-  new winston.transports.File({ filename: "logs/all.log" }),
-];
+const transports = [new winston.transports.Console()];
+
+if (process.env.NODE_ENV === "production") {
+  transports.push(
+    new winston.transports.File({
+      filename: "logs/error.log",
+      level: "error",
+    }),
+    new winston.transports.File({ filename: "logs/all.log" })
+  );
+}
 
 const logger = winston.createLogger({
   level: level(),
