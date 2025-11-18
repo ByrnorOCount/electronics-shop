@@ -11,7 +11,7 @@ import LoginPage from "./features/auth/LoginPage";
 import RegisterPage from "./features/auth/RegisterPage";
 import AboutPage from "./pages/AboutPage";
 import CareersPage from "./pages/CareersPage";
-import SupportPage from "./pages/SupportPage";
+import SupportPage from "./features/support/SupportPage";
 import WarrantyPage from "./pages/WarrantyPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CartPage from "./features/cart/CartPage";

@@ -27,6 +27,48 @@
       - Support
     security:
       - bearerAuth: []
+    parameters:
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum: [open, in_progress, closed]
+        description: Filter tickets by status.
+      - in: query
+        name: sortBy
+        schema:
+          type: string
+        description: "Sort tickets. Example: `created_at:desc`"
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: Number of tickets to return per page.
+      - in: query
+        name: page
+        schema:
+          type: integer
+        description: Page number for pagination.
+    responses:
+      "200":
+        description: An array of the user's support tickets.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas.yaml#/SupportTicket"
+      "401":
+        description: Unauthorized.
+
+  post:
+    summary: Submit a new support ticket
+    description: Creates a new support ticket for the logged-in user.
+    operationId: createSupportTicket
+    tags:
+      - Support
+    security:
+      - bearerAuth: []
     requestBody:
       required: true
       content:

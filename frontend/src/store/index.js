@@ -14,6 +14,7 @@ import authReducer from "../features/auth/authSlice";
 import cartReducer from "../features/cart/cartSlice";
 import wishlistReducer from "../features/wishlist/wishlistSlice";
 import notificationReducer from "../features/notifications/notificationSlice";
+import supportReducer from "../features/support/supportSlice";
 
 const persistConfig = {
   key: "root",
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
   cart: cartReducer,
   wishlist: wishlistReducer,
   notifications: notificationReducer,
+  support: supportReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
