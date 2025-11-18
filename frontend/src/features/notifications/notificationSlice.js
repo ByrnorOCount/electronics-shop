@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import notificationService from "./notificationService";
+import { notificationService } from "../../api";
 
 const initialState = {
   unreadCount: 0,

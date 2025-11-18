@@ -12,13 +12,14 @@ import {
 import {
   authenticate,
   isAdmin,
+  isAuthenticated,
 } from "../../core/middlewares/auth.middleware.js";
 import validate from "../../core/middlewares/validation.middleware.js";
 import * as adminValidation from "./admin.validation.js";
 
 const router = express.Router();
 
-router.use(authenticate, isAdmin); // All routes in this file are protected and for admins only
+router.use(authenticate, isAuthenticated, isAdmin); // All routes in this file are protected and for admins only
 
 router.get("/dashboard", getDashboardMetrics);
 

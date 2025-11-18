@@ -6,7 +6,10 @@ import {
   removeCartItem,
   syncCart,
 } from "./cart.controller.js";
-import { authenticate } from "../../core/middlewares/auth.middleware.js";
+import {
+  authenticate,
+  isAuthenticated,
+} from "../../core/middlewares/auth.middleware.js";
 import validate from "../../core/middlewares/validation.middleware.js";
 import * as cartValidation from "./cart.validation.js";
 
@@ -19,7 +22,14 @@ router
   .get(authenticate, getCart)
   .post(authenticate, validate(cartValidation.addItem), addItemToCart); // Ensure authenticate is here
 
-router.post("/sync", authenticate, validate(cartValidation.syncCart), syncCart); // Keep this as it is
+// This route requires a logged-in user to merge the guest cart.
+router.post(
+  "/sync",
+  authenticate,
+  isAuthenticated,
+  validate(cartValidation.syncCart),
+  syncCart
+);
 
 router
   .route("/items/:itemId") // All operations on a specific cart item require authentication

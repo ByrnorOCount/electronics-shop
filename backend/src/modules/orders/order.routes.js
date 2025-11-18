@@ -6,7 +6,10 @@ import {
   createPaymentSession,
   handlePaymentWebhook,
 } from "./order.controller.js";
-import { authenticate } from "../../core/middlewares/auth.middleware.js";
+import {
+  authenticate,
+  isAuthenticated,
+} from "../../core/middlewares/auth.middleware.js";
 import validate from "../../core/middlewares/validation.middleware.js";
 import * as orderValidation from "./order.validation.js";
 
@@ -21,7 +24,7 @@ router.post(
 );
 
 // All subsequent routes in this module are for authenticated users.
-router.use(authenticate);
+router.use(authenticate, isAuthenticated);
 
 router
   .route("/")

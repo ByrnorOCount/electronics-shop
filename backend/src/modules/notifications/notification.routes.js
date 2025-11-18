@@ -5,14 +5,17 @@ import {
   markNotificationAsRead,
   markAllNotificationsAsRead,
 } from "./notification.controller.js";
-import { authenticate } from "../../core/middlewares/auth.middleware.js";
+import {
+  authenticate,
+  isAuthenticated,
+} from "../../core/middlewares/auth.middleware.js";
 import validate from "../../core/middlewares/validation.middleware.js";
 import * as notificationValidation from "./notification.validation.js";
 
 const router = express.Router();
 
 // All routes in this file are protected
-router.use(authenticate);
+router.use(authenticate, isAuthenticated);
 
 router
   .route("/")

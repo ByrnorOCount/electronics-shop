@@ -1,13 +1,15 @@
 import express from "express";
 import * as wishlistController from "./wishlist.controller.js";
 import * as wishlistValidation from "./wishlist.validation.js";
-import { authenticate } from "../../core/middlewares/auth.middleware.js";
+import {
+  authenticate,
+  isAuthenticated,
+} from "../../core/middlewares/auth.middleware.js";
 import validate from "../../core/middlewares/validation.middleware.js";
-
 const router = express.Router();
 
 // All wishlist routes require an authenticated user.
-router.use(authenticate);
+router.use(authenticate, isAuthenticated);
 
 router
   .route("/")

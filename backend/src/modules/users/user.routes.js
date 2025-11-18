@@ -1,15 +1,22 @@
 import express from "express";
 import * as userController from "./user.controller.js";
 import * as userValidation from "./user.validation.js";
-import { authenticate } from "../../core/middlewares/auth.middleware.js";
+import {
+  authenticate,
+  isAuthenticated,
+} from "../../core/middlewares/auth.middleware.js";
 import validate from "../../core/middlewares/validation.middleware.js";
-
 const router = express.Router();
 
-// Authenticated routes for user profile
-router.use(authenticate);
+// --- Protected Routes ---
+// These routes require a user to be logged in.
+router
+  .route("/me")
+  .get(authenticate, isAuthenticated, userController.getUserProfile)
+  .put(authenticate, isAuthenticated, userController.updateUserProfile);
 
-// Public routes for account management
+// --- Public Routes ---
+// These routes are for account management and do not require an active session.
 router.post(
   "/verify-email",
   validate(userValidation.verifyEmail),

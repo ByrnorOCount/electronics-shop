@@ -62,13 +62,22 @@ export const logoutUser = createAsyncThunk(
 // Async thunk to check auth status via httpOnly cookie
 export const checkAuthStatus = createAsyncThunk(
   "auth/checkStatus",
-  async (_, { rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
+    const { token } = getState().auth;
+    // Only proceed if there's a token in the state. This prevents unnecessary
+    // checks for guest users on every page load.
+    if (!token) {
+      return rejectWithValue("No token found, skipping session check.");
+    }
     try {
       // This service relies on the httpOnly cookie being sent by the browser.
       const user = await authService.getMe();
-      // If we get a user, it means the cookie was valid.
-      // We return a payload that the `setCredentials` reducer can use.
-      return { user, token: "social_login" }; // Placeholder token
+      // If we get a user, the session is valid.
+      // We return the user object. We also check if a token already exists in the state.
+      // If it does (from localStorage), we preserve it. If not, it was a social login,
+      // and we can use a placeholder. This prevents overwriting a valid JWT.
+      const existingToken = getState().auth.token;
+      return { user, token: existingToken || "social_login" };
     } catch (error) {
       // This will happen if the cookie is invalid or not present (e.g., guest user).
       // It's not a "real" error, just a failed check, so we reject to prevent state changes.
@@ -146,8 +155,9 @@ const authSlice = createSlice({
         // Use the same logic as a successful login to set credentials
         authSlice.caseReducers.setCredentials(state, action);
       })
-      .addCase(checkAuthStatus.rejected, (state) => {
-        state.status = "idle"; // Reset to idle if no session is found
+      .addCase(checkAuthStatus.rejected, (state, action) => {
+        // If the session check fails (e.g., invalid token), log the user out completely.
+        authSlice.caseReducers.logout(state);
       });
   },
 });

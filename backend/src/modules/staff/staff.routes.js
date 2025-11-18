@@ -4,12 +4,13 @@ import * as staffValidation from "./staff.validation.js";
 import {
   authenticate,
   isStaff,
+  isAuthenticated,
 } from "../../core/middlewares/auth.middleware.js";
 import validate from "../../core/middlewares/validation.middleware.js";
 
 const router = express.Router();
 
-router.use(authenticate, isStaff);
+router.use(authenticate, isAuthenticated, isStaff);
 
 router
   .route("/products")
