@@ -172,7 +172,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 #### Customer
 
-- [X] `HomePage`, `ProductsPage`, `ProductDetailPage`
+- [x] `HomePage`, `ProductsPage`, `ProductDetailPage`
 - [x] `CartPage`, `WishlistPage`, `CheckoutPage`
 - [x] `OrderHistoryPage`, `LoginPage`, `RegisterPage`
 - [x] `AccountPage`, `SettingsPage`, `SupportPage`

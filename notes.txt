@@ -1,31 +1,12 @@
-Workflow
-
-Backend (Express API)
-Handles users, products, orders, cart, payments.
-Example routes:
-/api/auth
-/api/products
-/api/cart
-/api/orders
-/api/payments
-
-Frontend (React)
-Consumes backend API.
-Routes:
-/ (Home)
-/products/:id
-/cart
-/checkout
-/profile
-
+Backend (Express API with Node.js)
+Frontend (React) (Vite)
 Database (PostgreSQL)
 
 Shared Config
-Keep .env separate for backend vs frontend.
+Keep .env separate for backend vs frontend. (Look into whether this is necessary)
 Example:
 Backend .env → DB credentials, JWT secret, Stripe keys.
 Frontend .env → API base URL, public Stripe key.
-
 
 Commands
 At the root folder (with workspaces):
@@ -49,48 +30,17 @@ npm run preview # Preview production build
 For root combined dev (both frontend + backend at once):
 npm run dev
 
-Define the Schema First (The Migration)
-Apply the Schema Immediately
-Write Code That Obeys the Contract (Seeds, Models, etc.)
+npm migrate creates the tables if they don't exist yet. If they do exist, it applies any new changes that haven't been applied yet.
+npm seed populates the database with data. In our case, it clears the products table and adds sample products.
+
+npx knex migrate:rollback: Destroys the tables created by the last migration.
+npx knex migrate:latest: Re-creates the tables using your now-corrected migration file.
+npx knex seed:run: Repopulates the fresh tables with your test data.
 
 Using command line to view db (DBeaver is better as it's GUI)
 psql -h localhost -p 5432 -U postgres -d electronics_shop
 SELECT * FROM products;
 exit: type \q and enter
-
-Drop old tables
-npx knex migrate:rollback --knexfile ./database/knexfile.js
-Up new tables
-npx knex migrate:latest --knexfile ./database/knexfile.js
-Reseed
-npx knex seed:run --knexfile ./database/knexfile.js
-
-Migrations (migrate:latest, migrate:rollback): These commands change the structure (the schema) of your database. Running rollback will destroy the tables and all data in them. Running latest will create them again, empty. They don't clear data on their own if run repeatedly; they only apply structural changes that haven't been applied yet.
-Seeds (seed:run): This command populates the database with data. Yes, in your case, it does clear the old data from the products table. This is because the very first line in your 01_initial_products.js file is await knex('products').del();. This is a common practice for development seeds to ensure you start with a clean, predictable dataset every time you run the command.
-
-Workflow:
-npx knex migrate:rollback: Destroys the tables created by the last migration.
-npx knex migrate:latest: Re-creates the tables using your now-corrected migration file.
-npx knex seed:run: Repopulates the fresh tables with your test data.
-
-Adding a New Feature (The Standard Workflow)
-Create a new migration file: 
-npx knex migrate:make add_brand_to_products --cwd ./database
-Edit the new migration file to add the column:
-// In the new file: xxxx_add_brand_to_products.js
-export function up(knex) {
-  return knex.schema.alterTable('products', (table) => {
-    table.string('brand'); // Adds the new column
-  });
-}
-
-export function down(knex) {
-  return knex.schema.alterTable('products', (table) => {
-    table.dropColumn('brand'); // Reverts the change
-  });
-}
-Run the migration:
-npx knex migrate:latest --cwd ./database
 
 postman/curl testing
 apis for everything
@@ -105,7 +55,7 @@ làm thêm một bảng chức năng (các chức năng làm thì để bth còn
 
 tích hợp api:
 	ship(giao hàng nhanh)
-	payment (vnpay)
+	payment (stripe)
 tham khảo 
 
 admin ->CRD(products,.., dashboard (thống kê theo products, order, theo lượng user user nào mua nhiều mua ít tăng hạng cho user (premium,..))
@@ -117,7 +67,7 @@ table phân công công việc (process, requirment (tiến độ công việc,
 
 kết nối front và back để xử lý xung đột nếu có
 
-STORE PRODUCT IMAGES IN CLOUD
+STORE PRODUCT IMAGES IN CLOUD (IN PRODUCTION)
 Storage: AWS S3
 Frontend (React): Vercel (prob this) / Netlify
 Backend (Node.js): AWS Elastic Beanstalk (prob this) / Heroku / Render
@@ -140,18 +90,11 @@ zalo/github/twitter login
 
 kill vnpay, use momo instead
 
+# openapi.yaml validation
 npm install -g @redocly/cli
 redocly bundle backend/openapi/openapi.yaml -o backend/openapi/openapi.bundled.yaml
 redocly lint backend/openapi/openapi.bundled.yaml
 redocly lint backend/openapi/openapi.yaml
-
-ApiError:
-Where: In your services and controllers.
-When: Any time you encounter a situation that should result in an error response to the client. This includes invalid input, resources not being found, or authorization failures.
-
-ApiResponse:
-Where: At the end of your controller functions.
-When: After successfully fetching data or performing an action, you use this class to wrap the result before sending it
 
 KILL tiny-csrf NO MORE I HATE tiny-csrf USE DOUBLE SUBMIT COOKIE CSRF
 
