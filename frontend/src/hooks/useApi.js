@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import logger from "../utils/logger";
 
 /**
  * A custom hook to handle API calls.
@@ -34,7 +35,7 @@ export const useApi = (apiFunc) => {
       } catch (err) {
         setError(err);
         setStatus("failed");
-        console.error("API call failed", err);
+        logger.error("API call failed", err);
         throw err;
       }
     },

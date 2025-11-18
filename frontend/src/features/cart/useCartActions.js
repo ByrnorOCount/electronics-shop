@@ -7,6 +7,7 @@ import {
 } from "./cartSlice";
 import { selectToken } from "../auth/authSlice";
 import toast from "react-hot-toast";
+import logger from "../../utils/logger";
 
 /**
  * A custom hook to abstract cart operations (add, update, remove).
@@ -32,7 +33,7 @@ export const useCartActions = () => {
       try {
         await cartService.updateCartItemQuantity(item.cartItemId, newQuantity);
       } catch (error) {
-        console.error("Failed to update cart on server:", error);
+        logger.error("Failed to update cart on server:", error);
         toast.error("Failed to sync cart update.");
         // Optional: Revert the change in Redux on failure
         dispatch(updateQuantity({ id: item.id, qty: item.qty }));
@@ -80,7 +81,7 @@ export const useCartActions = () => {
         // The reducer will find the existing item and just add the cartItemId.
         dispatch(addItemAction({ ...itemToAdd, cartItemId: backendItem.id }));
       } catch (error) {
-        console.error("Failed to add item to backend cart:", error);
+        logger.error("Failed to add item to backend cart:", error);
         toast.error("Failed to add item to cart.");
         // Revert the change on failure.
         dispatch(removeItem(product.id));

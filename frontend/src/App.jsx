@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import logger from "./utils/logger";
 import Layout from "./components/layout/Layout";
 import HomePage from "./pages/home/HomePage";
 import api from "./api/axios";
-
 import ProductsPage from "./features/products/ProductsPage";
 import ProductDetailPage from "./features/products/ProductDetailPage";
 import LoginPage from "./features/auth/LoginPage";
@@ -39,7 +39,7 @@ const initializeCsrf = async () => {
   try {
     await api.get("/csrf-token");
   } catch (error) {
-    console.error("Failed to fetch CSRF token:", error);
+    logger.error("Failed to fetch CSRF token:", error);
   }
 };
 

@@ -1,4 +1,5 @@
 import React from "react";
+import logger from "../../utils/logger";
 
 const icons = {
   security: (
@@ -128,7 +129,7 @@ export default function Icon({ name, className = "h-6 w-6", ...props }) {
   const IconPath = icons[name];
 
   if (!IconPath) {
-    console.warn(`Icon "${name}" not found.`);
+    logger.info(`Icon "${name}" not found.`);
     return null; // Or return a default fallback icon
   }
 

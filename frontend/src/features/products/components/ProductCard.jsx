@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import Icon from "../../../components/ui/Icon";
 import { useCartActions } from "../../cart/useCartActions";
 import Button from "../../../components/ui/Button";
+import logger from "../../../utils/logger";
 
 export default function ProductCard({ product }) {
   const dispatch = useAppDispatch();
@@ -57,7 +58,7 @@ export default function ProductCard({ product }) {
         toast.success(`'${product.name}' added to wishlist!`);
       }
     } catch (error) {
-      console.error("Failed to update wishlist:", error);
+      logger.error("Failed to update wishlist:", error);
       toast.error("Failed to update wishlist.");
     }
   };

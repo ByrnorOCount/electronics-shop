@@ -3,6 +3,7 @@ import { useApi } from "../../hooks/useApi";
 import orderService from "./orderService";
 import OrderSummary from "../cart/components/OrderSummary";
 import toast from "react-hot-toast";
+import logger from "../../utils/logger";
 
 const OrderItem = ({ order }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,6 +66,7 @@ export default function OrderHistoryPage() {
     data: orders,
     isLoading,
     isError,
+    error,
     request: fetchOrders,
   } = useApi(orderService.getOrderHistory);
 
@@ -76,7 +78,7 @@ export default function OrderHistoryPage() {
   if (isLoading) {
     content = <p>Loading your order history...</p>;
   } else if (isError) {
-    console.error("Failed to load order history:", error);
+    logger.error("Failed to load order history:", error);
     toast.error("Could not load your order history.");
     content = (
       <p className="text-gray-600">

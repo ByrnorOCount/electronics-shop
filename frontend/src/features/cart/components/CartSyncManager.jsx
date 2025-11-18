@@ -1,8 +1,9 @@
-import { useEffect, useRef, useCallback } from 'react';
-import { useAppSelector, useAppDispatch } from '../../../store/hooks';
-import { store } from '../../../store';
-import { setCart, setCartSyncStatus } from '../cartSlice';
-import { cartService } from '../../../api';
+import { useEffect, useRef, useCallback } from "react";
+import { useAppSelector, useAppDispatch } from "../../../store/hooks";
+import { store } from "../../../store";
+import { setCart, setCartSyncStatus } from "../cartSlice";
+import { cartService } from "../../../api";
+import logger from "../../../utils/logger";
 
 /**
  * A headless component that manages the synchronization of the local (guest)
@@ -19,7 +20,7 @@ const CartSyncManager = () => {
   const syncAndFetchCart = useCallback(async () => {
     // Mark as synced immediately to prevent re-runs.
     hasSynced.current = true;
-    dispatch(setCartSyncStatus('syncing'));
+    dispatch(setCartSyncStatus("syncing"));
 
     try {
       let mergedCart;
@@ -29,7 +30,7 @@ const CartSyncManager = () => {
 
       if (currentLocalCart.length > 0) {
         // 1. If there's a guest cart, sync it.
-        const itemsToSync = currentLocalCart.map(item => ({
+        const itemsToSync = currentLocalCart.map((item) => ({
           productId: item.id,
           quantity: item.qty,
         }));
@@ -40,7 +41,7 @@ const CartSyncManager = () => {
       }
 
       // 3. Set the new, authoritative cart from the backend.
-      const normalizedMergedCart = mergedCart.map(item => ({
+      const normalizedMergedCart = mergedCart.map((item) => ({
         id: item.product_id,
         cartItemId: item.id,
         name: item.name,
@@ -49,11 +50,10 @@ const CartSyncManager = () => {
         img: item.image_url,
       }));
       dispatch(setCart(normalizedMergedCart));
-      dispatch(setCartSyncStatus('synced')); // Use a final 'synced' status
-
+      dispatch(setCartSyncStatus("synced")); // Use a final 'synced' status
     } catch (error) {
-      console.error("Failed to sync cart:", error);
-      dispatch(setCartSyncStatus('failed'));
+      logger.error("Failed to sync cart:", error);
+      dispatch(setCartSyncStatus("failed"));
       // If sync fails, we reset the flag to allow another attempt.
       hasSynced.current = false;
     }

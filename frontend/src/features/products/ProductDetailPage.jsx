@@ -9,6 +9,7 @@ import { useApi } from "../../hooks/useApi";
 import { productService, wishlistService } from "../../api";
 import toast from "react-hot-toast";
 import { useCartActions } from "../cart/useCartActions";
+import logger from "../../utils/logger";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -76,7 +77,7 @@ const ProductDetailPage = () => {
         toast.success("Added to wishlist!");
       }
     } catch (error) {
-      console.error("Failed to update wishlist:", error);
+      logger.error("Failed to update wishlist:", error);
       toast.error("Failed to update wishlist.");
     }
   };

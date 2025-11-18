@@ -6,6 +6,7 @@ import { setUser } from "../auth/authSlice";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Icon from "../../components/ui/Icon";
+import logger from "../../utils/logger";
 
 export default function SettingsPage() {
   const dispatch = useAppDispatch();
@@ -66,7 +67,7 @@ export default function SettingsPage() {
       dispatch(setUser(response.user));
       toast.success("Profile updated successfully!");
     } catch (err) {
-      console.error("Failed to update profile:", err);
+      logger.error("Failed to update profile:", err);
       toast.error(err.message || "Failed to update profile.");
     }
   };
@@ -80,7 +81,7 @@ export default function SettingsPage() {
       toast.success("Password changed successfully!");
       resetPasswordForm();
     } catch (err) {
-      console.error("Failed to change password:", err);
+      logger.error("Failed to change password:", err);
     }
   };
 
