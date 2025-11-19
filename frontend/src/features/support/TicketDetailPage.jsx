@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useAppSelector } from "../../store/hooks";
-import { supportService } from "../../api";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { supportService, staffService } from "../../api";
 import Spinner from "../../components/ui/Spinner";
 import Button from "../../components/ui/Button";
 import toast from "react-hot-toast";
 import { useApi } from "../../hooks/useApi";
+import { formatStatus } from "../../utils/formatters";
 
 const TicketDetailPage = () => {
   const { ticketId } = useParams();
-  const { user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.auth); // Keep user for reply author check
+  const isStaff = useAppSelector(
+    (state) =>
+      state.auth.user?.role === "staff" || state.auth.user?.role === "admin"
+  );
 
   const [ticket, setTicket] = useState(null);
   const [replies, setReplies] = useState([]);
@@ -29,6 +34,9 @@ const TicketDetailPage = () => {
   const { isLoading: isUpdatingStatus, request: updateStatus } = useApi(
     supportService.updateTicketStatus
   );
+
+  const { isLoading: isUpdatingStatusByStaff, request: updateStatusByStaff } =
+    useApi(staffService.updateTicketStatus);
 
   useEffect(() => {
     fetchTicketDetails(ticketId);
@@ -114,11 +122,46 @@ const TicketDetailPage = () => {
                 : "bg-gray-100 text-gray-800"
             }`}
           >
-            {ticket.status}
+            {formatStatus(ticket.status)}
           </span>
         </div>
 
-        {ticket.status !== "closed" && (
+        {/* Status update UI for Staff */}
+        {isStaff && (
+          <div className="flex items-center justify-end gap-2 mb-4 p-3 bg-gray-50 rounded-md border">
+            <p className="text-sm font-medium text-gray-600">Set Status:</p>
+            {["open", "in_progress", "closed"].map((statusOption) => (
+              <Button
+                key={statusOption}
+                variant={
+                  ticket.status === statusOption ? "primary" : "secondary"
+                }
+                size="sm"
+                onClick={async () => {
+                  try {
+                    const updated = await updateStatusByStaff(ticketId, {
+                      status: statusOption,
+                    });
+                    setTicket(updated);
+                    toast.success(`Ticket status set to "${statusOption}"`);
+                  } catch (err) {
+                    toast.error(
+                      err.response?.data?.message || "Failed to update status."
+                    );
+                  }
+                }}
+                disabled={
+                  isUpdatingStatusByStaff || ticket.status === statusOption
+                }
+              >
+                {formatStatus(statusOption)}
+              </Button>
+            ))}
+          </div>
+        )}
+
+        {/* Close ticket button for the user who created it */}
+        {!isStaff && ticket.status !== "closed" && (
           <div className="flex justify-end mb-4">
             <Button
               variant="danger"
@@ -141,6 +184,7 @@ const TicketDetailPage = () => {
             </Button>
           </div>
         )}
+
         <p className="text-sm text-gray-500 mb-6">
           Ticket #{ticket.id} &bull; Created on{" "}
           {new Date(ticket.created_at).toLocaleString()}

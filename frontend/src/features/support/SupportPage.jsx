@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 import Spinner from "../../components/ui/Spinner";
@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { useSupportActions } from "./useSupportActions";
 import { useApi } from "../../hooks/useApi";
 import { supportService } from "../../api";
+import { formatStatus } from "../../utils/formatters";
 
 const SupportPage = () => {
   const [showTicketForm, setShowTicketForm] = useState(false);
@@ -189,7 +190,7 @@ const SupportPage = () => {
                                 : "bg-gray-100 text-gray-800"
                             }`}
                           >
-                            {ticket.status}
+                            {formatStatus(ticket.status)}
                           </span>
                         </div>
                         <p className="mt-2 text-gray-700 truncate">

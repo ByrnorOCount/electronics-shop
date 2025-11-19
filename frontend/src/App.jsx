@@ -23,6 +23,9 @@ import OrderHistoryPage from "./features/checkout-orders/OrderHistoryPage";
 import SettingsPage from "./features/user/SettingsPage";
 import NotificationsPage from "./features/notifications/NotificationsPage";
 import ProfilePage from "./features/user/ProfilePage";
+import StaffLayout from "./features/staff/components/StaffLayout";
+import StaffDashboardPage from "./features/staff/StaffDashboardPage";
+import StaffSupportPage from "./features/staff/StaffSupportPage";
 // import AdminLayout from "./features/admin/components/AdminLayout";
 // import AdminDashboardPage from "./features/admin/AdminDashboardPage";
 // import AdminProductsPage from "./features/admin/AdminProductsPage";
@@ -146,6 +149,19 @@ function App() {
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
           </Route>
+        </Route>
+
+        {/* Staff routes */}
+        <Route
+          path="/staff"
+          element={
+            <ProtectedRoute roles={["staff", "admin"]}>
+              <StaffLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<StaffDashboardPage />} />
+          <Route path="support" element={<StaffSupportPage />} />
         </Route>
 
         {/* Admin routes */}
