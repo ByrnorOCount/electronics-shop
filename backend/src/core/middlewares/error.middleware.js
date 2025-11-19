@@ -1,6 +1,7 @@
 import httpStatus from "http-status";
 import ApiError from "../utils/ApiError.js";
 import logger from "../../config/logger.js";
+import env from "../../config/env.js";
 
 /**
  * Middleware to handle 404 Not Found errors for any unhandled routes.
@@ -40,7 +41,7 @@ export const errorHandler = (err, req, res, next) => {
     success: false,
     statusCode,
     message,
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+    ...(env.NODE_ENV === "development" && { stack: err.stack }),
   };
 
   res.status(response.statusCode).json(response);

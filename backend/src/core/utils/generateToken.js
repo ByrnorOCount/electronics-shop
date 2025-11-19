@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import env from "../../config/env.js";
 
 /**
  * Generates a JSON Web Token (JWT) for a given user ID.
@@ -9,8 +10,8 @@ import jwt from "jsonwebtoken";
  * @returns {string} The generated JWT.
  */
 const generateToken = (id, role = "customer") => {
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+  return jwt.sign({ id, role }, env.JWT_SECRET, {
+    expiresIn: env.JWT_EXPIRES_IN,
   });
 };
 

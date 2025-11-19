@@ -17,6 +17,7 @@ import {
 } from "../../core/middlewares/auth.middleware.js";
 import validate from "../../core/middlewares/validation.middleware.js";
 import authValidation from "./auth.validation.js";
+import env from "../../config/env.js";
 
 const router = express.Router();
 
@@ -51,7 +52,7 @@ router.get("/google", (req, res, next) => {
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: `${process.env.FRONTEND_URL}/login?error=social`, // Redirect to login page on failure
+    failureRedirect: `${env.FRONTEND_URL}/login?error=social`, // Redirect to login page on failure
     session: false,
   }),
   socialAuthCallback // Use the new controller function
@@ -70,7 +71,7 @@ router.get("/facebook", (req, res, next) => {
 router.get(
   "/facebook/callback",
   passport.authenticate("facebook", {
-    failureRedirect: `${process.env.FRONTEND_URL}/login?error=social`,
+    failureRedirect: `${env.FRONTEND_URL}/login?error=social`,
     session: false,
   }),
   socialAuthCallback // Use the new controller function

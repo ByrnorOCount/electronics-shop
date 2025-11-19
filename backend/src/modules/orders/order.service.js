@@ -7,8 +7,9 @@ import * as cartModel from "../cart/cart.model.js";
 import { sendOtpEmail } from "../../core/integrations/email.service.js";
 import { createOrderFromCart } from "../../core/integrations/payment.service.js";
 import ApiError from "../../core/utils/ApiError.js";
+import env from "../../config/env.js";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 
 /**
  * Generate and send an OTP for checkout verification.
@@ -39,8 +40,8 @@ const createStripeSession = async (cartItems, userId) => {
       quantity: item.quantity,
     })),
     mode: "payment",
-    success_url: `${process.env.FRONTEND_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.FRONTEND_URL}/checkout/cancel`,
+    success_url: `${env.FRONTEND_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${env.FRONTEND_URL}/checkout/cancel`,
     metadata: { userId },
   });
   return { url: session.url };

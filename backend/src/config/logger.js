@@ -1,4 +1,5 @@
 import winston from "winston";
+import env from "./env.js";
 
 const levels = {
   error: 0,
@@ -9,8 +10,7 @@ const levels = {
 };
 
 const level = () => {
-  const env = process.env.NODE_ENV || "development";
-  return env === "development" ? "debug" : "warn";
+  return env.NODE_ENV === "development" ? "debug" : "warn";
 };
 
 const colors = {
@@ -33,7 +33,7 @@ const format = winston.format.combine(
 
 const transports = [new winston.transports.Console()];
 
-if (process.env.NODE_ENV === "production") {
+if (env.NODE_ENV === "production") {
   transports.push(
     new winston.transports.File({
       filename: "logs/error.log",

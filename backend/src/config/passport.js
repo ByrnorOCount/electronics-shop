@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as FacebookStrategy } from "passport-facebook";
 import db from "./db.js";
+import env from "./env.js";
 import logger from "./logger.js";
 
 /**
@@ -83,8 +84,8 @@ export const useGoogleStrategy = () => {
   passport.use(
     new GoogleStrategy(
       {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        clientID: env.GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET,
         callbackURL: "/api/auth/google/callback",
         proxy: true,
       },
@@ -103,8 +104,8 @@ export const useFacebookStrategy = () => {
   passport.use(
     new FacebookStrategy(
       {
-        clientID: process.env.FACEBOOK_APP_ID,
-        clientSecret: process.env.FACEBOOK_APP_SECRET,
+        clientID: env.FACEBOOK_APP_ID,
+        clientSecret: env.FACEBOOK_APP_SECRET,
         callbackURL: "/api/auth/facebook/callback",
         proxy: true,
         profileFields: ["id", "emails", "name"],

@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 import db from "../../config/db.js";
 import ApiError from "../utils/ApiError.js";
 import logger from "../../config/logger.js";
+import env from "../../config/env.js";
 
 export const authenticate = async (req, res, next) => {
   try {
@@ -32,7 +33,7 @@ export const authenticate = async (req, res, next) => {
     }
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, env.JWT_SECRET);
 
     // Get the full user object from the database.
     const user = await db("users").where({ id: decoded.id }).first();

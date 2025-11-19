@@ -2,6 +2,7 @@ import * as authService from "./auth.service.js";
 import httpStatus from "http-status";
 import ApiResponse from "../../core/utils/ApiResponse.js";
 import logger from "../../config/logger.js";
+import env from "../../config/env.js";
 
 /**
  * @route POST /api/auth/register
@@ -55,17 +56,17 @@ export const socialAuthCallback = async (req, res, next) => {
     // Set the token in a secure, httpOnly cookie for the browser.
     res.cookie("jwt", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
     // Redirect to the frontend.
-    res.redirect(process.env.FRONTEND_URL);
+    res.redirect(env.FRONTEND_URL);
   } catch (error) {
     // If anything goes wrong, redirect to the login page with an error.
     logger.error("Social login error:", error);
-    res.redirect(`${process.env.FRONTEND_URL}/login?error=social_login_failed`);
+    res.redirect(`${env.FRONTEND_URL}/login?error=social_login_failed`);
   }
 };
 

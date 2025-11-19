@@ -4,6 +4,7 @@ import httpStatus from "http-status";
 import ApiResponse from "../../core/utils/ApiResponse.js";
 import { createOrderFromCart } from "../../core/integrations/payment.service.js";
 import logger from "../../config/logger.js";
+import env from "../../config/env.js";
 
 // TODO: Add additional payment methods beside Stripe in the future
 
@@ -101,11 +102,11 @@ export const getOrders = async (req, res, next) => {
  * @access Public (verified by signature/hash)
  */
 export const handlePaymentWebhook = async (req, res) => {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  const stripe = new Stripe(env.STRIPE_SECRET_KEY);
   // --- Stripe Webhook Handling ---
   const stripeSignature = req.headers["stripe-signature"];
   if (stripeSignature) {
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const endpointSecret = env.STRIPE_WEBHOOK_SECRET;
     let event;
 
     try {

@@ -1,7 +1,5 @@
 import { Router } from "express";
 import crypto from "crypto";
-
-import { authenticate } from "./core/middlewares/auth.middleware.js";
 import userRoutes from "./modules/users/user.routes.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import productRoutes from "./modules/products/product.routes.js";
@@ -12,6 +10,7 @@ import supportRoutes from "./modules/support/support.routes.js";
 import notificationRoutes from "./modules/notifications/notification.routes.js";
 import staffRoutes from "./modules/staff/staff.routes.js";
 import adminRoutes from "./modules/admin/admin.routes.js";
+import env from "./config/env.js";
 
 const apiRouter = Router();
 
@@ -23,7 +22,7 @@ apiRouter.get("/csrf-token", (req, res) => {
   // Send the token in a cookie that is NOT httpOnly, so the frontend JS can read it.
   res.cookie("XSRF-TOKEN", csrfToken, {
     path: "/",
-    secure: process.env.NODE_ENV === "production", // Send only over HTTPS in production
+    secure: env.NODE_ENV === "production", // Send only over HTTPS in production
     sameSite: "lax", // Recommended for CSRF protection
   });
 

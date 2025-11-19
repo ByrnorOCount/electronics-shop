@@ -5,6 +5,7 @@ import * as userModel from "./user.model.js";
 import { sendPasswordResetEmail } from "../../core/integrations/email.service.js";
 import ApiError from "../../core/utils/ApiError.js";
 import logger from "../../config/logger.js";
+import env from "../../config/env.js";
 
 const PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -56,7 +57,7 @@ export const requestPasswordReset = async (email) => {
       .update(resetToken)
       .digest("hex");
 
-    if (process.env.NODE_ENV !== "production") {
+    if (env.NODE_ENV !== "production") {
       logger.info(
         `\n--- PASSWORD RESET --- \nUser: ${user.email}\nToken: ${resetToken}\n----------------------\n`
       );

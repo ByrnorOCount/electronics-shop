@@ -7,11 +7,11 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import passport from "passport";
-
 import apiRouter from "./routes.js";
 import { errorHandler, notFound } from "./core/middlewares/error.middleware.js";
 import { csrfProtection } from "./core/middlewares/csrf.middleware.js";
 import "./config/passport.js";
+import env from "./config/env.js";
 
 const app = express();
 
@@ -19,7 +19,7 @@ const app = express();
 app.use(
   cors({
     // Explicitly allow your frontend origin
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: env.FRONTEND_URL || "http://localhost:5173",
     // Allow cookies and other credentials to be sent
     credentials: true,
   })

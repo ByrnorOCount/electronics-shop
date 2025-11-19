@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import logger from "../../config/logger.js";
+import env from "../../config/env.js";
 
 let transporter;
 
@@ -12,16 +13,16 @@ async function getTransporter() {
     return transporter;
   }
 
-  if (process.env.NODE_ENV === "production") {
+  if (env.NODE_ENV === "production") {
     // --- PRODUCTION TRANSPORTER ---
     // Replace with your actual email provider's settings (e.g., SendGrid, Mailgun)
     transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
+      host: env.EMAIL_HOST,
+      port: env.EMAIL_PORT,
       secure: true, // true for 465, false for other ports
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: env.EMAIL_USER,
+        pass: env.EMAIL_PASS,
       },
     });
   } else {
@@ -54,7 +55,7 @@ export const sendOrderConfirmationEmail = async (user, order) => {
     html: `<h1>Hi ${user.first_name},</h1><p>Thank you for your order! Your order #${order.id} for a total of $${order.total_amount} has been placed successfully.</p>`,
   });
 
-  if (process.env.NODE_ENV !== "production") {
+  if (env.NODE_ENV !== "production") {
     logger.log(
       `\n--- ORDER CONFIRMATION --- \nUser: ${user.email}\nOrder ID: ${order.id}\nTotal: $${order.total_amount}\n--------------------------\n`
     );
@@ -82,7 +83,7 @@ export const sendPasswordResetEmail = async (user, token) => {
     html: `<h1>Hi ${user.first_name},</h1><p>You requested a password reset. Please click the following link to reset your password:</p><a href="${resetUrl}">${resetUrl}</a><p>This link will expire in 1 hour.</p>`,
   });
 
-  if (process.env.NODE_ENV !== "production") {
+  if (env.NODE_ENV !== "production") {
     logger.info(
       `Password reset email sent. Preview URL: ${nodemailer.getTestMessageUrl(
         info
@@ -108,7 +109,7 @@ export const sendVerificationEmail = async (user, token) => {
     html: `<h1>Welcome, ${user.first_name}!</h1><p>Thank you for registering. Please click the link below to verify your email address:</p><a href="${verificationUrl}">${verificationUrl}</a>`,
   });
 
-  if (process.env.NODE_ENV !== "production") {
+  if (env.NODE_ENV !== "production") {
     logger.info(
       `Verification email sent. Preview URL: ${nodemailer.getTestMessageUrl(
         info
@@ -131,7 +132,7 @@ export const sendOtpEmail = async (user, otp) => {
     html: `<h1>Hi ${user.first_name},</h1><p>Your One-Time Password (OTP) for checkout is:</p><h2>${otp}</h2><p>This code will expire in 10 minutes.</p>`,
   });
 
-  if (process.env.NODE_ENV !== "production") {
+  if (env.NODE_ENV !== "production") {
     logger.info(
       `\n--- CHECKOUT OTP --- \nUser: ${user.email}\nOTP: ${otp}\n--------------------\n`
     );
