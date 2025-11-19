@@ -19,9 +19,6 @@ const envVarsSchema = Joi.object()
 
     // Stripe
     STRIPE_SECRET_KEY: Joi.string().required().description("Stripe Secret Key"),
-    STRIPE_PUBLISHABLE_KEY: Joi.string()
-      .required()
-      .description("Stripe Publishable Key"),
 
     // Email
     EMAIL_HOST: Joi.string().description("Email SMTP host"),
