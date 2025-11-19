@@ -175,3 +175,28 @@ export const replyToTicket = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * @summary Update support ticket status
+ * @route PUT /api/staff/support-tickets/:ticketId/status
+ * @access Staff
+ */
+export const updateTicketStatus = async (req, res, next) => {
+  try {
+    const updatedTicket = await staffService.updateTicketStatus(
+      req.params.ticketId,
+      req.body.status
+    );
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          updatedTicket,
+          "Ticket status updated successfully."
+        )
+      );
+  } catch (error) {
+    next(error);
+  }
+};

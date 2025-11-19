@@ -78,3 +78,12 @@ export const replyToTicket = {
     message: Joi.string().required(),
   }),
 };
+
+export const updateTicketStatus = {
+  params: Joi.object().keys({
+    ticketId: Joi.number().integer().required(),
+  }),
+  body: Joi.object().keys({
+    status: Joi.string().valid("open", "in_progress", "closed").required(),
+  }),
+};

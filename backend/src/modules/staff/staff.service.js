@@ -91,18 +91,46 @@ export const replyToTicket = async (ticketId, message, staffId) => {
     throw new ApiError(httpStatus.NOT_FOUND, "Support ticket not found");
   }
 
-  const newReply = await staffModel.createSupportTicketReply({
+  const replyData = {
     ticket_id: ticketId,
     user_id: staffId,
     message,
-  });
+  };
+
+  const newReply = await staffModel.createSupportTicketReply(replyData);
 
   // Update ticket status and notify the user
-  await staffModel.updateSupportTicketStatus(ticketId, "in_progress");
+  await staffModel.update(ticketId, { status: "in_progress" });
+
   await createNotification(
     ticket.user_id,
-    `Your support ticket #${ticketId} has a new reply from staff.`
+    `Your support ticket #${ticketId} has a new reply from staff.`,
+    `/support/ticket/${ticketId}`
   );
 
   return newReply;
+};
+
+/**
+ * Update support ticket status by staff
+ * @param {number|string} ticketId
+ * @param {string} status
+ * @returns {Promise<object>}
+ */
+export const updateTicketStatus = async (ticketId, status) => {
+  const ticket = await staffModel.findSupportTicketById(ticketId);
+  if (!ticket) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Support ticket not found");
+  }
+
+  const [updatedTicket] = await staffModel.update(ticketId, { status });
+
+  // Notify the user that the status has changed
+  await createNotification(
+    ticket.user_id,
+    `The status of your support ticket #${ticketId} has been updated to "${status}".`,
+    `/support/ticket/${ticketId}`
+  );
+
+  return updatedTicket;
 };

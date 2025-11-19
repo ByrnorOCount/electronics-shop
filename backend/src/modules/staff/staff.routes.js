@@ -14,7 +14,7 @@ router.use(authenticate, isAuthenticated, isStaff);
 
 router
   .route("/products")
-  .post(validate(staffValidation.createProduct), staffController.createProduct) // prettier-ignore
+  .post(validate(staffValidation.createProduct), staffController.createProduct)
   .get(
     validate(staffValidation.getAllProducts),
     staffController.getAllProducts
@@ -49,5 +49,12 @@ router
 router
   .route("/support-tickets/:ticketId/reply")
   .post(validate(staffValidation.replyToTicket), staffController.replyToTicket);
+
+router
+  .route("/support-tickets/:ticketId/status")
+  .put(
+    validate(staffValidation.updateTicketStatus),
+    staffController.updateTicketStatus
+  );
 
 export default router;

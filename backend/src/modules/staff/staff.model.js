@@ -118,11 +118,14 @@ export const createSupportTicketReply = async (replyData) => {
 };
 
 /**
- * Updates the status of a support ticket.
+ * Updates a support ticket.
  * @param {number} ticketId - The ID of the ticket to update.
- * @param {string} status - The new status.
- * @returns {Promise<number>} The number of updated rows.
+ * @param {object} updateData - The data to update.
+ * @returns {Promise<Array<object>>} An array containing the updated ticket object.
  */
-export const updateSupportTicketStatus = (ticketId, status) => {
-  return db("support_tickets").where({ id: ticketId }).update({ status });
+export const update = (ticketId, updateData) => {
+  return db("support_tickets")
+    .where({ id: ticketId })
+    .update(updateData)
+    .returning("*");
 };
