@@ -12,6 +12,7 @@ import RegisterPage from "./features/auth/RegisterPage";
 import AboutPage from "./pages/AboutPage";
 import CareersPage from "./pages/CareersPage";
 import SupportPage from "./features/support/SupportPage";
+import TicketDetailPage from "./features/support/TicketDetailPage";
 import WarrantyPage from "./pages/WarrantyPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CartPage from "./features/cart/CartPage";
@@ -133,6 +134,14 @@ function App() {
             <Route path="about" element={<AboutPage />} />
             <Route path="careers" element={<CareersPage />} />
             <Route path="support" element={<SupportPage />} />
+            <Route
+              path="support/ticket/:ticketId"
+              element={
+                <ProtectedRoute>
+                  <TicketDetailPage />
+                </ProtectedRoute>
+              }
+            />
             <Route path="support/warranty" element={<WarrantyPage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />

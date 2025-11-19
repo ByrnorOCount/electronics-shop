@@ -16,9 +16,9 @@ import logger from "../utils/logger";
  *   request: Function
  * }}
  */
-export const useApi = (apiFunc) => {
+export const useApi = (apiFunc, options = {}) => {
   const [status, setStatus] = useState("idle");
-  const [data, setData] = useState(null);
+  const [data, setData] = useState(options.defaultData ?? null);
   const [error, setError] = useState(null);
 
   const request = useCallback(

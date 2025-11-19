@@ -45,15 +45,110 @@ export const getUserTickets = async (userId, filter, options) => {
  * @param {number|string} userId
  * @returns {Promise<object>}
  */
-export const getTicketById = async (ticketId, userId) => {
-  const ticket = await supportModel.findByIdAndUserId(ticketId, userId);
+export const getTicketById = async (ticketId, user) => {
+  let ticket;
+  // Staff can get any ticket, users can only get their own.
+  if (user.role === "staff" || user.role === "admin") {
+    ticket = await supportModel.findById(ticketId);
+  } else {
+    ticket = await supportModel.findByIdAndUserId(ticketId, user.id);
+  }
+
   if (!ticket) {
     throw new ApiError(
       httpStatus.NOT_FOUND,
       "Ticket not found or you do not have permission to view it."
     );
   }
-  return ticket;
+
+  const replies = await supportModel.findRepliesByTicketId(ticketId);
+
+  // The original message is also part of the thread
+  const initialMessage = {
+    id: `ticket-${ticket.id}`,
+    ticket_id: ticket.id,
+    user_id: ticket.user_id,
+    message: ticket.message,
+    created_at: ticket.created_at,
+    author_name: user.id === ticket.user_id ? "You" : `User #${ticket.user_id}`,
+  };
+
+  return { ticket, replies: [initialMessage, ...replies] };
+};
+
+/**
+ * Adds a reply to a support ticket.
+ * If the ticket is closed, it will be re-opened.
+ * @param {number|string} ticketId
+ * @param {object} user
+ * @param {string} message
+ * @returns {Promise<object>}
+ */
+export const addTicketReply = async (ticketId, user, message) => {
+  let ticket;
+  // Staff can reply to any ticket, users can only reply to their own.
+  if (user.role === "staff" || user.role === "admin") {
+    ticket = await supportModel.findById(ticketId);
+  } else {
+    ticket = await supportModel.findByIdAndUserId(ticketId, user.id);
+  }
+
+  if (!ticket) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      "Ticket not found or you do not have permission to reply to it."
+    );
+  }
+
+  // If ticket is closed, re-open it upon user reply.
+  if (ticket.status === "closed") {
+    await supportModel.update(ticketId, { status: "open" });
+  }
+
+  return supportModel.createReply({
+    ticket_id: ticketId,
+    user_id: user.id,
+    message,
+  });
+};
+
+/**
+ * Updates the status of a support ticket.
+ * @param {number|string} ticketId
+ * @param {object} user
+ * @param {string} newStatus
+ * @returns {Promise<object>}
+ */
+export const updateTicketStatus = async (ticketId, user, newStatus) => {
+  const ticket = await supportModel.findById(ticketId);
+  if (!ticket) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Ticket not found.");
+  }
+
+  const isOwner = ticket.user_id === user.id;
+  const isStaff = user.role === "staff" || user.role === "admin";
+
+  // Only the owner or staff can update the status.
+  if (!isOwner && !isStaff) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      "You do not have permission to update this ticket."
+    );
+  }
+
+  // A regular user can only close the ticket.
+  if (!isStaff && newStatus !== "closed") {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "You can only close the ticket."
+    );
+  }
+
+  const [updatedTicket] = await supportModel.update(ticketId, {
+    status: newStatus,
+  });
+
+  return updatedTicket;
 };
 
 /**

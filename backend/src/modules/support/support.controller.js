@@ -67,7 +67,7 @@ export const getTicketById = async (req, res, next) => {
   try {
     const ticket = await supportService.getTicketById(
       req.params.ticketId,
-      req.user.id,
+      req.user,
       req.query
     );
     if (!ticket) {
@@ -82,6 +82,60 @@ export const getTicketById = async (req, res, next) => {
       .status(httpStatus.OK)
       .json(
         new ApiResponse(httpStatus.OK, ticket, "Ticket retrieved successfully.")
+      );
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @summary Add a reply to a support ticket
+ * @route POST /api/support/:ticketId/reply
+ * @access Private
+ */
+export const addTicketReply = async (req, res, next) => {
+  try {
+    const { message } = req.body;
+    const newReply = await supportService.addTicketReply(
+      req.params.ticketId,
+      req.user,
+      message
+    );
+    res
+      .status(httpStatus.CREATED)
+      .json(
+        new ApiResponse(
+          httpStatus.CREATED,
+          newReply,
+          "Reply added successfully."
+        )
+      );
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @summary Update the status of a support ticket
+ * @route PUT /api/support/:ticketId/status
+ * @access Private
+ */
+export const updateTicketStatus = async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    const updatedTicket = await supportService.updateTicketStatus(
+      req.params.ticketId,
+      req.user,
+      status
+    );
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          updatedTicket,
+          "Ticket status updated successfully."
+        )
       );
   } catch (error) {
     next(error);

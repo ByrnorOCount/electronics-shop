@@ -28,10 +28,45 @@ const getFaqs = async () => {
   return response.data.data;
 };
 
+/**
+ * Fetches a single support ticket by its ID, including its replies.
+ * @param {string | number} ticketId - The ID of the ticket.
+ * @returns {Promise<{ticket: object, replies: Array}>} The ticket and its replies.
+ */
+const getTicketById = async (ticketId) => {
+  const response = await api.get(`/support/${ticketId}`);
+  return response.data.data;
+};
+
+/**
+ * Adds a reply to a specific support ticket.
+ * @param {string | number} ticketId - The ID of the ticket.
+ * @param {{ message: string }} replyData - The reply message.
+ * @returns {Promise<object>} The newly created reply.
+ */
+const addTicketReply = async (ticketId, replyData) => {
+  const response = await api.post(`/support/${ticketId}/reply`, replyData);
+  return response.data.data;
+};
+
+/**
+ * Updates the status of a support ticket.
+ * @param {string | number} ticketId - The ID of the ticket.
+ * @param {{ status: string }} statusData - The new status.
+ * @returns {Promise<object>} The updated ticket.
+ */
+const updateTicketStatus = async (ticketId, statusData) => {
+  const response = await api.put(`/support/${ticketId}/status`, statusData);
+  return response.data.data;
+};
+
 const supportService = {
   submitTicket,
   getUserTickets,
   getFaqs,
+  getTicketById,
+  addTicketReply,
+  updateTicketStatus,
 };
 
 export default supportService;

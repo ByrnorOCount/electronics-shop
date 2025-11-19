@@ -34,3 +34,58 @@ export const findByUserId = (userId, filter = {}) => {
 export const findByIdAndUserId = (ticketId, userId) => {
   return db("support_tickets").where({ id: ticketId, user_id: userId }).first();
 };
+
+/**
+ * Finds a single support ticket by its ID.
+ * @param {number} ticketId - The ID of the ticket.
+ * @returns {Promise<object|undefined>} The ticket object or undefined if not found.
+ */
+export const findById = (ticketId) => {
+  return db("support_tickets").where({ id: ticketId }).first();
+};
+
+/**
+ * Updates a support ticket.
+ * @param {number} ticketId - The ID of the ticket to update.
+ * @param {object} updateData - The data to update.
+ * @returns {Promise<object>} The updated ticket object.
+ */
+export const update = (ticketId, updateData) => {
+  return db("support_tickets")
+    .where({ id: ticketId })
+    .update(updateData)
+    .returning("*");
+};
+
+/**
+ * Finds all replies for a given support ticket.
+ * It also joins with the users table to get the author's name.
+ * @param {number} ticketId - The ID of the ticket.
+ * @returns {Promise<Array>} An array of reply objects.
+ */
+export const findRepliesByTicketId = (ticketId) => {
+  return db("support_ticket_replies as r")
+    .join("users as u", "r.user_id", "u.id")
+    .select(
+      "r.id",
+      "r.ticket_id",
+      "r.user_id",
+      "r.message",
+      "r.created_at",
+      db.raw("CONCAT(u.first_name, ' ', u.last_name) as author_name")
+    )
+    .where("r.ticket_id", ticketId)
+    .orderBy("r.created_at", "asc");
+};
+
+/**
+ * Creates a new reply for a support ticket.
+ * @param {object} replyData - The data for the new reply.
+ * @returns {Promise<object>} The newly created reply object.
+ */
+export const createReply = async (replyData) => {
+  const [newReply] = await db("support_ticket_replies")
+    .insert(replyData)
+    .returning("*");
+  return newReply;
+};

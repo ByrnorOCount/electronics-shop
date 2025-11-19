@@ -1,25 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { getUserTickets } from "./supportSlice";
+import { useAppSelector } from "../../store/hooks";
 import Spinner from "../../components/ui/Spinner";
 import FaqSection from "./components/FaqSection";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import toast from "react-hot-toast";
 import { useSupportActions } from "./useSupportActions";
+import { useApi } from "../../hooks/useApi";
+import { supportService } from "../../api";
 
 const SupportPage = () => {
   const [showTicketForm, setShowTicketForm] = useState(false);
-  const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-  const { tickets, status, error } = useAppSelector((state) => state.support);
+
+  const {
+    data: tickets,
+    status,
+    error,
+    request: fetchUserTickets,
+  } = useApi(supportService.getUserTickets, { defaultData: [] });
 
   useEffect(() => {
     if (user) {
-      dispatch(getUserTickets());
+      fetchUserTickets();
     }
-  }, [user, dispatch]);
+  }, [user, fetchUserTickets]);
 
   // --- Ticket Submission Form ---
   const [subject, setSubject] = useState("");
@@ -36,7 +42,8 @@ const SupportPage = () => {
       toast.error("Please fill out both subject and message.");
       return;
     }
-    const success = await submitTicket({ subject, message });
+    // Pass the fetch function so the hook can refresh the ticket list
+    const success = await submitTicket({ subject, message }, fetchUserTickets);
     if (success) {
       setSubject("");
       setMessage("");
@@ -157,34 +164,39 @@ const SupportPage = () => {
               ) : (
                 <div className="space-y-4">
                   {tickets.map((ticket) => (
-                    <div
+                    <Link
+                      to={`/support/ticket/${ticket.id}`}
                       key={ticket.id}
-                      className="border border-gray-200 p-4 rounded-md bg-white shadow-sm"
+                      className="block border border-gray-200 p-4 rounded-md bg-white shadow-sm hover:shadow-md transition-shadow duration-200"
                     >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-bold text-lg">
-                            {ticket.subject}
-                          </h3>
-                          <p className="text-sm text-gray-500">
-                            Ticket #{ticket.id} &bull; Created on{" "}
-                            {new Date(ticket.created_at).toLocaleDateString()}
-                          </p>
+                      <div className="w-full">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-bold text-lg text-gray-800">
+                              {ticket.subject}
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                              Ticket #{ticket.id} &bull; Created on{" "}
+                              {new Date(ticket.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <span
+                            className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                              ticket.status === "open"
+                                ? "bg-green-100 text-green-800"
+                                : ticket.status === "in_progress"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {ticket.status}
+                          </span>
                         </div>
-                        <span
-                          className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                            ticket.status === "open"
-                              ? "bg-green-100 text-green-800"
-                              : ticket.status === "in_progress"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
-                        >
-                          {ticket.status}
-                        </span>
+                        <p className="mt-2 text-gray-700 truncate">
+                          {ticket.message}
+                        </p>
                       </div>
-                      <p className="mt-2 text-gray-700">{ticket.message}</p>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

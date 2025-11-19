@@ -53,6 +53,7 @@
 |       |-- app.js
 |       |-- config
 |       |   |-- db.js
+|       |   |-- env.js
 |       |   |-- logger.js
 |       |   `-- passport.js
 |       |-- core
@@ -216,6 +217,7 @@
 |   |   |   |-- staff
 |   |   |   |-- support
 |   |   |   |   |-- SupportPage.jsx
+|   |   |   |   |-- TicketDetailPage.jsx
 |   |   |   |   |-- components
 |   |   |   |   |   `-- FaqSection.jsx
 |   |   |   |   |-- supportService.js
@@ -256,4 +258,4 @@
 |-- package.json
 `-- tree.txt
 
-59 directories, 197 files
+59 directories, 199 files

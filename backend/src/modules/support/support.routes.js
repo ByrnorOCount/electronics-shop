@@ -33,4 +33,22 @@ router
     supportController.getTicketById
   );
 
+router
+  .route("/:ticketId/reply")
+  .post(
+    authenticate,
+    isAuthenticated,
+    validate(supportValidation.addTicketReply),
+    supportController.addTicketReply
+  );
+
+router
+  .route("/:ticketId/status")
+  .put(
+    authenticate,
+    isAuthenticated,
+    validate(supportValidation.updateTicketStatus),
+    supportController.updateTicketStatus
+  );
+
 export default router;

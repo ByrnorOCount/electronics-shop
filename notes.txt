@@ -104,3 +104,19 @@ modules should follow _template module
 
 Filtering options to the "Your Tickets" section on the support page (e.g., filter by status: open, closed)
 The support tickets on the support page are static. Make them clickable to view a detailed page for each ticket
+
+`import { xService } from "../../api";` must be used consistently no matter if the service file is in the exact same folder or not. That means no `import xService from "./xService";`
+
+
+
+frontend/src/hooks/useApi vs frontend/src/store/hooks:
+
+Server Cache State: This is data that actually lives on your backend server (e.g., products, orders, support tickets). Your frontend is just keeping a temporary, cached copy of it. This state has properties like loading, error, success, and can become "stale."
+
+The useApi hook is perfect for this. It's designed specifically to manage the lifecycle of a single API request and its cached data directly within the component that needs it.
+Global Client State: This is state that is truly global to the entire application and shared between many disconnected components.
+
+Redux is still the best tool for this. The classic examples in our app are:
+auth: The user's authentication status and profile info are needed everywhere (header, protected routes, etc.).
+cart: The cart contents and total need to be accessible from the product page, the header, and the cart page itself.
+Using Redux Thunks for every API call, as was done initially, mixes these concerns. It clutters the global Redux store with temporary server state that only one component might care about, leading to a lot of boilerplate (createAsyncThunk, extraReducers, etc.).

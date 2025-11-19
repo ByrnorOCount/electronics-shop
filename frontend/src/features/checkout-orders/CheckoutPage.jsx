@@ -4,6 +4,8 @@ import Button from "../../components/ui/Button";
 import toast from "react-hot-toast";
 import { useOrderActions } from "./useOrderActions";
 
+// Use stripe public key here?
+
 export default function CheckoutPage() {
   const [shippingAddress, setShippingAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod"); // 'cod', 'stripe'
