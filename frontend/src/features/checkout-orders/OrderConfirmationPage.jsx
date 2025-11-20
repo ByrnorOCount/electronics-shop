@@ -33,13 +33,13 @@ export default function OrderConfirmationPage() {
 
   if (isLoading && !initialOrder) {
     return (
-      <main className="flex-grow max-w-2xl mx-auto px-4 py-12 text-center">
+      <main className="flex-grow max-w-6xl mx-auto px-4 py-12 text-center">
         <p>Loading your order details...</p>
       </main>
     );
   } else if (isError || !order) {
     return (
-      <main className="flex-grow max-w-2xl mx-auto px-4 py-12 text-center">
+      <main className="flex-grow max-w-6xl mx-auto px-4 py-12 text-center">
         <h1 className="text-2xl font-bold mb-4">No Order Information</h1>
         <p className="text-gray-600 mb-6">
           We couldn't find any recent order details. You can view your past
@@ -56,21 +56,23 @@ export default function OrderConfirmationPage() {
   }
 
   return (
-    <main className="flex-grow max-w-2xl mx-auto px-4 py-12 w-full">
-      <div className="bg-white p-8 rounded-lg shadow-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-green-600">
-            Thank You for Your Order!
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Your order has been confirmed. A confirmation email has been sent to
-            you.
-          </p>
-          <p className="text-sm text-gray-500 mt-1">Order ID: #{order.id}</p>
-        </div>
+    <main className="flex-grow max-w-6xl mx-auto px-4 py-12 w-full">
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white p-8 rounded-lg shadow-md">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-green-600">
+              Thank You for Your Order!
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Your order has been confirmed. A confirmation email has been sent
+              to you.
+            </p>
+            <p className="text-sm text-gray-500 mt-1">Order ID: #{order.id}</p>
+          </div>
 
-        <div className="border-t pt-6">
-          <OrderDetails order={order} />
+          <div className="border-t pt-6">
+            <OrderDetails order={order} />
+          </div>
         </div>
       </div>
     </main>

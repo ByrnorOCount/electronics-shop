@@ -38,7 +38,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <main className="flex-grow max-w-screen-xl mx-auto px-4 py-12 w-full">
+    <main className="flex-grow max-w-6xl mx-auto px-4 py-12 w-full">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <form

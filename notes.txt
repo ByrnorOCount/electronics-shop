@@ -136,3 +136,9 @@ Using Redux Thunks for every API call, as was done initially, mixes these concer
     `<div className="max-w-6xl mx-auto px-4 py-8">...</div>`
 
 "save for later" functionality for cart items
+
+https://docs.stripe.com/testing#cards
+stripe test cards
+
+todo: stripe payment redirects to http://localhost:5173/checkout/success?session_id=cs_test_b13KX4CHmDBGG3bbGoM4cqDm7xzJJsky649V8ZhnRlrTWetBcMkirLtVHZ
+and http://localhost:5173/order-confirmation doesn't update
