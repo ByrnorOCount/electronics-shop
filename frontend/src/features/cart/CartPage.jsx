@@ -24,7 +24,7 @@ export default function CartPage() {
     );
 
   return (
-    <main className="flex-grow max-w-screen-xl mx-auto px-4 py-12 w-full">
+    <div className="max-w-6xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
       {items.length === 0 ? (
         <div className="text-center bg-white p-12 rounded-lg shadow-sm">
@@ -68,7 +68,12 @@ export default function CartPage() {
                 </div>
                 <QuantityInput
                   value={it.qty}
-                  onChange={(newQty) => handleQuantityChange(it, newQty)}
+                  onChange={(newQty) => {
+                    // Prevent updates if quantity is less than 1.
+                    // User must click "Remove" to delete the item.
+                    if (newQty < 1) return;
+                    handleQuantityChange(it, newQty);
+                  }}
                   max={it.stock}
                 />
               </div>
@@ -79,6 +84,6 @@ export default function CartPage() {
           </div>
         </div>
       )}
-    </main>
+    </div>
   );
 }

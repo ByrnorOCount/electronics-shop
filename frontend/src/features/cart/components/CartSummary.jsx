@@ -43,7 +43,7 @@ export default function CartSummary() {
   }, [token]);
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm sticky top-24">
+    <div className="bg-white p-6 rounded-lg shadow-sm sticky top-12">
       <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
       <ItemList
@@ -52,7 +52,7 @@ export default function CartSummary() {
         containerClassName="max-h-60 overflow-y-auto pr-2"
       />
 
-      <div className="space-y-2">
+      <div className="space-y-1 text-sm">
         <div className="flex justify-between">
           <span>Subtotal</span>
           <span className="font-medium">${subtotal.toFixed(2)}</span>
@@ -66,7 +66,7 @@ export default function CartSummary() {
           <span className="font-medium">${tax.toFixed(2)}</span>
         </div>
       </div>
-      <div className="flex justify-between font-bold text-lg my-4 pt-4 border-t">
+      <div className="flex justify-between font-bold text-lg mt-3 mb-3 pt-3 border-t">
         <span>Order total</span>
         <span>${total.toFixed(2)}</span>
       </div>

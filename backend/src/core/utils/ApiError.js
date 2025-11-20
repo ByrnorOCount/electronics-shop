@@ -2,6 +2,7 @@ class ApiError extends Error {
   /**
    * Creates a custom API Error.
    * This is used for operational, predictable errors that should be sent to the client.
+   * TODO: Display error on frontend in a user-friendly way.
    *
    * @param {number} statusCode - The HTTP status code of the error.
    * @param {string} message - The error message.

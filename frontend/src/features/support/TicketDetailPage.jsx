@@ -102,9 +102,9 @@ const TicketDetailPage = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-4xl mb-12">
+    <div className="max-w-6xl mx-auto px-4 py-8">
       <Link
-        to="/support"
+        to={isStaff ? "/staff/support" : "/support"}
         className="text-indigo-600 hover:underline mb-4 block"
       >
         &larr; Back to All Tickets

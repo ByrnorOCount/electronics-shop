@@ -18,7 +18,16 @@ export const useCartActions = () => {
   const token = useAppSelector(selectToken);
 
   const handleUpdateQuantity = async (item, newQuantity) => {
-    if (newQuantity < 1) return;
+    // If the new quantity is the same as the current quantity, do nothing.
+    // This prevents unnecessary updates and toasts when the quantity doesn't actually change.
+    if (newQuantity === item.qty) {
+      return;
+    }
+    // If newQuantity is less than 1, the item should be removed, not updated to 0.
+    // The "Remove" button should be used for this.
+    if (newQuantity < 1) {
+      return;
+    }
     if (item.stock !== undefined && newQuantity > item.stock) {
       toast.error(`Only ${item.stock} items in stock.`);
       return;

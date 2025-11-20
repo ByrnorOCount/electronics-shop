@@ -54,8 +54,8 @@ const SupportPage = () => {
 
   if (!user) {
     return (
-      <div className="container mx-auto p-4 md:p-8 max-w-6xl mb-12">
-        <div className="text-center">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="text-center max-w-2xl mx-auto">
           <h1 className="text-4xl font-bold mb-4">Support Center</h1>
           <p className="text-lg text-gray-700 mb-6">
             Please{" "}
@@ -66,7 +66,7 @@ const SupportPage = () => {
           </p>
         </div>
 
-        <div className="max-w-2xl mx-auto mt-12">
+        <div className="mt-12">
           <h2 className="text-2xl font-bold mb-4 text-center">
             Frequently Asked Questions
           </h2>
@@ -77,22 +77,17 @@ const SupportPage = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-6xl mb-12">
+    <div className="max-w-6xl mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-6">Support Center</h1>
 
       <div className="grid lg:grid-cols-5 gap-12">
         <div className="lg:col-span-2 order-2 lg:order-1">
-          {" "}
-          {/* FAQ section takes 2 columns, moved to order 1 on large screens */}
           <h2 className="text-2xl font-bold mb-4">
             Frequently Asked Questions
           </h2>
           <FaqSection />
         </div>
-
         <div className="lg:col-span-3 order-1 lg:order-2">
-          {" "}
-          {/* Ticket section takes 3 columns, moved to order 2 on large screens */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
             <h2 className="text-2xl font-bold">Your Support Tickets</h2>
             {user && (

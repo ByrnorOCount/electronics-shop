@@ -9,10 +9,12 @@ const Layout = () => {
   return (
     <div className="flex flex-col min-h-screen bg-yellow-50">
       <Header />
-      <main className="flex flex-col flex-grow">
+      <main className="flex flex-col flex-grow items-center">
         <ErrorBoundary>
-          {/* No context needed here anymore for the modal */}
-          <Outlet />
+          {/* The w-full is crucial to make the content pages stretch to the full width of the main container */}
+          <div className="w-full">
+            <Outlet />
+          </div>
         </ErrorBoundary>
       </main>
       <Footer />

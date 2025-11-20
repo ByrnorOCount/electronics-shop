@@ -2,7 +2,7 @@ import React from "react";
 
 const AboutPage = () => {
   return (
-    <div className="container mx-auto p-8 max-w-4xl mb-12">
+    <div className="max-w-6xl mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-4">About ElectroShop</h1>
       <p className="text-lg text-gray-700 mb-4">
         Founded in 2023, ElectroShop was born from a passion for electronics and

@@ -148,6 +148,7 @@ function App() {
             <Route path="support/warranty" element={<WarrantyPage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Route>
 
@@ -171,9 +172,6 @@ function App() {
           <Route path="orders" element={<AdminOrdersPage />} />
           <Route path="users" element={<AdminUsersPage />} />
         </Route> */}
-
-        {/* Catch-all 404 route */}
-        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );

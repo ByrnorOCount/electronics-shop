@@ -2,7 +2,7 @@ import React from "react";
 
 const CareersPage = () => {
   return (
-    <div className="container mx-auto p-8 max-w-4xl">
+    <div className="max-w-6xl mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-4">Careers at ElectroShop</h1>
       <p className="text-lg text-gray-700 mb-4">
         Join our team and help us build the future of electronics retail. We are
