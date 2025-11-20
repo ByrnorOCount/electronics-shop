@@ -12,6 +12,8 @@ export default function Header() {
   const { user, token } = useAppSelector((state) => state.auth);
   const totalQty = items.reduce((s, it) => s + (it.qty || 0), 0);
 
+  const isStaffOrAdmin = user?.role === "staff" || user?.role === "admin";
+
   return (
     <header className="sticky top-0 bg-amber-200 shadow-sm z-50">
       <div className="relative max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
@@ -80,7 +82,19 @@ export default function Header() {
                   className="h-6 w-6 text-gray-700 hover:text-indigo-600"
                 />
               </Link>
-              <Link to="/profile" title="My Account">
+              {isStaffOrAdmin && (
+                <Link to="/staff" title="Staff Panel">
+                  <Icon
+                    name="staff-panel"
+                    className="h-6 w-6 text-gray-700 hover:text-indigo-600"
+                  />
+                </Link>
+              )}
+              <Link
+                to="/profile"
+                title="My Account"
+                className="relative flex items-center"
+              >
                 <Icon
                   name="user-account"
                   className="h-6 w-6 text-gray-700 hover:text-indigo-600"

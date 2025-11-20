@@ -117,6 +117,13 @@ const icons = {
       <path fill="none" d="M0 0h48v48H0z"></path>
     </>
   ),
+  "staff-panel": (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M20.25 14.15v4.07a2.25 2.25 0 01-2.25 2.25h-12a2.25 2.25 0 01-2.25-2.25v-4.07m16.5 0v-3.875a2.25 2.25 0 00-2.25-2.25h-12a2.25 2.25 0 00-2.25 2.25v3.875m16.5 0h-16.5"
+    />
+  ),
 };
 
 /**
