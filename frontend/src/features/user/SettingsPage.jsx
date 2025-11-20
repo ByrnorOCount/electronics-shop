@@ -69,244 +69,252 @@ export default function SettingsPage() {
   }
 
   return (
-    <main className="flex-grow max-w-2xl mx-auto px-4 py-12 w-full">
-      <h1 className="text-3xl font-bold mb-8">Login & Security</h1>
+    <main className="flex-grow max-w-6xl mx-auto px-4 py-12 w-full">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Login & Security</h1>
 
-      {/* Login & Security Section */}
-      <div className="bg-white p-8 rounded-lg shadow-md">
-        <p className="text-sm text-gray-600 mb-6">
-          Manage your personal information and password.
-        </p>
+        {/* Login & Security Section */}
+        <div className="bg-white p-8 rounded-lg shadow-md">
+          <p className="text-sm text-gray-600 mb-6">
+            Manage your personal information and password.
+          </p>
 
-        {/* Profile Information Form */}
-        <form
-          onSubmit={handleProfileSubmit(onProfileFormSubmit)}
-          className="space-y-6 border-b pb-8 mb-8"
-        >
-          <h3 className="text-lg font-medium text-gray-900">
-            Personal Information
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label
-                htmlFor="first_name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                First Name
-              </label>
-              <input
-                type="text"
-                id="first_name"
-                {...registerProfile("first_name")}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
-              {profileErrors.first_name && (
-                <p className="text-sm text-red-600 mt-1">
-                  {profileErrors.first_name.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <label
-                htmlFor="last_name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Last Name
-              </label>
-              <input
-                type="text"
-                id="last_name"
-                {...registerProfile("last_name")}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
-              {profileErrors.last_name && (
-                <p className="text-sm text-red-600 mt-1">
-                  {profileErrors.last_name.message}
-                </p>
-              )}
-            </div>
-          </div>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              {...registerProfile("email", {
-                pattern: {
-                  value: /^\S+@\S+$/i,
-                  message: "Entered value does not match email format",
-                },
-              })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-            {profileErrors.email && (
-              <p className="text-sm text-red-600 mt-1">
-                {profileErrors.email.message}
-              </p>
-            )}
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex-grow">
-              {error && <p className="text-sm text-red-600">{error.message}</p>}
-            </div>
-            <button
-              type="submit"
-              disabled={isLoading || !isProfileDirty}
-              className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed"
-            >
-              {isLoading ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-        </form>
-
-        {/* Change Password Form */}
-        <form
-          onSubmit={handlePasswordSubmit(onPasswordFormSubmit)}
-          className="space-y-6"
-        >
-          <h3 className="text-lg font-medium text-gray-900">Change Password</h3>
-          {/* Visually hidden username field for accessibility and password managers */}
-          <input
-            type="text"
-            autoComplete="username"
-            value={user?.email || ""}
-            readOnly
-            className="sr-only"
-          />
-
-          <div>
-            <label
-              htmlFor="currentPassword"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Current Password
-            </label>
-            <div className="relative mt-1">
-              <input
-                type={showCurrentPassword ? "text" : "password"}
-                id="currentPassword"
-                {...registerPassword("currentPassword", {
-                  required: "Current password is required",
-                })}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
-              >
-                <Icon
-                  name={showCurrentPassword ? "eye" : "eye-off"}
-                  className="h-5 w-5"
+          {/* Profile Information Form */}
+          <form
+            onSubmit={handleProfileSubmit(onProfileFormSubmit)}
+            className="space-y-6 border-b pb-8 mb-8"
+          >
+            <h3 className="text-lg font-medium text-gray-900">
+              Personal Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label
+                  htmlFor="first_name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  id="first_name"
+                  {...registerProfile("first_name")}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 />
-              </button>
+                {profileErrors.first_name && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {profileErrors.first_name.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label
+                  htmlFor="last_name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  id="last_name"
+                  {...registerProfile("last_name")}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                />
+                {profileErrors.last_name && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {profileErrors.last_name.message}
+                  </p>
+                )}
+              </div>
             </div>
-            {passwordErrors.currentPassword && (
-              <p className="text-sm text-red-600 mt-1">
-                {passwordErrors.currentPassword.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="newPassword"
-              className="block text-sm font-medium text-gray-700"
-            >
-              New Password
-            </label>
-            <div className="relative mt-1">
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Email Address
+              </label>
               <input
-                type={showNewPassword ? "text" : "password"}
-                id="newPassword"
-                {...registerPassword("newPassword", {
-                  required: "New password is required",
-                  minLength: {
-                    value: 8,
-                    message: "Password must be at least 8 characters",
-                  },
+                type="email"
+                id="email"
+                {...registerProfile("email", {
                   pattern: {
-                    value:
-                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                    message:
-                      "Password must include uppercase, lowercase, number, and special character.",
+                    value: /^\S+@\S+$/i,
+                    message: "Entered value does not match email format",
                   },
                 })}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                autoComplete="new-password"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               />
+              {profileErrors.email && (
+                <p className="text-sm text-red-600 mt-1">
+                  {profileErrors.email.message}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex-grow">
+                {error && (
+                  <p className="text-sm text-red-600">{error.message}</p>
+                )}
+              </div>
               <button
-                type="button"
-                onClick={() => setShowNewPassword(!showNewPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+                type="submit"
+                disabled={isLoading || !isProfileDirty}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed"
               >
-                <Icon
-                  name={showNewPassword ? "eye" : "eye-off"}
-                  className="h-5 w-5"
-                />
+                {isLoading ? "Saving..." : "Save Changes"}
               </button>
             </div>
-            {passwordErrors.newPassword && (
-              <p className="text-sm text-red-600 mt-1">
-                {passwordErrors.newPassword.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Confirm New Password
-            </label>
-            <div className="relative mt-1">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                id="confirmPassword"
-                {...registerPassword("confirmPassword", {
-                  required: "Please confirm your new password",
-                  validate: (value) =>
-                    value === watchPassword("newPassword") ||
-                    "The passwords do not match",
-                })}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                autoComplete="new-password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+          </form>
+
+          {/* Change Password Form */}
+          <form
+            onSubmit={handlePasswordSubmit(onPasswordFormSubmit)}
+            className="space-y-6"
+          >
+            <h3 className="text-lg font-medium text-gray-900">
+              Change Password
+            </h3>
+            {/* Visually hidden username field for accessibility and password managers */}
+            <input
+              type="text"
+              autoComplete="username"
+              value={user?.email || ""}
+              readOnly
+              className="sr-only"
+            />
+
+            <div>
+              <label
+                htmlFor="currentPassword"
+                className="block text-sm font-medium text-gray-700"
               >
-                <Icon
-                  name={showConfirmPassword ? "eye" : "eye-off"}
-                  className="h-5 w-5"
+                Current Password
+              </label>
+              <div className="relative mt-1">
+                <input
+                  type={showCurrentPassword ? "text" : "password"}
+                  id="currentPassword"
+                  {...registerPassword("currentPassword", {
+                    required: "Current password is required",
+                  })}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  autoComplete="current-password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+                >
+                  <Icon
+                    name={showCurrentPassword ? "eye" : "eye-off"}
+                    className="h-5 w-5"
+                  />
+                </button>
+              </div>
+              {passwordErrors.currentPassword && (
+                <p className="text-sm text-red-600 mt-1">
+                  {passwordErrors.currentPassword.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="newPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
+                New Password
+              </label>
+              <div className="relative mt-1">
+                <input
+                  type={showNewPassword ? "text" : "password"}
+                  id="newPassword"
+                  {...registerPassword("newPassword", {
+                    required: "New password is required",
+                    minLength: {
+                      value: 8,
+                      message: "Password must be at least 8 characters",
+                    },
+                    pattern: {
+                      value:
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      message:
+                        "Password must include uppercase, lowercase, number, and special character.",
+                    },
+                  })}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+                >
+                  <Icon
+                    name={showNewPassword ? "eye" : "eye-off"}
+                    className="h-5 w-5"
+                  />
+                </button>
+              </div>
+              {passwordErrors.newPassword && (
+                <p className="text-sm text-red-600 mt-1">
+                  {passwordErrors.newPassword.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Confirm New Password
+              </label>
+              <div className="relative mt-1">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  id="confirmPassword"
+                  {...registerPassword("confirmPassword", {
+                    required: "Please confirm your new password",
+                    validate: (value) =>
+                      value === watchPassword("newPassword") ||
+                      "The passwords do not match",
+                  })}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+                >
+                  <Icon
+                    name={showConfirmPassword ? "eye" : "eye-off"}
+                    className="h-5 w-5"
+                  />
+                </button>
+              </div>
+              {passwordErrors.confirmPassword && (
+                <p className="text-sm text-red-600 mt-1">
+                  {passwordErrors.confirmPassword.message}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex-grow">
+                {error && (
+                  <p className="text-sm text-red-600">{error.message}</p>
+                )}
+              </div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="px-6 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {isLoading ? "Saving..." : "Change Password"}
               </button>
             </div>
-            {passwordErrors.confirmPassword && (
-              <p className="text-sm text-red-600 mt-1">
-                {passwordErrors.confirmPassword.message}
-              </p>
-            )}
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex-grow">
-              {error && <p className="text-sm text-red-600">{error.message}</p>}
-            </div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="px-6 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-              {isLoading ? "Saving..." : "Change Password"}
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </main>
   );

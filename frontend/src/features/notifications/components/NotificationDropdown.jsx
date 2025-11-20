@@ -9,6 +9,7 @@ import {
   decrementUnreadCount,
 } from "../notificationSlice";
 import Icon from "../../../components/ui/Icon";
+import { renderFormattedNotificationMessage } from "../../../utils/notificationUtils.jsx";
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -133,7 +134,7 @@ export default function NotificationDropdown() {
                   onClick={() => setIsOpen(false)}
                 >
                   <p className="text-sm text-gray-800">
-                    {notification.message}
+                    {renderFormattedNotificationMessage(notification.message)}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
                     {new Date(notification.created_at).toLocaleString()}

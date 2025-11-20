@@ -48,7 +48,7 @@ export default function WishlistPage() {
   }
 
   return (
-    <main className="flex-grow max-w-screen-xl mx-auto px-4 py-12 w-full">
+    <main className="flex-grow max-w-6xl mx-auto px-4 py-12 w-full">
       <h1 className="text-3xl font-bold mb-8">My Wishlist</h1>
       {content}
     </main>

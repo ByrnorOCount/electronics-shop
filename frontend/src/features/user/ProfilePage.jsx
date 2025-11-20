@@ -71,7 +71,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <main className="flex-grow max-w-4xl mx-auto px-4 py-12 w-full">
+    <main className="flex-grow max-w-6xl mx-auto px-4 py-12 w-full">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Welcome, {userName}!</h1>
         <p className="text-gray-600">

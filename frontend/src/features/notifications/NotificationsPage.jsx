@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useApi } from "../../hooks/useApi";
 import { notificationService } from "../../api";
 import toast from "react-hot-toast";
+import { renderFormattedNotificationMessage } from "../../utils/notificationUtils.jsx";
 
 export default function NotificationsPage() {
   const {
@@ -50,7 +51,7 @@ export default function NotificationsPage() {
   };
 
   return (
-    <main className="flex-grow max-w-4xl mx-auto px-4 py-12 w-full">
+    <main className="flex-grow max-w-6xl mx-auto px-4 py-12 w-full">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Notifications</h1>
         <button
@@ -82,7 +83,9 @@ export default function NotificationsPage() {
                 : "bg-indigo-50 hover:bg-indigo-100"
             }`}
           >
-            <p className="text-sm text-gray-800">{notification.message}</p>
+            <p className="text-sm text-gray-800">
+              {renderFormattedNotificationMessage(notification.message)}
+            </p>
             <p className="text-xs text-gray-500 mt-1">
               {new Date(notification.created_at).toLocaleString()}
             </p>
