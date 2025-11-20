@@ -4,6 +4,8 @@ import { useApi } from "../../hooks/useApi";
 import { notificationService } from "../../api";
 import toast from "react-hot-toast";
 import { renderFormattedNotificationMessage } from "../../utils/notificationUtils.jsx";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { decrementUnreadCount, setUnreadCount } from "./notificationSlice.js";
 
 export default function NotificationsPage() {
   const {
@@ -18,10 +20,12 @@ export default function NotificationsPage() {
   );
 
   const [notifications, setNotifications] = useState([]);
+  const dispatch = useAppDispatch();
+  const { unreadCount } = useAppSelector((state) => state.notifications);
 
   useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications]);
+    fetchNotifications(); // Re-fetch notifications whenever the global unreadCount changes
+  }, [fetchNotifications, unreadCount]);
 
   useEffect(() => {
     if (data) {
@@ -37,17 +41,27 @@ export default function NotificationsPage() {
   }, [isError]);
 
   const handleMarkAsRead = async (id) => {
-    await markAsReadRequest(id);
-    setNotifications(
-      notifications.map((n) => (n.id === id ? { ...n, is_read: true } : n))
-    );
+    const notification = notifications.find((n) => n.id === id);
+    // Only perform action if the notification is currently unread
+    if (notification && !notification.is_read) {
+      await markAsReadRequest(id);
+      setNotifications(
+        notifications.map((n) => (n.id === id ? { ...n, is_read: true } : n))
+      );
+      dispatch(decrementUnreadCount());
+    }
   };
 
   const handleMarkAllAsRead = async () => {
     if (notifications.every((n) => n.is_read)) return;
-    await markAllAsReadRequest();
-    setNotifications(notifications.map((n) => ({ ...n, is_read: true })));
-    toast.success("All notifications marked as read.");
+    try {
+      await markAllAsReadRequest();
+      setNotifications(notifications.map((n) => ({ ...n, is_read: true })));
+      dispatch(setUnreadCount(0));
+      toast.success("All notifications marked as read.");
+    } catch (error) {
+      toast.error("Failed to mark all notifications as read.");
+    }
   };
 
   return (
@@ -74,22 +88,31 @@ export default function NotificationsPage() {
 
       <div className="space-y-4">
         {notifications.map((notification) => (
-          <Link
+          <div
             key={notification.id}
-            to={notification.link || "#"}
             className={`block p-4 rounded-lg shadow-sm transition-colors ${
               notification.is_read
                 ? "bg-white hover:bg-gray-50"
                 : "bg-indigo-50 hover:bg-indigo-100"
             }`}
           >
-            <p className="text-sm text-gray-800">
-              {renderFormattedNotificationMessage(notification.message)}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              {new Date(notification.created_at).toLocaleString()}
-            </p>
-          </Link>
+            <Link to={notification.link || "#"} className="block">
+              <p className="text-sm text-gray-800">
+                {renderFormattedNotificationMessage(notification.message)}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                {new Date(notification.created_at).toLocaleString()}
+              </p>
+            </Link>
+            {!notification.is_read && (
+              <button
+                onClick={() => handleMarkAsRead(notification.id)}
+                className="text-xs text-indigo-500 hover:underline mt-2 font-medium"
+              >
+                Mark as read
+              </button>
+            )}
+          </div>
         ))}
       </div>
     </main>

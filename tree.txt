@@ -215,6 +215,11 @@
 |   |   |   |   |   `-- ProductFilter.jsx
 |   |   |   |   `-- productService.js
 |   |   |   |-- staff
+|   |   |   |   |-- StaffDashboardPage.jsx
+|   |   |   |   |-- StaffSupportPage.jsx
+|   |   |   |   |-- components
+|   |   |   |   |   `-- StaffLayout.jsx
+|   |   |   |   `-- staffService.js
 |   |   |   |-- support
 |   |   |   |   |-- SupportPage.jsx
 |   |   |   |   |-- TicketDetailPage.jsx
@@ -251,11 +256,13 @@
 |   |   |-- styles
 |   |   |   `-- global.css
 |   |   `-- utils
-|   |       `-- logger.js
+|   |       |-- formatters.js
+|   |       |-- logger.js
+|   |       `-- notificationUtils.jsx
 |   `-- vite.config.js
 |-- notes.txt
 |-- package-lock.json
 |-- package.json
 `-- tree.txt
 
-59 directories, 199 files
+60 directories, 205 files
