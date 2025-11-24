@@ -27,9 +27,12 @@ const TicketDetailPage = () => {
     request: fetchTicketDetails,
   } = useApi(supportService.getTicketById);
 
-  const { isLoading: isSubmitting, request: submitReply } = useApi(
-    supportService.addTicketReply
-  );
+  // Use the correct service for submitting a reply based on user role
+  const replyService = isStaff
+    ? staffService.replyToTicket
+    : supportService.addTicketReply;
+  const { isLoading: isSubmitting, request: submitReply } =
+    useApi(replyService);
 
   const { isLoading: isUpdatingStatus, request: updateStatus } = useApi(
     supportService.updateTicketStatus
