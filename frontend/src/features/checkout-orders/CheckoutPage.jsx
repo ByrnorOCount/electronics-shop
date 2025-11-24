@@ -128,8 +128,10 @@ export default function CheckoutPage() {
           )}
 
           {/* Error Messages */}
-          {error && !toast.isActive("error-toast") && (
-            <p className="text-red-500 text-sm">{error}</p>
+          {error && (
+            <p className="text-red-500 text-sm">
+              {error.response?.data?.message || error.message}
+            </p>
           )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>

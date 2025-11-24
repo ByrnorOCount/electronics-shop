@@ -18,7 +18,7 @@ import logger from "../../utils/logger";
  *  }) => Promise<void>;
  *  generateOtp: () => Promise<void>;
  *  isLoading: boolean;
- *  error: Error | null;
+ *  error: string | null;
  * }}
  */
 export const useOrderActions = () => {
@@ -38,10 +38,10 @@ export const useOrderActions = () => {
       toast.success("An OTP has been sent to your email.");
     } catch (err) {
       logger.error("Failed to send OTP", err);
-      toast.error(
-        err.response?.data?.message || "Failed to send OTP. Please try again."
-      );
-      setError(err);
+      const errorMessage =
+        err.response?.data?.message || "Failed to send OTP. Please try again.";
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -69,10 +69,10 @@ export const useOrderActions = () => {
       }
     } catch (err) {
       logger.error("Order creation failed", err);
-      toast.error(
-        err.response?.data?.message || "An unexpected error occurred."
-      );
-      setError(err);
+      const errorMessage =
+        err.response?.data?.message || "An unexpected error occurred.";
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

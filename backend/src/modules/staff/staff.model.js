@@ -54,7 +54,13 @@ export const findAllProducts = (options = {}) => {
  * @returns {Promise<Array>} An array of order objects.
  */
 export const findAllOrders = (options = {}) => {
-  const query = db("orders");
+  const query = db("orders")
+    .select(
+      "orders.*",
+      db.raw("CONCAT(users.first_name, ' ', users.last_name) as customer_name")
+    )
+    .join("users", "orders.user_id", "users.id");
+
   if (options.status) {
     query.where("status", options.status);
   }
@@ -63,6 +69,18 @@ export const findAllOrders = (options = {}) => {
     : ["created_at", "desc"];
   query.orderBy(field, order);
   return query;
+};
+
+/**
+ * Finds all items for a given order.
+ * @param {number} orderId - The ID of the order.
+ * @returns {Promise<Array>} An array of order item objects.
+ */
+export const findOrderItems = (orderId) => {
+  return db("order_items")
+    .select("order_items.*", "products.name", "products.image_url")
+    .join("products", "order_items.product_id", "products.id")
+    .where("order_items.order_id", orderId);
 };
 
 /**
@@ -113,7 +131,7 @@ export const findSupportTicketById = (ticketId) => {
 export const createSupportTicketReply = async (replyData) => {
   const [newReply] = await db("support_ticket_replies")
     .insert(replyData)
-    .returning("*");
+    .returning("*"); // Note: The link is constructed in the service layer for this one.
   return newReply;
 };
 

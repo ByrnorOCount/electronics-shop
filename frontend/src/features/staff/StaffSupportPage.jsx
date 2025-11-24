@@ -48,6 +48,7 @@ const StaffSupportPage = () => {
               {tickets.map((ticket) => (
                 <Link
                   key={ticket.id}
+                  to={`/staff/support/ticket/${ticket.id}`}
                   className="block border border-gray-200 p-4 rounded-md hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex justify-between items-start">

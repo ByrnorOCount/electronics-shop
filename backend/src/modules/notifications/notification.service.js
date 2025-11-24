@@ -10,7 +10,13 @@ import ApiError from "../../core/utils/ApiError.js";
  * @param {object} [trx] - Optional Knex transaction object.
  */
 export const createNotification = async (userId, message, link = null, trx) => {
-  const notificationData = { user_id: userId, message, link };
+  let safeLink = null;
+  // Ensure the link is a non-empty string; otherwise, treat it as null.
+  if (typeof link === "string" && link.length > 0) {
+    safeLink = link;
+  }
+
+  const notificationData = { user_id: userId, message, link: safeLink };
   // Use the newly created model function for consistency.
   await notificationModel.create(notificationData, trx);
 };

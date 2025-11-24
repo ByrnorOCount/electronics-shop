@@ -12,13 +12,13 @@ const managementSections = [
   {
     name: "Manage Orders",
     description: "Update order statuses and view order details.",
-    link: "#", // To be implemented
+    link: "/staff/orders",
     icon: "shopping-cart",
   },
   {
     name: "Manage Products",
     description: "Add, edit, and remove products from the catalog.",
-    link: "#", // To be implemented
+    link: "/staff/products",
     icon: "package",
   },
 ];

@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store/hooks";
 import { logout } from "../../auth/authSlice";
 import toast from "react-hot-toast";
@@ -8,6 +8,8 @@ import Icon from "../../../components/ui/Icon";
 const staffLinks = [
   { name: "Dashboard", to: "/staff", icon: "dashboard" },
   { name: "Manage Tickets", to: "/staff/support", icon: "message-circle" },
+  { name: "Manage Orders", to: "/staff/orders", icon: "shopping-cart" },
+  { name: "Manage Products", to: "/staff/products", icon: "package" },
 ];
 
 const StaffLayout = () => {
@@ -21,8 +23,8 @@ const StaffLayout = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-yellow-50">
-      <aside className="w-64 bg-gray-800 text-white p-4">
+    <div className="min-h-screen bg-yellow-50">
+      <aside className="w-48 bg-gray-800 text-white p-4 fixed h-full flex flex-col">
         <h2 className="text-2xl font-bold mb-6">Staff Panel</h2>
         <nav>
           <ul>
@@ -72,16 +74,16 @@ const StaffLayout = () => {
         </div>
 
         <div className="mt-4 pt-4 border-t border-gray-700">
-          <a
-            href="/"
+          <Link
+            to="/"
             className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-gray-300 hover:bg-gray-700 hover:text-white"
           >
             <Icon name="arrow-left" className="h-5 w-5" />
             <span>Back to Shop</span>
-          </a>
+          </Link>
         </div>
       </aside>
-      <main className="flex-grow">
+      <main className="ml-48 flex-grow">
         <Outlet />
       </main>
     </div>

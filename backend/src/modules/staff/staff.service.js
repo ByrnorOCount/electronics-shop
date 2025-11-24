@@ -53,7 +53,15 @@ export const getAllProducts = async (options) => {
  * @param {object} options - Query options for pagination, sorting, etc.
  */
 export const getAllOrders = async (options) => {
-  return staffModel.findAllOrders(options);
+  const orders = await staffModel.findAllOrders(options);
+  // For each order, fetch its associated items
+  const ordersWithItems = await Promise.all(
+    orders.map(async (order) => {
+      const items = await staffModel.findOrderItems(order.id);
+      return { ...order, items };
+    })
+  );
+  return ordersWithItems;
 };
 
 /**
@@ -67,6 +75,13 @@ export const updateOrderStatus = async (orderId, status) => {
   if (!updated) {
     throw new ApiError(httpStatus.NOT_FOUND, "Order not found");
   }
+
+  // Notify the user about the order status update
+  await createNotification(
+    updated.user_id,
+    `Your order #${orderId} has been updated to "${status}".`,
+    `/orders/${orderId}`
+  );
   return updated;
 };
 

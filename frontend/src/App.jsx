@@ -26,6 +26,8 @@ import ProfilePage from "./features/user/ProfilePage";
 import StaffLayout from "./features/staff/components/StaffLayout";
 import StaffDashboardPage from "./features/staff/StaffDashboardPage";
 import StaffSupportPage from "./features/staff/StaffSupportPage";
+import StaffOrdersPage from "./features/staff/StaffOrdersPage";
+import StaffProductsPage from "./features/staff/StaffProductsPage";
 // import AdminLayout from "./features/admin/components/AdminLayout";
 // import AdminDashboardPage from "./features/admin/AdminDashboardPage";
 // import AdminProductsPage from "./features/admin/AdminProductsPage";
@@ -163,6 +165,12 @@ function App() {
         >
           <Route index element={<StaffDashboardPage />} />
           <Route path="support" element={<StaffSupportPage />} />
+          <Route path="products" element={<StaffProductsPage />} />
+          <Route path="orders" element={<StaffOrdersPage />} />
+          <Route
+            path="support/ticket/:ticketId"
+            element={<TicketDetailPage />}
+          />
         </Route>
 
         {/* Admin routes */}
