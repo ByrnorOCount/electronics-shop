@@ -65,7 +65,7 @@ CREATE TABLE "orders" (
   "id" SERIAL PRIMARY KEY,
   "user_id" INTEGER NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
   "total_amount" DECIMAL(10, 2) NOT NULL,
-  "status" VARCHAR(255) NOT NULL DEFAULT 'Pending' CHECK (status IN ('Pending', 'Shipped', 'Delivered', 'Cancelled', 'pending', 'processing', 'shipped', 'delivered', 'cancelled')),
+  "status" VARCHAR(255) NOT NULL DEFAULT 'Pending' CHECK (status IN ('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'pending', 'processing', 'shipped', 'delivered', 'cancelled')),
   "shipping_address" TEXT NOT NULL,
   "payment_method" VARCHAR(255) NOT NULL DEFAULT 'cod',
   "payment_details" JSONB,

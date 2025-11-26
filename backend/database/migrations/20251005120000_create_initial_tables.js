@@ -35,7 +35,7 @@ export function up(knex) {
         .inTable("users")
         .onDelete("CASCADE");
       table.decimal("total_amount", 10, 2).notNullable();
-      table.string("status").notNullable().defaultTo("Pending"); // e.g., 'Pending', 'Shipped', 'Delivered', 'Cancelled'
+      table.string("status").notNullable().defaultTo("Pending"); // e.g., 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'
       table.text("shipping_address").notNullable();
       table.timestamps(true, true);
     })
