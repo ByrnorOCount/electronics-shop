@@ -154,6 +154,7 @@
 |   |   |-- components
 |   |   |   |-- ErrorBoundary.jsx
 |   |   |   |-- layout
+|   |   |   |   |-- DashboardLayout.jsx
 |   |   |   |   |-- Footer.jsx
 |   |   |   |   |-- Header.jsx
 |   |   |   |   `-- Layout.jsx
@@ -248,6 +249,7 @@
 |   |   |-- pages
 |   |   |   |-- AboutPage.jsx
 |   |   |   |-- CareersPage.jsx
+|   |   |   |-- DashboardHomePage.jsx
 |   |   |   |-- NotFoundPage.jsx
 |   |   |   |-- WarrantyPage.jsx
 |   |   |   `-- home
@@ -269,4 +271,4 @@
 |-- package.json
 `-- tree.txt
 
-60 directories, 209 files
+60 directories, 211 files
