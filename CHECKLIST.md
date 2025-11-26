@@ -179,14 +179,14 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 #### Staff
 
-- [x] `StaffDashboardPage`
+- [x] `StaffDashboardPage` (Consolidated into `DashboardHomePage`)
 - [x] `StaffProductsPage`
 - [x] `StaffOrdersPage`
 - [x] `StaffSupportPage`
 
 #### Administrator
 
-- [ ] `AdminDashboardPage`
+- [x] `AdminDashboardPage` (Consolidated into `DashboardHomePage`)
 - [ ] `AdminUsersPage`
 - [ ] `AdminProductsPage`
 - [ ] `AdminOrdersPage`

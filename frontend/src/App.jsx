@@ -16,6 +16,7 @@ import TicketDetailPage from "./features/support/TicketDetailPage";
 import WarrantyPage from "./pages/WarrantyPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CartPage from "./features/cart/CartPage";
+import CartSyncManager from "./features/cart/components/CartSyncManager";
 import WishlistPage from "./features/wishlist/WishlistPage";
 import CheckoutPage from "./features/checkout-orders/CheckoutPage";
 import OrderConfirmationPage from "./features/checkout-orders/OrderConfirmationPage";
@@ -23,18 +24,15 @@ import OrderHistoryPage from "./features/checkout-orders/OrderHistoryPage";
 import SettingsPage from "./features/user/SettingsPage";
 import NotificationsPage from "./features/notifications/NotificationsPage";
 import ProfilePage from "./features/user/ProfilePage";
-import StaffLayout from "./features/staff/components/StaffLayout";
-import StaffDashboardPage from "./features/staff/StaffDashboardPage";
+import ProtectedRoute from "./features/auth/components/ProtectedRoute";
+import DashboardHomePage from "./pages/DashboardHomePage";
+import DashboardLayout from "./components/layout/DashboardLayout";
 import StaffSupportPage from "./features/staff/StaffSupportPage";
 import StaffOrdersPage from "./features/staff/StaffOrdersPage";
 import StaffProductsPage from "./features/staff/StaffProductsPage";
-// import AdminLayout from "./features/admin/components/AdminLayout";
-// import AdminDashboardPage from "./features/admin/AdminDashboardPage";
-// import AdminProductsPage from "./features/admin/AdminProductsPage";
-// import AdminOrdersPage from "./features/admin/AdminOrdersPage";
-// import AdminUsersPage from "./features/admin/AdminUsersPage";
-import ProtectedRoute from "./features/auth/components/ProtectedRoute";
-import CartSyncManager from "./features/cart/components/CartSyncManager";
+import AdminProductsPage from "./features/admin/AdminProductsPage";
+import AdminOrdersPage from "./features/admin/AdminOrdersPage";
+import AdminUsersPage from "./features/admin/AdminUsersPage";
 
 /**
  * Fetches the CSRF token from the backend to enable secure requests.
@@ -159,11 +157,11 @@ function App() {
           path="/staff"
           element={
             <ProtectedRoute roles={["staff", "admin"]}>
-              <StaffLayout />
+              <DashboardLayout />
             </ProtectedRoute>
           }
         >
-          <Route index element={<StaffDashboardPage />} />
+          <Route index element={<DashboardHomePage />} />
           <Route path="support" element={<StaffSupportPage />} />
           <Route path="products" element={<StaffProductsPage />} />
           <Route path="orders" element={<StaffOrdersPage />} />
@@ -174,12 +172,19 @@ function App() {
         </Route>
 
         {/* Admin routes */}
-        {/* <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboardPage />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<DashboardHomePage />} />
           <Route path="products" element={<AdminProductsPage />} />
           <Route path="orders" element={<AdminOrdersPage />} />
           <Route path="users" element={<AdminUsersPage />} />
-        </Route> */}
+        </Route>
       </Routes>
     </>
   );

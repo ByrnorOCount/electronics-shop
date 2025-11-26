@@ -168,13 +168,10 @@
 |   |   |       `-- Spinner.jsx
 |   |   |-- features
 |   |   |   |-- admin
-|   |   |   |   |-- AdminDashboardPage.jsx
 |   |   |   |   |-- AdminOrdersPage.jsx
 |   |   |   |   |-- AdminProductsPage.jsx
 |   |   |   |   |-- AdminUsersPage.jsx
-|   |   |   |   |-- adminService.js
-|   |   |   |   `-- components
-|   |   |   |       `-- AdminLayout.jsx
+|   |   |   |   `-- adminService.js
 |   |   |   |-- auth
 |   |   |   |   |-- LoginPage.jsx
 |   |   |   |   |-- RegisterPage.jsx
@@ -216,14 +213,12 @@
 |   |   |   |   |   `-- ProductFilter.jsx
 |   |   |   |   `-- productService.js
 |   |   |   |-- staff
-|   |   |   |   |-- StaffDashboardPage.jsx
 |   |   |   |   |-- StaffOrdersPage.jsx
 |   |   |   |   |-- StaffProductsPage.jsx
 |   |   |   |   |-- StaffSupportPage.jsx
 |   |   |   |   |-- components
 |   |   |   |   |   |-- ProductDetails.jsx
-|   |   |   |   |   |-- ProductFormModal.jsx
-|   |   |   |   |   `-- StaffLayout.jsx
+|   |   |   |   |   `-- ProductFormModal.jsx
 |   |   |   |   `-- staffService.js
 |   |   |   |-- support
 |   |   |   |   |-- SupportPage.jsx
@@ -271,4 +266,4 @@
 |-- package.json
 `-- tree.txt
 
-60 directories, 211 files
+59 directories, 207 files

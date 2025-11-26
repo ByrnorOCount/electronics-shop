@@ -6,7 +6,6 @@ import toast from "react-hot-toast";
 import Icon from "../../components/ui/Icon";
 
 const staffLinks = [
-  { name: "Dashboard", to: "/staff", icon: "dashboard" },
   { name: "Manage Tickets", to: "/staff/support", icon: "message-circle" },
   { name: "Manage Orders", to: "/staff/orders", icon: "shopping-cart" },
   { name: "Manage Products", to: "/staff/products", icon: "package" },
@@ -23,6 +22,7 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
   const isAdmin = useAppSelector(selectIsAdmin);
 
+  const dashboardLink = isAdmin ? "/admin" : "/staff";
   const handleLogout = () => {
     dispatch(logout());
     toast.success("You have been signed out.");
@@ -34,6 +34,22 @@ const DashboardLayout = () => {
       <aside className="w-56 bg-gray-800 text-white p-4 fixed h-full flex flex-col">
         <h2 className="text-2xl font-bold mb-6">Control Panel</h2>
         <nav className="flex-grow">
+          <ul className="space-y-1 mb-6">
+            <li>
+              <NavLink
+                to={dashboardLink}
+                end
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                    isActive ? "bg-indigo-600" : "hover:bg-gray-700"
+                  }`
+                }
+              >
+                <Icon name="dashboard" className="h-5 w-5" />
+                <span>Dashboard</span>
+              </NavLink>
+            </li>
+          </ul>
           <h3 className="px-3 text-xs font-semibold uppercase text-gray-400 tracking-wider">
             Staff
           </h3>
@@ -42,7 +58,7 @@ const DashboardLayout = () => {
               <li key={link.name}>
                 <NavLink
                   to={link.to}
-                  end={link.to === "/staff"}
+                  end={false}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                       isActive ? "bg-indigo-600" : "hover:bg-gray-700"
@@ -66,6 +82,7 @@ const DashboardLayout = () => {
                   <li key={link.name}>
                     <NavLink
                       to={link.to}
+                      end={false}
                       className={({ isActive }) =>
                         `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                           isActive ? "bg-indigo-600" : "hover:bg-gray-700"
@@ -99,7 +116,7 @@ const DashboardLayout = () => {
           </Link>
         </div>
       </aside>
-      <main className="ml-56 flex-grow p-8">
+      <main className="ml-56 flex-grow">
         <Outlet />
       </main>
     </div>
