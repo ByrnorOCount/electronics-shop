@@ -168,8 +168,9 @@
 |   |   |       `-- Spinner.jsx
 |   |   |-- features
 |   |   |   |-- admin
-|   |   |   |   |-- AdminOrdersPage.jsx
-|   |   |   |   |-- AdminProductsPage.jsx
+|   |   |   |   |-- AdminAnalyticsPage.jsx
+|   |   |   |   |-- AdminCategoriesPage.jsx
+|   |   |   |   |-- AdminLogsPage.jsx
 |   |   |   |   |-- AdminUsersPage.jsx
 |   |   |   |   `-- adminService.js
 |   |   |   |-- auth
@@ -266,4 +267,4 @@
 |-- package.json
 `-- tree.txt
 
-59 directories, 207 files
+59 directories, 208 files

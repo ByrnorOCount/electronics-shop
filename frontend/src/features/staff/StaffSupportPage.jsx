@@ -40,16 +40,18 @@ const StaffSupportPage = () => {
       )}
 
       {status === "succeeded" && (
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <>
           {tickets.length === 0 ? (
-            <p className="text-gray-600">There are no support tickets.</p>
+            <p className="text-gray-600 bg-white p-6 rounded-lg shadow-md">
+              There are no support tickets.
+            </p>
           ) : (
             <div className="space-y-4">
               {tickets.map((ticket) => (
                 <Link
                   key={ticket.id}
                   to={`/staff/support/ticket/${ticket.id}`}
-                  className="block border border-gray-200 p-4 rounded-md hover:bg-gray-50 transition-colors"
+                  className="block border border-gray-200 p-4 rounded-md hover:bg-gray-50 transition-colors bg-white shadow-sm"
                 >
                   <div className="flex justify-between items-start">
                     <div>
@@ -81,7 +83,7 @@ const StaffSupportPage = () => {
               ))}
             </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );

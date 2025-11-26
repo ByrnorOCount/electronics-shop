@@ -184,3 +184,4 @@ class diagram
 
 
 blank card on home should be a bunch of rotating stock images
+category id in staff modal -> select category name instead

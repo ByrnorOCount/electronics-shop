@@ -30,9 +30,10 @@ import DashboardLayout from "./components/layout/DashboardLayout";
 import StaffSupportPage from "./features/staff/StaffSupportPage";
 import StaffOrdersPage from "./features/staff/StaffOrdersPage";
 import StaffProductsPage from "./features/staff/StaffProductsPage";
-import AdminProductsPage from "./features/admin/AdminProductsPage";
-import AdminOrdersPage from "./features/admin/AdminOrdersPage";
+import AdminCategoriesPage from "./features/admin/AdminCategoriesPage";
 import AdminUsersPage from "./features/admin/AdminUsersPage";
+import AdminAnalyticsPage from "./features/admin/AdminAnalyticsPage";
+import AdminLogsPage from "./features/admin/AdminLogsPage";
 
 /**
  * Fetches the CSRF token from the backend to enable secure requests.
@@ -181,8 +182,9 @@ function App() {
           }
         >
           <Route index element={<DashboardHomePage />} />
-          <Route path="products" element={<AdminProductsPage />} />
-          <Route path="orders" element={<AdminOrdersPage />} />
+          <Route path="categories" element={<AdminCategoriesPage />} />
+          <Route path="analytics" element={<AdminAnalyticsPage />} />
+          <Route path="logs" element={<AdminLogsPage />} />
           <Route path="users" element={<AdminUsersPage />} />
         </Route>
       </Routes>

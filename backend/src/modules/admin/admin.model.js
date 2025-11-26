@@ -95,3 +95,24 @@ export const updateCategory = async (categoryId, updateData) => {
 export const deleteCategory = (categoryId) => {
   return db("categories").where({ id: categoryId }).del();
 };
+
+/**
+ * Fetches detailed analytics data based on provided options.
+ * @param {object} options - Filtering and aggregation options.
+ * @returns {Promise<object>} Detailed analytics data.
+ */
+export const fetchAnalyticsData = async (options) => {
+  // TODO: Implement complex database queries for analytics (e.g., sales by month, top products, user activity)
+  return { salesByMonth: [], topProducts: [], userActivity: [] };
+};
+
+/**
+ * Fetches system logs based on provided options.
+ * @param {object} options - Filtering options for logs (e.g., date range, level).
+ * @returns {Promise<Array>} An array of log entries.
+ */
+export const fetchSystemLogs = async (options) => {
+  // TODO: Implement database query to retrieve log entries (if logs are stored in DB)
+  // Alternatively, this might interact with a file system or dedicated logging service.
+  return [];
+};

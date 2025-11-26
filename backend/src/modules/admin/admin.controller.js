@@ -171,3 +171,53 @@ export const deleteCategory = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * Get detailed analytics data for the admin dashboard.
+ * @route GET /api/admin/analytics
+ * @access Admin
+ * @returns {Promise<void>}
+ */
+export const getAnalyticsData = async (req, res, next) => {
+  try {
+    // TODO: Implement analytics data retrieval logic in admin.service.js
+    // This could include sales trends, user engagement, product performance, etc.
+    const analyticsData = await adminService.getAnalyticsData(req.query);
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          analyticsData,
+          "Analytics data retrieved successfully"
+        )
+      );
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get system logs for administrators.
+ * @route GET /api/admin/logs
+ * @access Admin
+ * @returns {Promise<void>}
+ */
+export const getSystemLogs = async (req, res, next) => {
+  try {
+    // TODO: Implement system log retrieval logic in admin.service.js
+    // This could involve reading from log files or a database table for logs.
+    const systemLogs = await adminService.getSystemLogs(req.query);
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          systemLogs,
+          "System logs retrieved successfully"
+        )
+      );
+  } catch (error) {
+    next(error);
+  }
+};

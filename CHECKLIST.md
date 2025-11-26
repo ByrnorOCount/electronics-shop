@@ -188,8 +188,8 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 - [x] `AdminDashboardPage` (Consolidated into `DashboardHomePage`)
 - [ ] `AdminUsersPage`
-- [ ] `AdminProductsPage`
-- [ ] `AdminOrdersPage`
+- [ ] `AdminCategoriesPage`
+- [ ] `AdminAnalyticsPage`
 - [ ] `AdminLogsPage`
 
 ### **Reusable Components**

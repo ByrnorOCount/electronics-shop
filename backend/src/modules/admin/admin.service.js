@@ -102,3 +102,27 @@ export const deleteCategory = async (categoryId) => {
     throw new ApiError(httpStatus.NOT_FOUND, "Category not found.");
   }
 };
+
+/**
+ * Get detailed analytics data.
+ * @param {object} queryOptions - Query parameters for filtering analytics (e.g., date range).
+ * @returns {Promise<Object>}
+ */
+export const getAnalyticsData = async (queryOptions) => {
+  // TODO: Implement logic to fetch detailed analytics from admin.model.js or directly from DB
+  // Example: return await adminModel.fetchAnalyticsData(queryOptions);
+  return { message: "Analytics data placeholder", queryOptions };
+};
+
+/**
+ * Get system logs.
+ * @param {object} queryOptions - Query parameters for filtering logs (e.g., date range, log level).
+ * @returns {Promise<Array>}
+ */
+export const getSystemLogs = async (queryOptions) => {
+  // TODO: Implement logic to fetch system logs from admin.model.js or a logging service
+  // Example: return await adminModel.fetchSystemLogs(queryOptions);
+  return [
+    { id: 1, timestamp: new Date(), level: "info", message: "System started" },
+  ];
+};
