@@ -86,6 +86,40 @@ export const getAllProducts = async (req, res, next) => {
 };
 
 /**
+ * @summary Upload a product image
+ * @route POST /api/staff/products/upload-image
+ * @access Staff
+ */
+export const uploadProductImage = (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json(
+          new ApiResponse(
+            httpStatus.BAD_REQUEST,
+            null,
+            "No image file provided."
+          )
+        );
+    }
+    // The file is saved by multer. We just need to return the path.
+    // The path should be relative to the public folder for the frontend to use.
+    const imageUrl = `/images/${req.file.filename}`;
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(
+          httpStatus.OK,
+          { imageUrl },
+          "Image uploaded successfully."
+        )
+      );
+  } catch (error) {
+    next(error);
+  }
+};
+/**
  * @summary Get all orders
  * @route GET /api/staff/orders
  * @access Staff

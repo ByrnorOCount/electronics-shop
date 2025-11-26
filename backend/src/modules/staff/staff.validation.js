@@ -1,5 +1,7 @@
 import Joi from "joi";
 
+// image_url doesn't have uri rule to allow flexibility in storing different types of image references (e.g., base64, relative paths)
+
 export const createProduct = {
   body: Joi.object().keys({
     name: Joi.string().required(),
@@ -7,7 +9,7 @@ export const createProduct = {
     category_id: Joi.number().integer().allow(null),
     price: Joi.number().precision(2).required(),
     stock: Joi.number().integer().min(0).required(),
-    image_url: Joi.string().uri().allow(null, ""),
+    image_url: Joi.string().allow(null, "").max(255), // Assuming a common VARCHAR(255) limit in DB
     is_featured: Joi.boolean(),
   }),
 };
@@ -23,7 +25,7 @@ export const updateProduct = {
       category_id: Joi.number().integer().allow(null),
       price: Joi.number().precision(2),
       stock: Joi.number().integer().min(0),
-      image_url: Joi.string().uri().allow(null, ""),
+      image_url: Joi.string().allow(null, "").max(255), // Assuming a common VARCHAR(255) limit in DB
       is_featured: Joi.boolean(),
     })
     .min(1),

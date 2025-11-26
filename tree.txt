@@ -220,6 +220,8 @@
 |   |   |   |   |-- StaffProductsPage.jsx
 |   |   |   |   |-- StaffSupportPage.jsx
 |   |   |   |   |-- components
+|   |   |   |   |   |-- ProductDetails.jsx
+|   |   |   |   |   |-- ProductFormModal.jsx
 |   |   |   |   |   `-- StaffLayout.jsx
 |   |   |   |   `-- staffService.js
 |   |   |   |-- support
@@ -267,4 +269,4 @@
 |-- package.json
 `-- tree.txt
 
-60 directories, 207 files
+60 directories, 209 files

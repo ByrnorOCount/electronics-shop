@@ -69,6 +69,55 @@ const getAllProducts = async (query = {}) => {
   return response.data.data;
 };
 
+/**
+ * Creates a new product.
+ * @param {object} productData - The data for the new product.
+ * @returns {Promise<object>} The newly created product object.
+ */
+const createProduct = async (productData) => {
+  const response = await api.post("/staff/products", productData);
+  return response.data.data;
+};
+
+/**
+ * Updates an existing product.
+ * @param {string | number} productId - The ID of the product to update.
+ * @param {object} updateData - The fields to update.
+ * @returns {Promise<object>} The updated product object.
+ */
+const updateProduct = async (productId, updateData) => {
+  const response = await api.put(`/staff/products/${productId}`, updateData);
+  return response.data.data;
+};
+
+/**
+ * Deletes a product by its ID.
+ * @param {string | number} productId - The ID of the product to delete.
+ * @returns {Promise<object>} A promise that resolves when the product is deleted.
+ */
+const deleteProduct = async (productId) => {
+  // DELETE typically returns a 204 No Content, so we don't expect a body
+  await api.delete(`/staff/products/${productId}`);
+  return { id: productId }; // Return the ID for frontend state updates
+};
+
+/**
+ * Uploads a product image file.
+ * @param {File} imageFile - The image file to upload.
+ * @returns {Promise<{imageUrl: string}>} The path to the uploaded image.
+ */
+const uploadProductImage = async (imageFile) => {
+  const formData = new FormData();
+  formData.append("image", imageFile);
+
+  const response = await api.post("/staff/products/upload-image", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data.data;
+};
+
 const staffService = {
   getAllSupportTickets,
   updateTicketStatus,
@@ -76,6 +125,10 @@ const staffService = {
   getAllOrders,
   updateOrderStatus,
   getAllProducts,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  uploadProductImage,
 };
 
 export default staffService;

@@ -14,7 +14,7 @@ import logger from "../utils/logger";
  *   isSuccess: boolean,
  *   isError: boolean,
  *   request: Function
- * }}
+ * , setData: React.Dispatch<React.SetStateAction<any>>}}
  */
 export const useApi = (apiFunc, options = {}) => {
   const [status, setStatus] = useState("idle");
@@ -51,5 +51,6 @@ export const useApi = (apiFunc, options = {}) => {
     data,
     error,
     request,
+    setData,
   };
 };
