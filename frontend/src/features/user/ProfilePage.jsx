@@ -124,7 +124,7 @@ export default function ProfilePage() {
 
       {/* Logout Confirmation Modal */}
       <Modal
-        open={isLogoutModalOpen}
+        isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}
         title="Confirm Sign Out"
       >
