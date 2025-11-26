@@ -179,10 +179,10 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 #### Staff
 
-- [ ] `StaffDashboardPage`
-- [ ] `StaffProductsPage`
-- [ ] `StaffOrdersPage`
-- [ ] `StaffSupportPage`
+- [x] `StaffDashboardPage`
+- [x] `StaffProductsPage`
+- [x] `StaffOrdersPage`
+- [x] `StaffSupportPage`
 
 #### Administrator
 
@@ -214,7 +214,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] **Order History:** Fetch and render past orders.
 - [x] **Notifications:** Display new alerts in real-time or via polling.
 - [x] **Support System:** Allow message submission and viewing.
-- [ ] **Role-based Access:** Protect pages by role (user, staff, admin).
+- [x] **Role-based Access:** Protect pages by role (user, staff, admin).
 - [ ] **Responsiveness (NFR5):** Ensure full mobile and tablet support.
 
 ---

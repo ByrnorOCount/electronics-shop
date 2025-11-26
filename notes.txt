@@ -181,3 +181,6 @@ mở đầu
 chụp mô tả giao diện (phần chức năng)
 sơ đồ csdl
 class diagram
+
+
+blank card on home should be a bunch of rotating stock images
