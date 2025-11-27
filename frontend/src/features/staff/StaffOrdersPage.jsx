@@ -36,7 +36,7 @@ const OrderRow = ({ order, onStatusUpdate, onOpenModal }) => {
                 shipped: "bg-blue-100 text-blue-800",
                 delivered: "bg-green-100 text-green-800",
                 cancelled: "bg-red-100 text-red-800",
-              }[order.status] || "bg-gray-100 text-gray-800"
+              }[order.status.toLowerCase()] || "bg-gray-100 text-gray-800"
             }`}
           >
             {formatStatus(order.status)}

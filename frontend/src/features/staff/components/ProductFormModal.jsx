@@ -149,7 +149,7 @@ const ProductFormModal = ({ isOpen, onClose, product, onSave }) => {
       onClose={onClose}
       title={isEditing ? `Edit Product: ${product.name}` : "Add New Product"}
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3">
         <Input
           name="name"
           label="Product Name"
@@ -163,7 +163,7 @@ const ProductFormModal = ({ isOpen, onClose, product, onSave }) => {
           value={formData.description}
           onChange={handleChange}
         />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <Input
             name="price"
             label="Price"
@@ -182,7 +182,7 @@ const ProductFormModal = ({ isOpen, onClose, product, onSave }) => {
             required
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <Input
             name="category_id"
             label="Category ID"
@@ -200,7 +200,7 @@ const ProductFormModal = ({ isOpen, onClose, product, onSave }) => {
             />
           </div>
         </div>
-        <div className="flex justify-between items-center pt-2">
+        <div className="flex justify-between items-center pt-1">
           {/* Featured Product Checkbox */}
           <div className="flex items-center">
             <input
@@ -263,7 +263,7 @@ const ProductFormModal = ({ isOpen, onClose, product, onSave }) => {
           </p>
         )}
 
-        <div className="flex justify-end gap-4 pt-4">
+        <div className="flex justify-end gap-3 pt-2">
           <Button
             type="button"
             variant="secondary"

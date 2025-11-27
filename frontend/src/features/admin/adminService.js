@@ -20,9 +20,19 @@ const getLogs = async (params) => {
   return response.data.data;
 };
 
+/**
+ * Fetches dashboard metrics for the site overview.
+ * @returns {Promise<object>} A promise that resolves to the dashboard metrics.
+ */
+const getDashboardMetrics = async () => {
+  const response = await api.get("/admin/dashboard");
+  return response.data.data;
+};
+
 const adminService = {
   getAnalytics,
   getLogs,
+  getDashboardMetrics,
 };
 
 export default adminService;

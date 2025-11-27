@@ -13,6 +13,7 @@ const staffLinks = [
 
 const adminLinks = [
   { name: "Manage Users", to: "/admin/users", icon: "users" },
+  { name: "Manage Categories", to: "/admin/categories", icon: "tag" },
   { name: "Site Analytics", to: "/admin/analytics", icon: "bar-chart-2" },
   { name: "System Logs", to: "/admin/logs", icon: "file-text" },
 ];
@@ -32,9 +33,9 @@ const DashboardLayout = () => {
   return (
     <div className="min-h-screen bg-yellow-50">
       <aside className="w-56 bg-gray-800 text-white p-4 fixed h-full flex flex-col">
-        <h2 className="text-2xl font-bold mb-6">Control Panel</h2>
+        <h2 className="text-2xl font-bold mb-5">Control Panel</h2>
         <nav className="flex-grow">
-          <ul className="space-y-1 mb-6">
+          <ul className="space-y-1 mb-4">
             <li>
               <NavLink
                 to={dashboardLink}
@@ -53,7 +54,7 @@ const DashboardLayout = () => {
           <h3 className="px-3 text-xs font-semibold uppercase text-gray-400 tracking-wider">
             Staff
           </h3>
-          <ul className="mt-2 space-y-1">
+          <ul className="mt-1 space-y-1">
             {staffLinks.map((link) => (
               <li key={link.name}>
                 <NavLink
@@ -73,11 +74,11 @@ const DashboardLayout = () => {
           </ul>
 
           {isAdmin && (
-            <div className="mt-6">
+            <div className="mt-4">
               <h3 className="px-3 text-xs font-semibold uppercase text-gray-400 tracking-wider">
                 Administrator
               </h3>
-              <ul className="mt-2 space-y-1">
+              <ul className="mt-1 space-y-1">
                 {adminLinks.map((link) => (
                   <li key={link.name}>
                     <NavLink
@@ -99,7 +100,7 @@ const DashboardLayout = () => {
           )}
         </nav>
 
-        <div className="mt-auto space-y-1 border-t border-gray-700 pt-4">
+        <div className="mt-auto space-y-1 border-t border-gray-700 pt-1">
           <Link
             to="/profile"
             className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-gray-300 hover:bg-gray-700 hover:text-white"
