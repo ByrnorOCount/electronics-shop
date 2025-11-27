@@ -155,7 +155,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 ### **Order Logs & Dashboard (FR25)**
 
 - [x] `GET /api/admin/dashboard` — key metrics
-- [ ] `GET /api/admin/logs` — activity and order logs
+- [x] `GET /api/admin/logs` — activity and order logs
 
 ---
 
@@ -189,8 +189,8 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] `AdminDashboardPage` (Consolidated into `DashboardHomePage`)
 - [ ] `AdminUsersPage`
 - [ ] `AdminCategoriesPage`
-- [ ] `AdminAnalyticsPage`
-- [ ] `AdminLogsPage`
+- [x] `AdminAnalyticsPage`
+- [x] `AdminLogsPage`
 
 ### **Reusable Components**
 

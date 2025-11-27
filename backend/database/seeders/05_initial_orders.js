@@ -3,70 +3,62 @@
  * @returns { Promise<void> }
  */
 export async function seed(knex) {
-  // This seeder depends on users and products already being present.
-  const userId = 3; // Assuming 'John Doe' has id 3
-
   // Deletes ALL existing entries from orders and order_items tables
   // The order of deletion is important due to foreign key constraints.
   await knex("order_items").del();
   await knex("orders").del();
 
-  // --- Inserts seed entries for orders ---
-  const [order1] = await knex("orders")
-    .insert([
-      {
-        user_id: userId,
-        total_amount: 32.49,
-        shipping_address: "123 Main St, Anytown, USA 12345",
-        status: "Delivered",
-        payment_method: "cod",
-        created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
-      },
-    ])
-    .returning("id");
+  // --- Generate a large number of orders for analytics ---
+  const users = await knex("users").where("role", "customer");
+  const products = await knex("products").select("id", "price");
+  const statuses = [
+    "Pending",
+    "Processing",
+    "Shipped",
+    "Delivered",
+    "Cancelled",
+  ];
 
-  const [order2] = await knex("orders")
-    .insert([
-      {
-        user_id: userId,
-        total_amount: 15.49,
-        shipping_address: "123 Main St, Anytown, USA 12345",
-        status: "Shipped",
-        payment_method: "stripe",
-        created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-      },
-    ])
-    .returning("id");
+  const ordersToInsert = [];
+  const orderItemsToInsert = [];
 
-  // --- Inserts seed entries for order_items ---
-  await knex("order_items").insert([
-    // Items for Order 1
-    {
-      order_id: order1.id,
-      product_id: 2, // ESP32 Dev Module
-      quantity: 1,
-      price: 6.5, // Price at the time of purchase
-    },
-    {
-      order_id: order1.id,
-      product_id: 4, // USB-C PD 65W Charger
-      quantity: 1,
-      price: 24.0,
-    },
-    // Items for Order 2
-    {
-      order_id: order2.id,
-      product_id: 17, // Raspberry Pi Pico W
-      quantity: 1,
-      price: 6.0,
-    },
-    {
-      order_id: order2.id,
-      product_id: 8, // Breadboard (830-point)
-      quantity: 1,
-      price: 5.5,
-    },
-  ]);
+  for (let i = 0; i < 50; i++) {
+    const user = users[Math.floor(Math.random() * users.length)];
+    const daysAgo = Math.floor(Math.random() * 30);
+    const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+    // Create items for this order
+    const numItems = Math.floor(Math.random() * 5) + 1; // 1 to 5 items per order
+    let totalAmount = 0;
+    const tempOrderItems = [];
+
+    for (let j = 0; j < numItems; j++) {
+      const product = products[Math.floor(Math.random() * products.length)];
+      const quantity = Math.floor(Math.random() * 3) + 1; // 1 to 3 quantity
+      totalAmount += parseFloat(product.price) * quantity;
+
+      tempOrderItems.push({
+        order_id: i + 1, // Temporary ID, will be correct after insertion
+        product_id: product.id,
+        quantity: quantity,
+        price: product.price,
+      });
+    }
+
+    ordersToInsert.push({
+      id: i + 1,
+      user_id: user.id,
+      total_amount: totalAmount.toFixed(2),
+      shipping_address: `${user.first_name}'s Address, Anytown, USA`,
+      status: status,
+      payment_method: Math.random() > 0.5 ? "cod" : "stripe",
+      created_at: new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000),
+    });
+    orderItemsToInsert.push(...tempOrderItems);
+  }
+
+  await knex("orders").insert(ordersToInsert);
+  await knex("order_items").insert(orderItemsToInsert);
 
   // Reset sequences for the tables.
   try {

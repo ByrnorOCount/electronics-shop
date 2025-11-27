@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   BarChart,
   Bar,
@@ -6,11 +7,12 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
+  Legend,
 } from "recharts";
 import adminService from "./adminService";
 import Spinner from "../../components/ui/Spinner";
+import { formatShortDate } from "../../utils/formatters";
 
 export default function AdminAnalyticsPage() {
   const [analytics, setAnalytics] = useState(null);
@@ -22,7 +24,20 @@ export default function AdminAnalyticsPage() {
       try {
         setLoading(true);
         const data = await adminService.getAnalytics();
-        setAnalytics(data);
+
+        // Format dates before setting state
+        const formattedData = {
+          ...data,
+          salesByDay: data.salesByDay.map((item) => ({
+            ...item,
+            date: formatShortDate(item.date),
+          })),
+          newUserSignups: data.newUserSignups.map((item) => ({
+            ...item,
+            date: formatShortDate(item.date),
+          })),
+        };
+        setAnalytics(formattedData);
       } catch (err) {
         setError("Failed to load analytics data.");
         console.error(err);
@@ -74,9 +89,12 @@ export default function AdminAnalyticsPage() {
                   key={product.name}
                   className="flex justify-between items-center"
                 >
-                  <span>
+                  <Link
+                    to={`/products/${product.id}`}
+                    className="text-blue-600 hover:underline"
+                  >
                     {index + 1}. {product.name}
-                  </span>
+                  </Link>
                   <span className="font-semibold bg-gray-200 px-2 py-1 rounded-md text-sm">
                     {product.total_quantity} sold
                   </span>

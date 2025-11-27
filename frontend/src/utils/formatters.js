@@ -24,3 +24,16 @@ export const formatCurrency = (amount, currency = "USD") => {
     currency: currency,
   }).format(amount);
 };
+
+/**
+ * Formats a date string or Date object into a short format (e.g., MM/DD).
+ * @param {string | Date} date - The date to format.
+ * @returns {string} The formatted date string.
+ */
+export const formatShortDate = (date) => {
+  if (!date) return "";
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+  });
+};

@@ -116,9 +116,12 @@ export const fetchAnalyticsData = async ({ startDate, endDate }) => {
 
   const topProducts = await db("order_items")
     .join("products", "order_items.product_id", "products.id")
-    .select("products.name")
-    .sum("order_items.quantity as total_quantity")
-    .groupBy("products.name")
+    .select(
+      "products.id",
+      "products.name",
+      db.raw("CAST(SUM(order_items.quantity) AS INTEGER) as total_quantity")
+    )
+    .groupBy("products.id", "products.name")
     .orderBy("total_quantity", "desc")
     .limit(5);
 
