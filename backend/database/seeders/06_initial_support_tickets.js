@@ -3,10 +3,6 @@
  * @returns { Promise<void> }
  */
 export async function seed(knex) {
-  // Deletes ALL existing entries from the support_tickets and replies tables
-  await knex("support_ticket_replies").del();
-  await knex("support_tickets").del();
-
   const users = await knex("users").where("role", "customer");
   if (users.length === 0) {
     console.warn("No customer users found to create support tickets for.");

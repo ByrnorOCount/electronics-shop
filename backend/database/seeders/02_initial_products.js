@@ -5,9 +5,6 @@
  * @returns { Promise<void> }
  */
 export async function seed(knex) {
-  // Deletes ALL existing entries from the products table
-  await knex("products").del();
-
   // Inserts seed entries for featured products
   await knex("products").insert([
     {

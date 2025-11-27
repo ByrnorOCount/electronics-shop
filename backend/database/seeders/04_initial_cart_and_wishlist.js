@@ -7,10 +7,6 @@ export async function seed(knex) {
   // This should correspond to a user created in the '03_initial_users.js' seeder.
   const userId = 3; // Assuming 'John Doe' has id 3
 
-  // Deletes ALL existing entries from the cart_items and wishlists tables
-  await knex("cart_items").del();
-  await knex("wishlists").del();
-
   // --- Inserts seed entries for cart_items ---
   await knex("cart_items").insert([
     {

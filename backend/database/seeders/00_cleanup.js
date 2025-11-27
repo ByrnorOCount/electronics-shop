@@ -14,6 +14,9 @@ export async function seed(knex) {
     "support_tickets",
     "notifications",
     "orders",
+    "users",
+    "products",
+    "categories",
   ];
 
   for (const table of tablesToTruncate) {

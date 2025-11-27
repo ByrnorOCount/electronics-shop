@@ -5,16 +5,12 @@ import bcrypt from "bcrypt";
  * @returns { Promise<void> }
  */
 export async function seed(knex) {
-  // Deletes ALL existing entries from the users table
-  await knex("users").del();
-
   // Hash a common password
   const hashedPassword = await bcrypt.hash("Password123!", 12);
 
-  // Inserts seed entries for users with different roles
-  await knex("users").insert([
+  // --- Define all users to be inserted ---
+  const usersToInsert = [
     {
-      id: 1,
       first_name: "Admin",
       last_name: "User",
       email: "admin@example.com",
@@ -23,7 +19,6 @@ export async function seed(knex) {
       is_verified: true,
     },
     {
-      id: 2,
       first_name: "Staff",
       last_name: "User",
       email: "staff@example.com",
@@ -32,7 +27,6 @@ export async function seed(knex) {
       is_verified: true,
     },
     {
-      id: 3,
       first_name: "John",
       last_name: "Doe",
       email: "john.doe@example.com",
@@ -40,24 +34,36 @@ export async function seed(knex) {
       role: "customer",
       is_verified: true,
     },
-  ]);
+  ];
 
   // --- Add more users for analytics ---
-  const newUsers = [];
+  const providers = ["local", "google", "facebook"];
   for (let i = 0; i < 25; i++) {
     const daysAgo = Math.floor(Math.random() * 30); // Random day in the last 30 days
-    newUsers.push({
+    const provider = providers[Math.floor(Math.random() * providers.length)];
+
+    const user = {
       first_name: `Customer${i + 1}`,
       last_name: "Test",
       email: `customer${i + 1}@example.com`,
-      password_hash: hashedPassword,
       role: "customer",
       is_verified: true,
       created_at: new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000),
-    });
+      provider: provider,
+    };
+
+    if (provider === "local") {
+      user.password_hash = hashedPassword;
+    } else {
+      // Social logins don't have a local password.
+      // Generate a random string for provider_id for seeding purposes.
+      user.provider_id = Math.random().toString(36).substring(2, 15);
+    }
+    usersToInsert.push(user);
   }
 
-  await knex("users").insert(newUsers);
+  // Insert all users in a single batch
+  await knex("users").insert(usersToInsert);
 
   // Reset the sequence for the id column to start after the last inserted id.
   // This is good practice to avoid primary key conflicts if you manually insert users.

@@ -6,9 +6,6 @@ export async function seed(knex) {
   // This seeder depends on users already being present.
   const userId = 3; // Assuming 'John Doe' has id 3
 
-  // Deletes ALL existing entries from the notifications table
-  await knex("notifications").del();
-
   // Inserts seed entries for notifications
   await knex("notifications").insert([
     {

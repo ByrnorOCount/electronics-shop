@@ -39,7 +39,7 @@ CREATE TABLE "users" (
   "password_changed_at" TIMESTAMPTZ,
   "otp_hash" VARCHAR(255),
   "otp_expires" TIMESTAMPTZ,
-  "provider" VARCHAR(255) NOT NULL DEFAULT 'local',
+  "provider" VARCHAR(255) NOT NULL DEFAULT 'local', -- 'local', 'google', 'facebook', etc.
   "provider_id" VARCHAR(255),
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
