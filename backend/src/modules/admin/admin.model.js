@@ -1,4 +1,7 @@
 import db from "../../config/db.js";
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
 
 /**
  * Finds all users in the system.
@@ -156,16 +159,27 @@ export const fetchAnalyticsData = async ({ startDate, endDate }) => {
  * @returns {Promise<object>} An object containing log entries.
  */
 export const fetchSystemLogs = async (options) => {
-  // This is a placeholder for reading from a file system or a logging service.
-  // For a real implementation, you'd use fs.readFile or a stream.
-  // We will simulate this in the service layer for now.
-  return {
-    // This would be populated by reading and parsing log files.
-    // Example:
-    // const allLogs = fs.readFileSync('logs/all.log', 'utf8');
-    // const errorLogs = fs.readFileSync('logs/error.log', 'utf8');
-    // return { all: allLogs.split('\n'), error: errorLogs.split('\n') };
-    all: ["INFO: Server started successfully.", "DEBUG: User 1 logged in."],
-    error: ["ERROR: Database connection failed at ..."],
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const logDir = path.resolve(__dirname, "../../../logs");
+
+  const readLogFile = async (fileName) => {
+    try {
+      const filePath = path.join(logDir, fileName);
+      const data = await fs.readFile(filePath, "utf8");
+      // Return the last 100 lines to avoid sending huge files
+      return data.split("\n").slice(-100);
+    } catch (error) {
+      if (error.code === "ENOENT") {
+        return [`Log file not found: ${fileName}`];
+      }
+      console.error(`Error reading log file ${fileName}:`, error);
+      return [`Error reading log file: ${fileName}`];
+    }
   };
+
+  const allLogs = await readLogFile("all.log");
+  const errorLogs = await readLogFile("error.log");
+
+  return { all: allLogs, error: errorLogs };
 };

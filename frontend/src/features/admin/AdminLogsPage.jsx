@@ -25,7 +25,11 @@ export default function AdminLogsPage() {
   }, []);
 
   if (loading) {
-    return <Spinner />;
+    return (
+      <div className="flex justify-center items-center h-96">
+        <Spinner />
+      </div>
+    );
   }
 
   if (error) {
