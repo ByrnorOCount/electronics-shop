@@ -32,7 +32,7 @@ const DashboardLayout = () => {
 
   return (
     <div className="min-h-screen bg-yellow-50">
-      <aside className="w-56 bg-gray-800 text-white p-4 fixed h-full flex flex-col">
+      <aside className="w-58 bg-gray-800 text-white p-4 fixed h-full flex flex-col">
         <h2 className="text-2xl font-bold mb-5">Control Panel</h2>
         <nav className="flex-grow">
           <ul className="space-y-1 mb-4">
@@ -52,7 +52,7 @@ const DashboardLayout = () => {
             </li>
           </ul>
           <h3 className="px-3 text-xs font-semibold uppercase text-gray-400 tracking-wider">
-            Staff
+            Staff Controls
           </h3>
           <ul className="mt-1 space-y-1">
             {staffLinks.map((link) => (
@@ -76,7 +76,7 @@ const DashboardLayout = () => {
           {isAdmin && (
             <div className="mt-4">
               <h3 className="px-3 text-xs font-semibold uppercase text-gray-400 tracking-wider">
-                Administrator
+                Admin Controls
               </h3>
               <ul className="mt-1 space-y-1">
                 {adminLinks.map((link) => (
@@ -117,7 +117,7 @@ const DashboardLayout = () => {
           </Link>
         </div>
       </aside>
-      <main className="ml-56 flex-grow">
+      <main className="ml-56 flex-grow px-4">
         <Outlet />
       </main>
     </div>

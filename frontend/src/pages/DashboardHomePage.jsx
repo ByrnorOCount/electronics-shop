@@ -74,19 +74,19 @@ const AdminStats = () => {
       <h2 className="text-2xl font-bold mb-4">Site Overview</h2>
       <div className="grid gap-4 md:grid-cols-3">
         <article className="bg-white p-6 rounded-lg shadow">
-          <h3 className="font-semibold text-gray-500">Total Sales</h3>
+          <h3 className="font-semibold text-gray-600">Total Sales</h3>
           <p className="text-3xl font-bold mt-1">
             {metrics ? formatCurrency(Number(metrics.totalSales)) : "--"}
           </p>
         </article>
         <article className="bg-white p-6 rounded-lg shadow">
-          <h3 className="font-semibold text-gray-500">Total Orders</h3>
+          <h3 className="font-semibold text-gray-600">Total Orders</h3>
           <p className="text-3xl font-bold mt-1">
             {metrics ? metrics.totalOrders : "--"}
           </p>
         </article>
         <article className="bg-white p-6 rounded-lg shadow">
-          <h3 className="font-semibold text-gray-500">Total Users</h3>
+          <h3 className="font-semibold text-gray-600">Total Users</h3>
           <p className="text-3xl font-bold mt-1">
             {metrics ? metrics.totalUsers : "--"}
           </p>
@@ -120,7 +120,7 @@ const DashboardHomePage = () => {
               className="h-8 w-8 text-indigo-600 mb-4"
             />
             <h3 className="text-xl font-bold mb-2">{section.name}</h3>
-            <p className="text-gray-600">{section.description}</p>
+            <p className="text-gray-700">{section.description}</p>
           </Link>
         ))}
       </div>

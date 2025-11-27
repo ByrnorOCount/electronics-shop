@@ -42,7 +42,7 @@ const StaffSupportPage = () => {
       {status === "succeeded" && (
         <>
           {tickets.length === 0 ? (
-            <p className="text-gray-600 bg-white p-6 rounded-lg shadow-md">
+            <p className="text-gray-700 bg-white p-6 rounded-lg shadow-md">
               There are no support tickets.
             </p>
           ) : (
@@ -58,7 +58,7 @@ const StaffSupportPage = () => {
                       <h3 className="font-bold text-lg text-gray-800">
                         {ticket.subject}
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-600">
                         Ticket #{ticket.id} &bull; User ID: {ticket.user_id}{" "}
                         &bull; Created on{" "}
                         {new Date(ticket.created_at).toLocaleDateString()}

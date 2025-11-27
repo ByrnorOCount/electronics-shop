@@ -20,12 +20,12 @@ const ProductRow = ({ product, onEdit, onDelete }) => {
           <div className="text-sm font-medium text-gray-900">
             {product.name}
           </div>
-          <div className="text-sm text-gray-500">ID: {product.id}</div>
+          <div className="text-sm text-gray-700">ID: {product.id}</div>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
           {product.stock}
         </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
           {formatCurrency(Number(product.price))}
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
@@ -159,22 +159,22 @@ const StaffProductsPage = () => {
       </div>
       <div className="bg-white p-6 rounded-lg shadow-md">
         {products.length === 0 ? (
-          <p className="text-gray-600">There are no products to display.</p>
+          <p className="text-gray-800">There are no products to display.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Product
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Stock
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Price
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -208,7 +208,7 @@ const StaffProductsPage = () => {
         onClose={() => setIsDeleteModalOpen(false)}
         title="Confirm Product Deletion"
       >
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-700 mb-6">
           Are you sure you want to delete product "
           <span className="font-semibold">{productToDelete?.name}</span>" (ID:{" "}
           {productToDelete?.id})? This action cannot be undone.

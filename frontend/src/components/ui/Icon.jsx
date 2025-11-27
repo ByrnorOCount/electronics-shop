@@ -124,6 +124,83 @@ const icons = {
       d="M20.25 14.15v4.07a2.25 2.25 0 01-2.25 2.25h-12a2.25 2.25 0 01-2.25-2.25v-4.07m16.5 0v-3.875a2.25 2.25 0 00-2.25-2.25h-12a2.25 2.25 0 00-2.25 2.25v3.875m16.5 0h-16.5"
     />
   ),
+  dashboard: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+    />
+  ),
+  "message-circle": (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"
+    />
+  ),
+  "shopping-cart": (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+    />
+  ),
+  package: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4"
+    />
+  ),
+  users: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m8-10a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87"
+    />
+  ),
+  tag: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82zM7 7h.01"
+    />
+  ),
+  "bar-chart-2": (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M12 20V10m6 10V4M6 20v-4"
+    />
+  ),
+  "file-text": (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM9 9h6M9 13h6M9 17h3"
+    />
+  ),
+  user: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"
+    />
+  ),
+  "arrow-left": (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M10 19l-7-7m0 0l7-7m-7 7h18"
+    />
+  ),
+  x: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6 18L18 6M6 6l12 12"
+    />
+  ),
 };
 
 /**
