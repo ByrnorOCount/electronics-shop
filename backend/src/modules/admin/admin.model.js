@@ -101,18 +101,71 @@ export const deleteCategory = (categoryId) => {
  * @param {object} options - Filtering and aggregation options.
  * @returns {Promise<object>} Detailed analytics data.
  */
-export const fetchAnalyticsData = async (options) => {
-  // TODO: Implement complex database queries for analytics (e.g., sales by month, top products, user activity)
-  return { salesByMonth: [], topProducts: [], userActivity: [] };
+export const fetchAnalyticsData = async ({ startDate, endDate }) => {
+  const salesByDay = await db("orders")
+    .select(
+      db.raw("DATE(created_at) as date"),
+      db.raw("SUM(total_amount) as total")
+    )
+    .whereBetween("created_at", [startDate, endDate])
+    .groupBy("date")
+    .orderBy("date", "asc");
+
+  const topProducts = await db("order_items")
+    .join("products", "order_items.product_id", "products.id")
+    .select("products.name")
+    .sum("order_items.quantity as total_quantity")
+    .groupBy("products.name")
+    .orderBy("total_quantity", "desc")
+    .limit(5);
+
+  const newUserSignups = await db("users")
+    .select(db.raw("DATE(created_at) as date"), db.raw("COUNT(id) as count"))
+    .whereBetween("created_at", [startDate, endDate])
+    .groupBy("date")
+    .orderBy("date", "asc");
+
+  const [orderStatusDistribution] = await db("orders")
+    .select(
+      db.raw("COUNT(*) as total"),
+      db.raw("SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pending"),
+      db.raw(
+        "SUM(CASE WHEN status = 'Processing' THEN 1 ELSE 0 END) as processing"
+      ),
+      db.raw("SUM(CASE WHEN status = 'Shipped' THEN 1 ELSE 0 END) as shipped"),
+      db.raw(
+        "SUM(CASE WHEN status = 'Delivered' THEN 1 ELSE 0 END) as delivered"
+      ),
+      db.raw(
+        "SUM(CASE WHEN status = 'Cancelled' THEN 1 ELSE 0 END) as cancelled"
+      )
+    )
+    .whereBetween("created_at", [startDate, endDate]);
+
+  return {
+    salesByDay,
+    topProducts,
+    newUserSignups,
+    orderStatusDistribution,
+  };
 };
 
 /**
  * Fetches system logs based on provided options.
  * @param {object} options - Filtering options for logs (e.g., date range, level).
- * @returns {Promise<Array>} An array of log entries.
+ * @returns {Promise<object>} An object containing log entries.
  */
 export const fetchSystemLogs = async (options) => {
-  // TODO: Implement database query to retrieve log entries (if logs are stored in DB)
-  // Alternatively, this might interact with a file system or dedicated logging service.
-  return [];
+  // This is a placeholder for reading from a file system or a logging service.
+  // For a real implementation, you'd use fs.readFile or a stream.
+  // We will simulate this in the service layer for now.
+  return {
+    // This would be populated by reading and parsing log files.
+    // Example:
+    // const allLogs = fs.readFileSync('logs/all.log', 'utf8');
+    // const errorLogs = fs.readFileSync('logs/error.log', 'utf8');
+    // return { all: allLogs.split('\n'), error: errorLogs.split('\n') };
+    all: ["INFO: Server started successfully.", "DEBUG: User 1 logged in."],
+    error: ["ERROR: Database connection failed at ..."],
+  };
 };

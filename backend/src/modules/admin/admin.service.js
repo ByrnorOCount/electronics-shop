@@ -109,9 +109,18 @@ export const deleteCategory = async (categoryId) => {
  * @returns {Promise<Object>}
  */
 export const getAnalyticsData = async (queryOptions) => {
-  // TODO: Implement logic to fetch detailed analytics from admin.model.js or directly from DB
-  // Example: return await adminModel.fetchAnalyticsData(queryOptions);
-  return { message: "Analytics data placeholder", queryOptions };
+  const {
+    startDate = new Date(
+      new Date().setDate(new Date().getDate() - 30)
+    ).toISOString(),
+    endDate = new Date().toISOString(),
+  } = queryOptions;
+
+  const analyticsData = await adminModel.fetchAnalyticsData({
+    startDate,
+    endDate,
+  });
+  return analyticsData;
 };
 
 /**
@@ -120,9 +129,10 @@ export const getAnalyticsData = async (queryOptions) => {
  * @returns {Promise<Array>}
  */
 export const getSystemLogs = async (queryOptions) => {
-  // TODO: Implement logic to fetch system logs from admin.model.js or a logging service
-  // Example: return await adminModel.fetchSystemLogs(queryOptions);
-  return [
-    { id: 1, timestamp: new Date(), level: "info", message: "System started" },
-  ];
+  // In a real-world scenario, you would use Node's `fs` module to read from the log files
+  // in the `logs/` directory and parse them. This is a simplified example.
+  // For example: `fs.readFileSync('logs/all.log', 'utf-8')`
+  // The model function is kept simple, and we return a mock response here.
+  const logs = await adminModel.fetchSystemLogs(queryOptions);
+  return logs;
 };
