@@ -7,6 +7,7 @@ export async function seed(knex) {
   // List of tables to truncate. Order matters due to foreign key constraints.
   // Tables with foreign keys pointing to other tables should be truncated first.
   const tablesToTruncate = [
+    "support_ticket_replies",
     "order_items",
     "cart_items",
     "wishlists",

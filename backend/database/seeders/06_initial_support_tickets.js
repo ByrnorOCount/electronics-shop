@@ -3,23 +3,47 @@
  * @returns { Promise<void> }
  */
 export async function seed(knex) {
-  // This seeder depends on users already being present.
-  const userId = 3; // Assuming 'John Doe' has id 3
-
-  // Deletes ALL existing entries from the support_tickets table
+  // Deletes ALL existing entries from the support_tickets and replies tables
+  await knex("support_ticket_replies").del();
   await knex("support_tickets").del();
 
-  // Inserts seed entries for support_tickets
-  await knex("support_tickets").insert([
-    {
-      user_id: userId,
-      subject: "Question about Raspberry Pi 5 power supply",
-      message:
-        "Hi, I saw the new Raspberry Pi 5 and I was wondering if the USB-C PD 65W Charger (Product ID 4) is compatible with it. What are the official power requirements? Thanks!",
-      status: "open",
-      created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-    },
-  ]);
+  const users = await knex("users").where("role", "customer");
+  if (users.length === 0) {
+    console.warn("No customer users found to create support tickets for.");
+    return;
+  }
+
+  const ticketsToInsert = [];
+  const statuses = ["Open", "In Progress", "Closed"];
+  const subjects = [
+    "Question about product compatibility",
+    "Issue with my recent order",
+    "Shipping time inquiry",
+    "Return request for item",
+    "Problem with payment",
+  ];
+  const messages = [
+    "Hello, I'm having an issue with my order. Can you please help?",
+    "I'd like to know if product A is compatible with product B.",
+    "How long will it take for my order to arrive?",
+    "I need to return an item from my last purchase. What is the process?",
+    "My payment was declined but I'm not sure why. Can you check?",
+  ];
+
+  for (let i = 0; i < 15; i++) {
+    const user = users[Math.floor(Math.random() * users.length)];
+    const daysAgo = Math.floor(Math.random() * 30);
+
+    ticketsToInsert.push({
+      user_id: user.id,
+      subject: subjects[Math.floor(Math.random() * subjects.length)],
+      message: messages[Math.floor(Math.random() * messages.length)],
+      status: statuses[Math.floor(Math.random() * statuses.length)],
+      created_at: new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000),
+    });
+  }
+
+  await knex("support_tickets").insert(ticketsToInsert);
 
   // Reset the sequence for the id column.
   try {
