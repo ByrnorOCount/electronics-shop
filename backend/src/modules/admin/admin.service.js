@@ -28,7 +28,14 @@ export const getAllUsers = async (filters) => {
  * @param {string} role
  * @returns {Promise<Object>}
  */
-export const updateUserRole = async (userId, role) => {
+export const updateUserRole = async (userId, role, currentAdminId) => {
+  if (Number(userId) === currentAdminId) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "Admins cannot change their own role."
+    );
+  }
+
   const updatedUser = await adminModel.updateUserRole(userId, role);
   if (!updatedUser) {
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");

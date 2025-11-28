@@ -100,7 +100,7 @@ const DashboardLayout = () => {
           )}
         </nav>
 
-        <div className="mt-auto space-y-1 border-t border-gray-700 pt-1">
+        <div className="mt-auto space-y-1 border-t border-gray-700 pt-2">
           <Link
             to="/profile"
             className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-gray-300 hover:bg-gray-700 hover:text-white"
