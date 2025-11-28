@@ -117,12 +117,12 @@ const TicketDetailPage = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-4">
           <h1 className="text-3xl font-bold">{ticket.subject}</h1>
           <span
-            className={`px-3 py-1 text-sm font-semibold rounded-full ${
-              ticket.status === "open"
-                ? "bg-green-100 text-green-800"
-                : ticket.status === "in_progress"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-gray-100 text-gray-800"
+            className={`px-3 py-1 text-sm font-semibold rounded-full whitespace-nowrap ${
+              {
+                open: "bg-green-100 text-green-800",
+                in_progress: "bg-yellow-100 text-yellow-800",
+                closed: "bg-gray-100 text-gray-800",
+              }[ticket.status] || "bg-gray-100 text-gray-800"
             }`}
           >
             {formatStatus(ticket.status)}
