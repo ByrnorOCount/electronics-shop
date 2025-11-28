@@ -35,9 +35,10 @@ export default function Header() {
           <Link to="/products" className="hover:text-indigo-600">
             Catalog
           </Link>
+          {/* //TODO: Add deals feature later
           <Link to="/products?filter=deals" className="hover:text-indigo-600">
             Deals
-          </Link>
+          </Link> */}
           <Link to="/support" className="hover:text-indigo-600">
             Support
           </Link>
