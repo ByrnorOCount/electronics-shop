@@ -59,7 +59,10 @@ const StaffSupportPage = () => {
                         {ticket.subject}
                       </h3>
                       <p className="text-sm text-gray-600">
-                        Ticket #{ticket.id} &bull; User ID: {ticket.user_id}{" "}
+                        Ticket #{ticket.id} &bull; Customer:{" "}
+                        <span className="font-medium">
+                          {ticket.customer_name}
+                        </span>{" "}
                         &bull; Created on{" "}
                         {new Date(ticket.created_at).toLocaleDateString()}
                       </p>

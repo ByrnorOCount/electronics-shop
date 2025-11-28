@@ -206,7 +206,9 @@ const TicketDetailPage = () => {
               style={{ maxWidth: "85%" }}
             >
               <p className="font-semibold text-gray-800">
-                {reply.user_id === user.id ? "You" : reply.author_name}
+                {reply.user_id === user.id
+                  ? "You"
+                  : `${reply.author_name} (${formatStatus(reply.author_role)})`}
               </p>
               <p className="text-gray-700">{reply.message}</p>
               <p className="text-xs text-gray-400 mt-2 text-right">

@@ -36,7 +36,7 @@ export const submitTicket = async (userId, subject, message) => {
  */
 export const getUserTickets = async (userId, filter, options) => {
   // Add pagination/sorting logic here if needed in the future
-  return supportModel.findByUserId(userId, filter);
+  return supportModel.findByUserId(userId);
 };
 
 /**
@@ -62,6 +62,7 @@ export const getTicketById = async (ticketId, user) => {
   }
 
   const replies = await supportModel.findRepliesByTicketId(ticketId);
+  const author = await supportModel.findTicketAuthor(ticketId);
 
   // The original message is also part of the thread
   const initialMessage = {
@@ -70,7 +71,8 @@ export const getTicketById = async (ticketId, user) => {
     user_id: ticket.user_id,
     message: ticket.message,
     created_at: ticket.created_at,
-    author_name: user.id === ticket.user_id ? "You" : `User #${ticket.user_id}`,
+    author_name: author.author_name,
+    author_role: author.author_role,
   };
 
   return { ticket, replies: [initialMessage, ...replies] };

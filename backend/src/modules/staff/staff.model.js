@@ -103,7 +103,12 @@ export const updateOrderStatus = async (orderId, status) => {
  * @returns {Promise<Array>} An array of support ticket objects.
  */
 export const findAllSupportTickets = (options = {}) => {
-  const query = db("support_tickets");
+  const query = db("support_tickets")
+    .select(
+      "support_tickets.*",
+      db.raw("CONCAT(users.first_name, ' ', users.last_name) as customer_name")
+    )
+    .join("users", "support_tickets.user_id", "users.id");
   if (options.status) {
     query.where("status", options.status);
   }

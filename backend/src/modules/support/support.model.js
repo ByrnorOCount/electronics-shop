@@ -72,10 +72,27 @@ export const findRepliesByTicketId = (ticketId) => {
       "r.user_id",
       "r.message",
       "r.created_at",
-      db.raw("CONCAT(u.first_name, ' ', u.last_name) as author_name")
+      db.raw("CONCAT(u.first_name, ' ', u.last_name) as author_name"),
+      "u.role as author_role"
     )
     .where("r.ticket_id", ticketId)
     .orderBy("r.created_at", "asc");
+};
+
+/**
+ * Finds the author of the original support ticket.
+ * @param {number} ticketId - The ID of the ticket.
+ * @returns {Promise<object|undefined>} The author's details.
+ */
+export const findTicketAuthor = (ticketId) => {
+  return db("support_tickets as st")
+    .join("users as u", "st.user_id", "u.id")
+    .select(
+      db.raw("CONCAT(u.first_name, ' ', u.last_name) as author_name"),
+      "u.role as author_role"
+    )
+    .where("st.id", ticketId)
+    .first();
 };
 
 /**
