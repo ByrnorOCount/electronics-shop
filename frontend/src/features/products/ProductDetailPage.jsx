@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 import { useApi } from "../../hooks/useApi";
 import { productService } from "../../api";
 import toast from "react-hot-toast";
 import { useCartActions } from "../cart/useCartActions";
 import { useWishlistActions } from "../wishlist/useWishlistActions";
+import ProductCard from "./components/ProductCard";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -15,6 +16,11 @@ const ProductDetailPage = () => {
     isError,
     request: fetchProduct,
   } = useApi(productService.getProductById);
+  const {
+    data: similarProducts,
+    isLoading: isLoadingSimilar,
+    request: fetchSimilarProducts,
+  } = useApi(productService.getProducts);
   const { addItem: addItemToCart } = useCartActions();
   const {
     addItem: addToWishlist,
@@ -23,15 +29,20 @@ const ProductDetailPage = () => {
   } = useWishlistActions();
 
   useEffect(() => {
-    // The `id` is a string from the URL, but our services expect a number.
     if (id) {
-      fetchProduct(id).catch(() => {
-        // The useApi hook already logs the error, so we can just let it fail silently here
-        // from the component's perspective, or add more specific UI feedback if needed.
-      });
+      fetchProduct(id)
+        .then((p) => {
+          if (p && p.category_name) {
+            fetchSimilarProducts({ category: p.category_name, limit: 4 });
+          }
+        })
+        .catch(() => {
+          // The useApi hook already logs the error, so we can just let it fail silently here
+          // from the component's perspective, or add more specific UI feedback if needed.
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id]); // Rerun when the product ID in the URL changes
 
   const { token } = useAppSelector((state) => state.auth);
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
@@ -69,6 +80,24 @@ const ProductDetailPage = () => {
 
   const isCurrentlyLoading = isWishlistLoading(product?.id);
 
+  const StockDisplay = ({ stock }) => {
+    if (stock === 0) {
+      return <p className="text-red-600 font-semibold mb-6">Out of Stock</p>;
+    }
+    if (stock <= 10) {
+      return (
+        <p className="text-orange-500 font-semibold mb-6">
+          Low Stock: {stock} remaining
+        </p>
+      );
+    }
+    return (
+      <p className="text-green-600 font-semibold mb-6">
+        In Stock ({stock} available)
+      </p>
+    );
+  };
+
   if (isLoading) return <div className="text-center p-8">Loading...</div>;
   if (isError)
     return (
@@ -78,57 +107,107 @@ const ProductDetailPage = () => {
   if (!product) return null;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row gap-8">
-        <img
-          src={product.image_url || "https://via.placeholder.com/400"}
-          alt={product.name}
-          className="w-full md:w-1/2 rounded-lg shadow-lg"
-        />
-        <div className="flex flex-col justify-center">
-          <h1 className="text-4xl font-bold mb-2">{product.name}</h1>
-          <p className="text-2xl text-gray-800 mb-4">
-            ${Number(product.price).toFixed(2)}
-          </p>
-          <p className="text-gray-600 mb-6">{product.description}</p>
-          <p className="text-sm text-gray-500 mb-6">
-            In Stock: {product.stock}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={handleAddToCart}
-              className="bg-green-600 text-white font-bold py-3 px-6 rounded hover:bg-green-700 transition duration-300 flex-1 text-center"
-            >
-              Add to Cart
-            </button>
-            {isWishlisted ? (
-              <button
-                onClick={handleWishlistToggle}
-                onMouseEnter={() => setIsWishlistHovered(true)}
-                onMouseLeave={() => setIsWishlistHovered(false)}
-                disabled={isCurrentlyLoading}
-                className="bg-red-400 text-white font-bold py-3 px-6 rounded hover:bg-red-500 transition duration-300 flex-1 text-center disabled:bg-gray-400"
-              >
-                <span className="inline-block w-42">
-                  {isCurrentlyLoading
-                    ? "Updating..."
-                    : isWishlistHovered
-                    ? "Remove from Wishlist"
-                    : "Added to Wishlist"}
-                </span>
-              </button>
-            ) : (
-              <button
-                onClick={handleWishlistToggle}
-                disabled={isCurrentlyLoading}
-                className="bg-red-600 text-white font-bold py-3 px-6 rounded hover:bg-red-700 transition duration-300 flex-1 text-center disabled:bg-gray-400"
-              >
-                <span className="inline-block w-40">Add to Wishlist</span>
-              </button>
+    <div className="max-w-6xl mx-auto px-4 py-8 w-full">
+      <div className="bg-white p-8 rounded-lg shadow-md">
+        <div className="flex flex-col md:flex-row gap-8">
+          <img
+            src={product.image_url || "https://via.placeholder.com/400"}
+            alt={product.name}
+            className="w-full md:w-1/2 rounded-lg shadow-lg object-cover"
+          />
+          <div className="flex flex-col justify-center gap-y-4">
+            <div>
+              <h1 className="text-4xl font-bold">{product.name}</h1>
+              {product.category_name && (
+                <p className="text-md text-gray-500 mt-1">
+                  Category: {product.category_name}
+                </p>
+              )}
+            </div>
+            <p className="text-2xl text-gray-900">
+              ${Number(product.price).toFixed(2)}
+            </p>
+            <p className="text-lg text-gray-800 leading-relaxed">
+              {product.description}
+            </p>
+
+            <StockDisplay stock={product.stock} />
+
+            {/* Recommendation message for low/no stock */}
+            {product.stock <= 5 && ( // This div already has mb-6, which is fine as it's a distinct block
+              <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md">
+                <p className="font-bold">
+                  {product.stock === 0
+                    ? "This item is out of stock."
+                    : "Stock is running low!"}
+                </p>
+                <p>
+                  Why not{" "}
+                  <Link
+                    to="/products"
+                    className="underline hover:text-yellow-800"
+                  >
+                    check out other products
+                  </Link>{" "}
+                  {product.category_name && (
+                    <>or browse items in the same category below?</>
+                  )}
+                </p>
+              </div>
             )}
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={handleAddToCart}
+                disabled={product.stock === 0}
+                className="bg-green-600 text-white font-bold py-3 px-6 rounded hover:bg-green-700 transition duration-300 flex-1 text-center disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+              </button>
+              {isWishlisted ? (
+                <button
+                  onClick={handleWishlistToggle}
+                  onMouseEnter={() => setIsWishlistHovered(true)}
+                  onMouseLeave={() => setIsWishlistHovered(false)}
+                  disabled={isCurrentlyLoading}
+                  className="bg-red-400 text-white font-bold py-3 px-6 rounded hover:bg-red-500 transition duration-300 flex-1 text-center disabled:bg-gray-400"
+                >
+                  <span className="inline-block w-42">
+                    {isCurrentlyLoading
+                      ? "Updating..."
+                      : isWishlistHovered
+                      ? "Remove from Wishlist"
+                      : "Added to Wishlist"}
+                  </span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleWishlistToggle}
+                  disabled={isCurrentlyLoading}
+                  className="bg-red-600 text-white font-bold py-3 px-6 rounded hover:bg-red-700 transition duration-300 flex-1 text-center disabled:bg-gray-400"
+                >
+                  <span className="inline-block w-40">Add to Wishlist</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
+
+      {similarProducts && similarProducts.length > 1 && (
+        <div className="mt-12">
+          <h2 className="text-3xl font-bold mb-6 text-center">
+            Similar Products
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {similarProducts
+              .filter((p) => p.id !== product.id) // Exclude the current product
+              .map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

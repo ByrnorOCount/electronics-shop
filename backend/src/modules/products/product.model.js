@@ -13,7 +13,12 @@ import db from "../../config/db.js";
  * @returns {Promise<Array>} A promise that resolves to an array of products.
  */
 export const find = async (filters = {}) => {
-  const query = db("products");
+  const query = db("products").select(
+    "products.*",
+    "categories.name as category_name"
+  );
+
+  query.leftJoin("categories", "products.category_id", "categories.id");
 
   if (filters.search) {
     query.where("name", "ilike", `%${filters.search}%`);
@@ -39,7 +44,7 @@ export const find = async (filters = {}) => {
     query.where("price", "<=", filters.max_price);
   }
 
-  return query.select("*");
+  return query;
 };
 
 /**
@@ -48,7 +53,11 @@ export const find = async (filters = {}) => {
  * @returns {Promise<object|undefined>} A promise that resolves to the product object or undefined if not found.
  */
 export const findById = async (id) => {
-  return db("products").where({ id }).first();
+  return db("products")
+    .select("products.*", "categories.name as category_name")
+    .leftJoin("categories", "products.category_id", "categories.id")
+    .where("products.id", id)
+    .first();
 };
 
 /**
