@@ -1,4 +1,9 @@
 import db from "../../config/db.js";
+import * as cartModel from "../cart/cart.model.js";
+import * as productModel from "../products/product.model.js";
+import { createOrderFromCart } from "../../core/integrations/payment.service.js";
+import ApiError from "../../core/utils/ApiError.js";
+import httpStatus from "http-status";
 
 /**
  * Updates a user's record with an OTP hash and expiration.
@@ -89,4 +94,59 @@ export const clearUserOtp = (userId) => {
   return db("users")
     .where({ id: userId })
     .update({ otp_hash: null, otp_expires: null });
+};
+
+/**
+ * Creates an order within a database transaction, ensuring stock is sufficient
+ * and decrementing it atomically. This is the primary function for order creation.
+ * @param {number} userId
+ * @param {string} shippingAddress
+ * @param {string} paymentMethod
+ * @param {object} [paymentDetails={}]
+ * @returns {Promise<object>} The newly created order.
+ */
+export const createOrderFromCartInTransaction = (
+  userId,
+  shippingAddress,
+  paymentMethod,
+  paymentDetails = {}
+) => {
+  return db.transaction(async (trx) => {
+    // 1. Get cart items for the user within the transaction.
+    const cartItems = await cartModel.findByUserId(userId, trx);
+    if (cartItems.length === 0) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Cart is empty.");
+    }
+
+    // 2. Get product details and lock rows for update.
+    const productIds = cartItems.map((item) => item.product_id);
+    const products = await productModel.findByIdsForUpdate(productIds, trx);
+    const productMap = new Map(products.map((p) => [p.id, p]));
+
+    // 3. Verify stock.
+    for (const item of cartItems) {
+      const product = productMap.get(item.product_id);
+      if (!product || product.stock < item.quantity) {
+        throw new ApiError(
+          httpStatus.CONFLICT,
+          `Not enough stock for ${item.name}. Only ${product?.stock || 0} left.`
+        );
+      }
+    }
+
+    // 4. Delegate to the payment service to create order, items, and update stock.
+    // This function contains the logic for creating order records, order items,
+    // decrementing stock, and clearing the cart, all within the provided transaction.
+    const order = await createOrderFromCart(
+      userId,
+      shippingAddress,
+      paymentMethod,
+      paymentDetails,
+      trx
+    );
+
+    // The transaction will be committed automatically if no errors are thrown.
+    // If any error occurs (e.g., stock issue), the transaction is rolled back.
+    return order;
+  });
 };

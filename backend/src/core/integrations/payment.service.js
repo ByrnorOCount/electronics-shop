@@ -1,75 +1,113 @@
 import db from "../../config/db.js";
 import { createNotification } from "../../modules/notifications/notification.service.js";
+import logger from "../../config/logger.js";
 import { sendOrderConfirmationEmail } from "./email.service.js";
+import ApiError from "../utils/ApiError.js";
+import httpStatus from "http-status";
 
 /**
- * Creates an order in the database from a user's cart.
- * This function encapsulates the transaction logic for creating an order,
- * adding order items, clearing the cart, and sending notifications.
+ * Creates an order from cart items within a provided database transaction.
+ * This function assumes stock has already been verified and locked by the caller.
  *
  * @param {number} userId - The ID of the user placing the order.
  * @param {string} shippingAddress - The shipping address for the order.
  * @param {string} paymentMethod - The payment method used (e.g., 'cod', 'stripe').
  * @param {object} paymentDetails - Additional details from the payment gateway (e.g., transaction ID).
+ * @param {import("knex").Knex.Transaction} trx - The Knex transaction object.
  * @returns {Promise<object>} The newly created order object.
  */
 export const createOrderFromCart = async (
   userId,
   shippingAddress,
   paymentMethod,
-  paymentDetails = {}
+  paymentDetails = {},
+  trx
 ) => {
-  const user = await db("users").where({ id: userId }).first();
+  const user = await trx("users").where({ id: userId }).first();
   if (!user) throw new Error("User not found");
 
-  const cartItems = await db("cart_items")
+  const cartItems = await trx("cart_items")
     .join("products", "cart_items.product_id", "products.id")
     .where("cart_items.user_id", userId)
     .select(
-      "products.id as productId",
+      "products.id as product_id",
       "products.price",
-      "cart_items.quantity"
+      "cart_items.quantity",
+      "products.name",
+      "products.stock"
     );
 
   if (cartItems.length === 0) {
-    throw new Error("Cannot create order with an empty cart.");
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "Cannot create order with an empty cart."
+    );
   }
 
-  const totalAmount = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
+  let totalAmount = 0;
+  const stockUpdates = [];
+
+  for (const item of cartItems) {
+    // This check is a final safeguard within the transaction.
+    if (item.stock < item.quantity) {
+      throw new ApiError(
+        httpStatus.CONFLICT,
+        `Not enough stock for ${item.name}. Only ${item.stock} left.`
+      );
+    }
+    totalAmount += item.price * item.quantity;
+    // Prepare stock update promise
+    stockUpdates.push(
+      trx("products")
+        .where({ id: item.product_id })
+        .decrement("stock", item.quantity)
+    );
+  }
+
+  // 1. Create the order record.
+  const [order] = await trx("orders")
+    .insert({
+      user_id: userId,
+      total_amount: totalAmount,
+      shipping_address: shippingAddress,
+      payment_method: paymentMethod,
+      payment_details: JSON.stringify(paymentDetails),
+      status: "Pending",
+    })
+    .returning("*");
+
+  // 2. Create order items.
+  const orderItemsToInsert = cartItems.map((item) => ({
+    order_id: order.id,
+    product_id: item.product_id,
+    quantity: item.quantity,
+    price: item.price,
+  }));
+  await trx("order_items").insert(orderItemsToInsert);
+
+  // 3. Decrement product stock for all items.
+  await Promise.all(stockUpdates);
+
+  // 4. Clear the user's cart.
+  await trx("cart_items").where({ user_id: userId }).del();
+
+  // 5. Create a notification.
+  await createNotification(
+    userId,
+    `Your order #${order.id} has been placed successfully.`,
+    "/orders",
+    trx
   );
 
-  const newOrder = await db.transaction(async (trx) => {
-    const [order] = await trx("orders")
-      .insert({
-        user_id: userId,
-        total_amount: totalAmount,
-        shipping_address: shippingAddress,
-        payment_method: paymentMethod,
-        payment_details: paymentDetails,
-        status: "Pending",
-      })
-      .returning("*");
-
-    const orderItems = cartItems.map((item) => ({
-      order_id: order.id,
-      product_id: item.productId,
-      quantity: item.quantity,
-      price: item.price,
-    }));
-
-    await trx("order_items").insert(orderItems);
-    await trx("cart_items").where("user_id", userId).del();
-    await createNotification(
-      userId,
-      `Your order #${order.id} has been placed successfully.`,
-      trx
-    );
-
-    return order;
+  // Log the successful order creation.
+  // This prevents the crash by logging an object, not a raw string.
+  logger.info("Order confirmation email triggered.", {
+    orderId: order.id,
+    userId: user.id,
   });
 
-  sendOrderConfirmationEmail(user, newOrder);
-  return newOrder;
+  // Send email outside the transaction. This function should not log on its own.
+  sendOrderConfirmationEmail(user, order);
+
+  return order;
 };

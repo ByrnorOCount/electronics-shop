@@ -2,7 +2,6 @@ import Stripe from "stripe";
 import * as orderService from "./order.service.js";
 import httpStatus from "http-status";
 import ApiResponse from "../../core/utils/ApiResponse.js";
-import { createOrderFromCart } from "../../core/integrations/payment.service.js";
 import logger from "../../config/logger.js";
 import env from "../../config/env.js";
 
@@ -131,9 +130,14 @@ export const handlePaymentWebhook = async (req, res) => {
         : "Address from Stripe";
 
       try {
-        await createOrderFromCart(Number(userId), shippingAddress, "stripe", {
-          transactionId: session.payment_intent,
-        });
+        await orderService.createOrderInTransaction(
+          Number(userId),
+          shippingAddress,
+          "stripe",
+          {
+            transactionId: session.payment_intent,
+          }
+        );
         logger.info(`✅ Order created for user ${userId} via Stripe.`);
       } catch (error) {
         logger.error("Failed to create order from Stripe webhook:", error);

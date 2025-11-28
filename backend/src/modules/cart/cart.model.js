@@ -3,10 +3,12 @@ import db from "../../config/db.js";
 /**
  * Finds all items in a user's cart, joining with product details.
  * @param {number} userId - The ID of the user.
+ * @param {import("knex").Knex.Transaction} [trx] - Optional Knex transaction object.
  * @returns {Promise<Array>} A promise that resolves to an array of cart items.
  */
-export const findByUserId = (userId) => {
-  return db("cart_items")
+export const findByUserId = (userId, trx) => {
+  const queryBuilder = trx || db;
+  return queryBuilder("cart_items")
     .join("products", "cart_items.product_id", "products.id")
     .where("cart_items.user_id", userId)
     .select(

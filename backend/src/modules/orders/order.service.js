@@ -3,9 +3,9 @@ import bcrypt from "bcrypt";
 import httpStatus from "http-status";
 import Stripe from "stripe";
 import * as orderModel from "./order.model.js";
+import * as productModel from "../products/product.model.js";
 import * as cartModel from "../cart/cart.model.js";
 import { sendOtpEmail } from "../../core/integrations/email.service.js";
-import { createOrderFromCart } from "../../core/integrations/payment.service.js";
 import ApiError from "../../core/utils/ApiError.js";
 import env from "../../config/env.js";
 
@@ -29,6 +29,24 @@ export const generateAndSendOtp = async (user) => {
  * @returns {Promise<object>} An object containing the session URL.
  */
 const createStripeSession = async (cartItems, userId) => {
+  // --- Preliminary Stock Check ---
+  // This provides a better UX by failing early if something is out of stock.
+  // The real atomic check happens in the webhook after payment.
+  const productIds = cartItems.map((item) => item.product_id);
+  const products = await productModel.find({ id: productIds });
+  const productMap = new Map(products.map((p) => [p.id, p]));
+
+  for (const item of cartItems) {
+    const product = productMap.get(item.product_id);
+    if (!product || product.stock < item.quantity) {
+      throw new ApiError(
+        httpStatus.CONFLICT,
+        `Sorry, '${item.name}' is out of stock or has insufficient quantity.`
+      );
+    }
+  }
+  // --- End of Preliminary Stock Check ---
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items: cartItems.map((item) => ({
@@ -96,19 +114,41 @@ export const createCodOrder = async (userId, shippingAddress, otp) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid or expired OTP.");
   }
 
-  const cartItems = await orderModel.findCartItemsByUserId(userId);
-  if (cartItems.length === 0) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      "Cannot create an order with an empty cart."
-    );
-  }
+  // Delegate order creation and transaction handling to the model layer.
+  const newOrder = await orderModel.createOrderFromCartInTransaction(
+    userId,
+    shippingAddress,
+    "cod"
+  );
 
-  const newOrder = await createOrderFromCart(userId, shippingAddress, "cod");
   await orderModel.clearUserOtp(userId);
 
   const finalOrder = await orderModel.findOrderByIdWithItems(newOrder.id);
   return finalOrder;
+};
+
+/**
+ * Creates an order within a database transaction, ensuring stock is sufficient
+ * and decrementing it atomically.
+ * @param {number} userId
+ * @param {string} shippingAddress
+ * @param {string} paymentMethod
+ * @param {object} [paymentDetails={}]
+ * @returns {Promise<object>} The newly created order.
+ */
+export const createOrderInTransaction = (
+  userId,
+  shippingAddress,
+  paymentMethod,
+  paymentDetails = {}
+) => {
+  // Simply delegate to the model, which now handles the transaction.
+  return orderModel.createOrderFromCartInTransaction(
+    userId,
+    shippingAddress,
+    paymentMethod,
+    paymentDetails
+  );
 };
 
 /**

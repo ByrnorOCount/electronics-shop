@@ -52,6 +52,19 @@ export const findById = async (id) => {
 };
 
 /**
+ * Fetches multiple products by their IDs within a transaction and locks them for update.
+ * @param {Array<number>} ids - An array of product IDs.
+ * @param {import("knex").Knex.Transaction} trx - The Knex transaction object.
+ * @returns {Promise<Array<object>>} A promise that resolves to an array of products.
+ */
+export const findByIdsForUpdate = (ids, trx) => {
+  return trx("products")
+    .whereIn("id", ids)
+    .forUpdate() // This locks the selected rows until the transaction is committed or rolled back.
+    .select("*");
+};
+
+/**
  * Fetches all product categories from the database.
  * @returns {Promise<Array>} A promise that resolves to an array of category objects.
  */
