@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAppSelector } from "../../../store/hooks";
 import ItemList from "../../../components/ui/ItemList";
 /**
@@ -9,6 +9,7 @@ import ItemList from "../../../components/ui/ItemList";
 export default function CartSummary() {
   const cartItems = useAppSelector((state) => state.cart.items);
   const { token } = useAppSelector((state) => state.auth);
+  const location = useLocation();
 
   const subtotal = cartItems.reduce(
     (sum, it) => sum + Number(it.price) * it.qty,
@@ -21,6 +22,11 @@ export default function CartSummary() {
 
   // The checkout link depends on whether the user is logged in.
   const CheckoutButton = useMemo(() => {
+    // Don't show the button if we are already on the checkout page.
+    if (location.pathname === "/checkout") {
+      return null;
+    }
+
     if (token) {
       return (
         <Link
@@ -40,7 +46,7 @@ export default function CartSummary() {
         Login to Continue
       </Link>
     );
-  }, [token]);
+  }, [token, location.pathname]);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm sticky top-12">
