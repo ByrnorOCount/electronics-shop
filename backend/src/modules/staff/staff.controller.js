@@ -33,7 +33,8 @@ export const updateProduct = async (req, res, next) => {
   try {
     const updatedProduct = await staffService.updateProduct(
       req.params.id,
-      req.body
+      req.body,
+      req.user
     );
     res
       .status(httpStatus.OK)

@@ -46,3 +46,15 @@ export const remove = (userId, productId) => {
     .where({ user_id: userId, product_id: productId })
     .del();
 };
+
+/**
+ * Finds all user IDs who have a specific product in their wishlist.
+ * @param {number} productId - The ID of the product.
+ * @returns {Promise<Array<number>>} A promise that resolves to an array of user IDs.
+ */
+export const findUsersByProductId = async (productId) => {
+  const results = await db("wishlists")
+    .where({ product_id: productId })
+    .select("user_id");
+  return results.map((r) => r.user_id);
+};

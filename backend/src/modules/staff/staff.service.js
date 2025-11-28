@@ -2,6 +2,9 @@ import * as staffModel from "./staff.model.js";
 import httpStatus from "http-status";
 import ApiError from "../../core/utils/ApiError.js";
 import { createNotification } from "../notifications/notification.service.js";
+import * as productModel from "../products/product.model.js";
+import * as wishlistModel from "../wishlist/wishlist.model.js";
+import logger from "../../config/logger.js";
 
 /**
  * Create a new product
@@ -16,9 +19,58 @@ export const createProduct = async (productData) => {
  * Update an existing product
  * @param {number|string} productId
  * @param {object} updateData
+ * @param {object} staffUser - The authenticated staff user performing the action.
  * @returns {Promise<object>}
  */
-export const updateProduct = async (productId, updateData) => {
+export const updateProduct = async (productId, updateData, staffUser) => {
+  const originalProduct = await productModel.findById(productId);
+  if (!originalProduct) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Product not found");
+  }
+
+  // --- Stock Change Logging ---
+  const newStock = updateData.stock;
+  if (newStock !== undefined && newStock !== originalProduct.stock) {
+    logger.info("Staff member updated product stock.", {
+      staffId: staffUser.id,
+      staffEmail: staffUser.email,
+      productId: productId,
+      productName: originalProduct.name,
+      oldStock: originalProduct.stock,
+      newStock: newStock,
+      change: newStock - originalProduct.stock,
+    });
+  }
+
+  // --- Back-in-Stock Notification Logic ---
+  // Check if stock is being updated from 0 to a positive number.
+  if (newStock > 0) {
+    // Condition: Product existed, its stock was 0, and the new stock is positive.
+    if (originalProduct.stock === 0) {
+      logger.info(
+        `Product #${productId} is back in stock. Checking for interested users.`
+      );
+
+      // Find all users who have this product on their wishlist.
+      const userIds = await wishlistModel.findUsersByProductId(productId);
+
+      if (userIds.length > 0) {
+        const notificationMessage = `Good news! "${originalProduct.name}" is back in stock.`;
+        const notificationLink = `/products/${productId}`;
+
+        // Create a notification for each interested user.
+        const notificationPromises = userIds.map((userId) =>
+          createNotification(userId, notificationMessage, notificationLink)
+        );
+
+        await Promise.all(notificationPromises);
+        logger.info(
+          `Sent ${userIds.length} back-in-stock notifications for product #${productId}.`
+        );
+      }
+    }
+  }
+
   const updated = await staffModel.updateProduct(productId, updateData);
   if (!updated) {
     throw new ApiError(httpStatus.NOT_FOUND, "Product not found");
