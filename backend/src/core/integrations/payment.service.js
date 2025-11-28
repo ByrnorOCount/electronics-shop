@@ -49,10 +49,16 @@ export const createOrderFromCart = async (
 
   for (const item of cartItems) {
     // This check is a final safeguard within the transaction.
+    if (item.stock === 0) {
+      throw new ApiError(
+        httpStatus.CONFLICT,
+        `'${item.name}' is now out of stock. Please remove it from your cart.`
+      );
+    }
     if (item.stock < item.quantity) {
       throw new ApiError(
         httpStatus.CONFLICT,
-        `Not enough stock for ${item.name}. Only ${item.stock} left.`
+        `Not enough stock for '${item.name}'. Only ${item.stock} left, but you have ${item.quantity} in your cart.`
       );
     }
     totalAmount += item.price * item.quantity;
@@ -100,14 +106,11 @@ export const createOrderFromCart = async (
   );
 
   // Log the successful order creation.
-  // This prevents the crash by logging an object, not a raw string.
   logger.info("Order confirmation email triggered.", {
     orderId: order.id,
-    userId: user.id,
+    userEmail: user.email,
+    total: order.total_amount,
   });
-
-  // Send email outside the transaction. This function should not log on its own.
-  sendOrderConfirmationEmail(user, order);
 
   return order;
 };

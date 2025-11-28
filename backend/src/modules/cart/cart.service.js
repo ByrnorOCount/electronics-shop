@@ -1,4 +1,5 @@
 import * as cartModel from "./cart.model.js";
+import * as productModel from "../products/product.model.js";
 import httpStatus from "http-status";
 import ApiError from "../../core/utils/ApiError.js";
 import logger from "../../config/logger.js";
@@ -20,20 +21,45 @@ export const getCartByUserId = async (userId) => {
  * @returns {Promise<{item: object, wasCreated: boolean}>}
  */
 export const addItemToCart = async (userId, productId, quantity) => {
+  const product = await productModel.findById(productId);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Product not found.");
+  }
+
   const existingItem = await cartModel.findOne(userId, productId);
+  const requestedQuantity = existingItem
+    ? existingItem.quantity + quantity
+    : quantity;
+
+  // Check stock before any database operation.
+  if (product.stock === 0) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      `'${product.name}' is out of stock.`
+    );
+  }
+
+  if (product.stock < requestedQuantity) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      `Only ${product.stock} of '${product.name}' left in stock. You cannot add ${requestedQuantity} to your cart.`
+    );
+  }
 
   if (existingItem) {
-    const newQuantity = existingItem.quantity + quantity;
     const [updatedItem] = await cartModel.update(
       existingItem.id,
-      newQuantity,
+      requestedQuantity,
       userId
     );
     const itemWithDetails = await cartModel.findById(updatedItem.id);
+    // The item details from findById don't include stock, so we add it back for consistency.
+    itemWithDetails.stock = product.stock;
     return { item: itemWithDetails, wasCreated: false };
   } else {
     const newItem = await cartModel.create(userId, productId, quantity);
     const itemWithDetails = await cartModel.findById(newItem.id);
+    itemWithDetails.stock = product.stock;
     return { item: itemWithDetails, wasCreated: true };
   }
 };
@@ -46,6 +72,33 @@ export const addItemToCart = async (userId, productId, quantity) => {
  * @returns {Promise<object>}
  */
 export const updateCartItem = async (userId, itemId, quantity) => {
+  // We need to get the product details to check stock.
+  const item = await cartModel.findById(itemId);
+  if (!item) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Cart item not found.");
+  }
+
+  const product = await productModel.findById(item.product_id);
+  if (!product) {
+    // This case is unlikely if the cart item exists, but it's good practice.
+    throw new ApiError(httpStatus.NOT_FOUND, "Associated product not found.");
+  }
+
+  // Check stock before updating.
+  if (product.stock === 0) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      `'${product.name}' is now out of stock. Please remove it from your cart.`
+    );
+  }
+
+  if (product.stock < quantity) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      `Only ${product.stock} of '${product.name}' left in stock. You cannot set quantity to ${quantity}.`
+    );
+  }
+
   const [updatedItem] = await cartModel.update(itemId, quantity, userId);
   if (!updatedItem) {
     throw new ApiError(
@@ -53,7 +106,10 @@ export const updateCartItem = async (userId, itemId, quantity) => {
       "Cart item not found or you do not have permission to update it."
     );
   }
-  return updatedItem;
+  // Return the full item details including the latest stock.
+  const itemWithDetails = await cartModel.findById(updatedItem.id);
+  itemWithDetails.stock = product.stock;
+  return itemWithDetails;
 };
 
 /**
