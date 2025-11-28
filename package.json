@@ -12,6 +12,7 @@
     "frontend"
   ],
   "devDependencies": {
+    "baseline-browser-mapping": "^2.8.31",
     "concurrently": "^9.2.1"
   }
 }
