@@ -187,8 +187,8 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 #### Administrator
 
 - [x] `AdminDashboardPage` (Consolidated into `DashboardHomePage`)
-- [ ] `AdminUsersPage`
-- [ ] `AdminCategoriesPage`
+- [x] `AdminUsersPage`
+- [x] `AdminCategoriesPage`
 - [x] `AdminAnalyticsPage`
 - [x] `AdminLogsPage`
 
