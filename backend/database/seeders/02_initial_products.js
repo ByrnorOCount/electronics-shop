@@ -14,7 +14,7 @@ export async function seed(knex) {
       category_id: 1,
       price: 49.99,
       image_url: "/images/pi4.jpg",
-      stock: 50,
+      stock: 9,
       is_featured: true,
     },
     {
@@ -24,7 +24,7 @@ export async function seed(knex) {
       category_id: 2,
       price: 6.5,
       image_url: "/images/esp32.jpg",
-      stock: 150,
+      stock: 15,
       is_featured: true,
     },
     {
@@ -34,7 +34,7 @@ export async function seed(knex) {
       category_id: 3,
       price: 8.25,
       image_url: "/images/battery.jpg",
-      stock: 300,
+      stock: 30,
       is_featured: true,
     },
     {
@@ -44,7 +44,7 @@ export async function seed(knex) {
       category_id: 4,
       price: 24.0,
       image_url: "/images/charger.jpg",
-      stock: 75,
+      stock: 13,
       is_featured: true,
     },
     {
@@ -54,7 +54,7 @@ export async function seed(knex) {
       category_id: 1,
       price: 15.0,
       image_url: "/images/pi-zero-2-w.jpg",
-      stock: 120,
+      stock: 12,
       is_featured: false,
     },
     {
@@ -64,7 +64,7 @@ export async function seed(knex) {
       category_id: 2,
       price: 27.5,
       image_url: "/images/arduino-uno-r4.jpg",
-      stock: 80,
+      stock: 10,
       is_featured: true,
     },
     {
@@ -74,7 +74,7 @@ export async function seed(knex) {
       category_id: 3,
       price: 12.99,
       image_url: "/images/power-supply-5v.jpg",
-      stock: 200,
+      stock: 20,
       is_featured: false,
     },
     {
@@ -84,7 +84,7 @@ export async function seed(knex) {
       category_id: 4,
       price: 5.5,
       image_url: "/images/breadboard.jpg",
-      stock: 500,
+      stock: 50,
       is_featured: false,
     },
     {
@@ -94,7 +94,7 @@ export async function seed(knex) {
       category_id: 1,
       price: 149.0,
       image_url: "/images/jetson-nano.jpg",
-      stock: 30,
+      stock: 5,
       is_featured: true,
     },
     {
@@ -104,7 +104,7 @@ export async function seed(knex) {
       category_id: 2,
       price: 29.95,
       image_url: "/images/teensy-4-1.jpg",
-      stock: 60,
+      stock: 8,
       is_featured: false,
     },
     {
@@ -114,7 +114,7 @@ export async function seed(knex) {
       category_id: 3,
       price: 1.99,
       image_url: "/images/tp4056-charger.jpg",
-      stock: 400,
+      stock: 40,
       is_featured: false,
     },
     {
@@ -125,14 +125,14 @@ export async function seed(knex) {
       category_id: 4,
       price: 6.99,
       image_url: "/images/jumper-wires.jpg",
-      stock: 1000,
+      stock: 100,
       is_featured: false,
     },
     {
       id: 13,
       name: "BeagleBone Black",
       description:
-        "Community-supported development platform for developers and hobbyists.",
+        "Community-supported development platform for devs and hobbyists.",
       category_id: 1,
       price: 55.0,
       image_url: "/images/beaglebone-black.jpg",
@@ -147,7 +147,7 @@ export async function seed(knex) {
       category_id: 2,
       price: 4.99,
       image_url: "/images/xiao-esp32c3.jpg",
-      stock: 250,
+      stock: 25,
       is_featured: true,
     },
     {
@@ -157,7 +157,7 @@ export async function seed(knex) {
       category_id: 3,
       price: 2.5,
       image_url: "/images/buck-converter.jpg",
-      stock: 350,
+      stock: 35,
       is_featured: false,
     },
     {
@@ -168,7 +168,7 @@ export async function seed(knex) {
       category_id: 4,
       price: 7.99,
       image_url: "/images/microsd-card.jpg",
-      stock: 150,
+      stock: 15,
       is_featured: false,
     },
     {
@@ -179,7 +179,7 @@ export async function seed(knex) {
       category_id: 2,
       price: 6.0,
       image_url: "/images/pi-pico-w.jpg",
-      stock: 300,
+      stock: 30,
       is_featured: false,
     },
     {
@@ -189,7 +189,7 @@ export async function seed(knex) {
       category_id: 3,
       price: 9.5,
       image_url: "/images/solar-panel.jpg",
-      stock: 90,
+      stock: 9,
       is_featured: false,
     },
     {
@@ -199,7 +199,7 @@ export async function seed(knex) {
       category_id: 4,
       price: 1.99,
       image_url: "/images/hc-sr04.jpg",
-      stock: 400,
+      stock: 40,
       is_featured: false,
     },
     {
@@ -209,7 +209,7 @@ export async function seed(knex) {
       category_id: 4,
       price: 2.99,
       image_url: "/images/sg90-servo.jpg",
-      stock: 600,
+      stock: 60,
       is_featured: false,
     },
     {
@@ -219,7 +219,7 @@ export async function seed(knex) {
       category_id: 4,
       price: 7.25,
       image_url: "/images/lcd-1602-i2c.jpg",
-      stock: 120,
+      stock: 12,
       is_featured: false,
     },
     {
@@ -229,7 +229,7 @@ export async function seed(knex) {
       category_id: 2,
       price: 4.5,
       image_url: "/images/relay-module.jpg",
-      stock: 180,
+      stock: 18,
       is_featured: false,
     },
     {
@@ -240,7 +240,7 @@ export async function seed(knex) {
       category_id: 4,
       price: 9.99,
       image_url: "/images/resistor-kit.jpg",
-      stock: 200,
+      stock: 20,
       is_featured: false,
     },
     {
@@ -251,7 +251,7 @@ export async function seed(knex) {
       category_id: 4,
       price: 5.99,
       image_url: "/images/led-kit.jpg",
-      stock: 300,
+      stock: 30,
       is_featured: false,
     },
     {
@@ -262,7 +262,7 @@ export async function seed(knex) {
       category_id: 2,
       price: 2.25,
       image_url: "/images/level-shifter.jpg",
-      stock: 220,
+      stock: 22,
       is_featured: false,
     },
     {
@@ -273,7 +273,7 @@ export async function seed(knex) {
       category_id: 3,
       price: 0.99,
       image_url: "/images/9v-snap.jpg",
-      stock: 800,
+      stock: 80,
       is_featured: false,
     },
     {
@@ -283,7 +283,7 @@ export async function seed(knex) {
       category_id: 4,
       price: 6.5,
       image_url: "/images/hdmi-micro-hdmi.jpg",
-      stock: 130,
+      stock: 13,
       is_featured: false,
     },
     {
@@ -293,7 +293,7 @@ export async function seed(knex) {
       category_id: 4,
       price: 4.75,
       image_url: "/images/usb-ttl.jpg",
-      stock: 160,
+      stock: 16,
       is_featured: false,
     },
     {
@@ -303,7 +303,7 @@ export async function seed(knex) {
       category_id: 2,
       price: 22.95,
       image_url: "/images/feather-m4.jpg",
-      stock: 70,
+      stock: 7,
       is_featured: false,
     },
     {
@@ -313,7 +313,7 @@ export async function seed(knex) {
       category_id: 1,
       price: 80.0,
       image_url: "/images/pi5.jpg",
-      stock: 40,
+      stock: 4,
       is_featured: true,
     },
   ]);

@@ -49,6 +49,10 @@ export async function seed(knex) {
         stockUpdates.push(
           trx("products").where("id", product.id).decrement("stock", quantity)
         );
+
+        // Update stock in-memory for the next iteration of the loop
+        // This prevents overselling within the same seeder run.
+        product.stock -= quantity;
       }
 
       if (tempOrderItems.length === 0) return; // Don't create an empty order
