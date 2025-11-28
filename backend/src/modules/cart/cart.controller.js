@@ -107,3 +107,22 @@ export const removeCartItem = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * Move an item from the cart to the wishlist.
+ * @route POST /api/cart/save-for-later/:itemId
+ * @access Private
+ */
+export const saveForLater = async (req, res, next) => {
+  const { itemId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const result = await cartService.saveItemForLater(userId, Number(itemId));
+    res
+      .status(httpStatus.OK)
+      .json(new ApiResponse(httpStatus.OK, result, result.message));
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,4 +1,5 @@
 import api from "../../api/axios";
+import logger from "../../utils/logger";
 
 /**
  * Fetches all items from the user's cart.
@@ -46,9 +47,23 @@ const removeCartItem = async (itemId) => {
  * @returns {Promise<Array<object>>} A promise that resolves to the fully merged cart from the backend.
  */
 const syncCart = async (itemsToSync) => {
+  logger.info("Attempting to sync cart with backend...");
+  logger.info("Payload to be sent to /cart/sync:", { items: itemsToSync });
+
   // This sends the local cart to a new endpoint for the backend to merge.
   const response = await api.post("/cart/sync", { items: itemsToSync });
+  logger.info("Cart sync successful. Response data:", response.data.data);
   return response.data.data;
+};
+
+/**
+ * Moves an item from the cart to the wishlist via a dedicated backend endpoint.
+ * @param {number} cartItemId The ID of the cart item to move.
+ * @returns {Promise<object>} A promise that resolves to the success message from the backend.
+ */
+const saveForLater = async (cartItemId) => {
+  const response = await api.post(`/cart/save-for-later/${cartItemId}`);
+  return response.data;
 };
 
 const cartService = {
@@ -57,6 +72,7 @@ const cartService = {
   updateCartItemQuantity,
   removeCartItem,
   syncCart,
+  saveForLater,
 };
 
 export default cartService;

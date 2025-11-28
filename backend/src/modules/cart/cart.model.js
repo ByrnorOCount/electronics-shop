@@ -117,3 +117,49 @@ export const replace = (userId, items) => {
     }
   });
 };
+
+/**
+ * Moves an item from the user's cart to their wishlist in a single transaction.
+ * @param {number} userId
+ * @param {number} cartItemId
+ * @returns {Promise<{message: string}>}
+ */
+export const saveForLater = (userId, cartItemId) => {
+  return db.transaction(async (trx) => {
+    // 1. Find the cart item and ensure it belongs to the user.
+    const cartItem = await trx("cart_items")
+      .where({ id: cartItemId, user_id: userId })
+      .first();
+
+    if (!cartItem) {
+      return {
+        success: false,
+        status: httpStatus.NOT_FOUND,
+        message: "Cart item not found.",
+      };
+    }
+
+    const { product_id: productId } = cartItem;
+
+    // 2. Check if the item is already in the wishlist.
+    const wishlistItem = await trx("wishlists")
+      .where({ user_id: userId, product_id: productId })
+      .first();
+
+    // 3. Add to wishlist if it's not already there.
+    if (!wishlistItem) {
+      await trx("wishlists").insert({
+        user_id: userId,
+        product_id: productId,
+      });
+    }
+
+    // 4. Delete the item from the cart.
+    await trx("cart_items").where({ id: cartItemId }).del();
+
+    const message = wishlistItem
+      ? "Item already in wishlist."
+      : "Item added to wishlist.";
+    return { success: true, message: `Item moved to wishlist. (${message})` };
+  });
+};

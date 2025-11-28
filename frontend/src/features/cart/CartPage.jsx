@@ -8,9 +8,11 @@ import { useCartActions } from "./useCartActions";
 export default function CartPage() {
   const { items, status: cartStatus } = useAppSelector((state) => state.cart); // Get cart items and status
   const { token } = useAppSelector((state) => state.auth);
-  // Abstracted logic for cart actions
-  const { updateQuantity: handleQuantityChange, removeItem: handleRemoveItem } =
-    useCartActions();
+  const {
+    updateQuantity: handleQuantityChange,
+    removeItem: handleRemoveItem,
+    saveForLater: handleSaveForLater,
+  } = useCartActions();
 
   // Show a loading indicator if the initial sync is happening or if we are fetching.
   if (cartStatus === "syncing" && token)
@@ -59,12 +61,25 @@ export default function CartPage() {
                       In Stock: {it.stock}
                     </p>
                   )}
-                  <button
-                    onClick={() => handleRemoveItem(it)}
-                    className="text-xs text-red-600 hover:underline mt-1"
-                  >
-                    Remove
-                  </button>
+                  <div className="flex items-center gap-x-2 mt-1">
+                    {token && (
+                      <>
+                        <button
+                          onClick={() => handleSaveForLater(it)}
+                          className="text-xs text-indigo-600 hover:underline"
+                        >
+                          Save for later
+                        </button>
+                        <span className="text-xs text-gray-300">|</span>
+                      </>
+                    )}
+                    <button
+                      onClick={() => handleRemoveItem(it)}
+                      className="text-xs text-red-600 hover:underline"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
                 <QuantityInput
                   value={it.qty}

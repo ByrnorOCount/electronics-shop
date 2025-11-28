@@ -5,6 +5,7 @@ import {
   updateCartItem,
   removeCartItem,
   syncCart,
+  saveForLater,
 } from "./cart.controller.js";
 import {
   authenticate,
@@ -35,5 +36,12 @@ router
   .route("/items/:itemId") // All operations on a specific cart item require authentication
   .put(authenticate, validate(cartValidation.updateItem), updateCartItem)
   .delete(authenticate, validate(cartValidation.removeItem), removeCartItem);
+
+router.post(
+  "/save-for-later/:itemId",
+  authenticate,
+  isAuthenticated,
+  saveForLater
+);
 
 export default router;

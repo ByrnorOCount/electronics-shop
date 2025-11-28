@@ -143,18 +143,6 @@ stripe test cards
 todo: stripe payment redirects to http://localhost:5173/checkout/success?session_id=cs_test_b13KX4CHmDBGG3bbGoM4cqDm7xzJJsky649V8ZhnRlrTWetBcMkirLtVHZ
 and http://localhost:5173/order-confirmation doesn't update
 
-[0] 2025-11-24 11:02:17:217 info: OTP email sent. Preview URL: https://ethereal.email/message/aSPYxTKY-EBaEr9jaSPYyYGyTc4D4fQ2AAAAAa1ixIRfyNku1LT6uw0NtdU
-[0] 2025-11-24 11:02:31:231 error: UNHANDLED ERROR: UNHANDLED REJECTION: TypeError: Cannot create property 'Symbol(level)' on string '
-[0] --- ORDER CONFIRMATION --- 
-[0] User: john.doe@example.com
-[0] Order ID: 11
-[0] Total: $27.50
-[0] --------------------------
-[0] '
-[0] 2025-11-24 11:02:31:231 info: Server closed due to unhandled error.
-[0] [nodemon] app crashed - waiting for file changes before starting...
-(during stripe checkout success)
-
 manage stock and multiple users using cart at once (give errors)
 momo/zalopay/giaohangnhanh
 
