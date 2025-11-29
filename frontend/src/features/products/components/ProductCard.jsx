@@ -78,16 +78,35 @@ export default function ProductCard({ product }) {
         <p className="text-gray-600 text-sm mt-1 mb-1 h-10">
           {product.description}
         </p>
-        <p className="text-lg font-semibold text-gray-800 mb-1">
+        <p className="text-lg font-semibold text-gray-800 mb-1 text-right">
           ${Number(product.price).toFixed(2)}
         </p>
-        <Button
-          onClick={handleAdd}
-          size="sm"
-          className="rounded-full bg-green-600 hover:bg-green-700 text-white"
-        >
-          Add to Cart
-        </Button>
+        <div className="flex items-center justify-end min-h-[32px] mt-2">
+          {product.stock > 0 ? (
+            <>
+              {product.stock <= 10 && (
+                <p className="text-orange-500 text-xs font-semibold mr-auto">
+                  Only {product.stock} left in stock!
+                </p>
+              )}
+              <Button
+                onClick={handleAdd}
+                size="sm"
+                className="rounded-full bg-green-600 hover:bg-green-700 text-white"
+              >
+                Add to Cart
+              </Button>
+            </>
+          ) : (
+            <Button
+              size="sm"
+              className="rounded-full bg-red-600 text-white cursor-not-allowed"
+              disabled
+            >
+              Out of Stock
+            </Button>
+          )}
+        </div>
       </div>
     </Link>
   );

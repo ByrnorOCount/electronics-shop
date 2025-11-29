@@ -8,7 +8,17 @@ import ApiError from "../../core/utils/ApiError.js";
  * @returns {Promise<Array>} list of products
  */
 export const getProducts = async (query = {}) => {
-  const { search, category, brand, featured, min_price, max_price } = query;
+  const {
+    search,
+    category,
+    brand,
+    featured,
+    hide_out_of_stock,
+    page = 1,
+    limit = 12,
+    sortBy = "created_at",
+    sortOrder = "desc",
+  } = query;
 
   let categoryId;
   if (category) {
@@ -25,12 +35,29 @@ export const getProducts = async (query = {}) => {
     category_id: categoryId,
     brand,
     is_featured: featured === "true" || featured === true,
-    min_price: min_price ? parseFloat(min_price) : undefined,
-    max_price: max_price ? parseFloat(max_price) : undefined,
+    hide_out_of_stock:
+      hide_out_of_stock === "true" || hide_out_of_stock === true,
   };
 
-  const products = await productModel.find(filters);
-  return products;
+  const cleanFilters = Object.fromEntries(
+    Object.entries(filters).filter(([, value]) => value !== undefined)
+  );
+
+  const totalProducts = await productModel.count(cleanFilters);
+  const totalPages = Math.ceil(totalProducts / limit);
+  const offset = (page - 1) * limit;
+
+  const products = await productModel.find(
+    cleanFilters,
+    { limit, offset },
+    { sortBy, sortOrder }
+  );
+
+  return {
+    products,
+    page: Number(page),
+    totalPages,
+  };
 };
 
 /**

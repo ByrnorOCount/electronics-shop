@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useApi } from "../../hooks/useApi";
 import ProductCard from "./components/ProductCard";
 import ProductFilter from "./components/ProductFilter";
+import Pagination from "../../components/ui/Pagination";
 import { productService } from "../../api";
 
 const ProductsPage = () => {
   const {
-    data: products,
+    data: productData,
     isLoading,
     isError,
     request: fetchProducts,
@@ -15,12 +16,25 @@ const ProductsPage = () => {
     productService.getProductCategories
   );
 
+  const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({
     search: "",
     category: "",
-    min_price: "",
-    max_price: "",
+    sortBy: "created_at", // Default sort
+    sortOrder: "desc", // Default order
+    hide_out_of_stock: true,
   });
+
+  useEffect(() => {
+    // Reset to page 1 whenever filters change
+    setCurrentPage(1);
+  }, [
+    filters.search,
+    filters.category,
+    filters.sortBy,
+    filters.sortOrder,
+    filters.hide_out_of_stock,
+  ]);
 
   useEffect(() => {
     // Fetch categories once on component mount
@@ -31,11 +45,14 @@ const ProductsPage = () => {
   useEffect(() => {
     // Debounce fetching to avoid too many API calls
     const handler = setTimeout(() => {
-      fetchProducts(filters);
+      fetchProducts({ ...filters, page: currentPage });
     }, 500); // Wait 500ms after user stops typing
 
     return () => clearTimeout(handler);
-  }, [filters, fetchProducts]);
+  }, [filters, currentPage, fetchProducts]);
+
+  const products = productData?.products;
+  const totalPages = productData?.totalPages;
 
   if (isLoading)
     return <div className="text-center p-8">Loading products...</div>;
@@ -61,8 +78,13 @@ const ProductsPage = () => {
           ))}
         </div>
       ) : (
-        <p>No products found.</p>
+        <p className="text-center text-gray-500 mt-8">No products found.</p>
       )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };

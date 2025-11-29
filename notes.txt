@@ -45,11 +45,13 @@ exit: type \q and enter
 postman/curl testing
 apis for everything
 
-focus on backend first to interact with api
-then 3 weeks later match frontend with backend/database
+STORE PRODUCT IMAGES IN CLOUD (IN PRODUCTION)
+Storage: AWS S3
+Frontend (React): Vercel (prob this) / Netlify
+Backend (Node.js): AWS Elastic Beanstalk (prob this) / Heroku / Render
+Database (PostgreSQL): Amazon RDS / Heroku Postgres (prob this) / Render Postgres
 
-diagrams
-use case tables
+
 
 làm thêm một bảng chức năng (các chức năng làm thì để bth còn để phát triển lên đồ án thì đánh màu)
 
@@ -61,34 +63,7 @@ tham khảo
 admin ->CRD(products,.., dashboard (thống kê theo products, order, theo lượng user user nào mua nhiều mua ít tăng hạng cho user (premium,..))
 không đề cao phải tích hợp AI
 
-log in using facebook, gg 
-
 table phân công công việc (process, requirment (tiến độ công việc, 
-
-kết nối front và back để xử lý xung đột nếu có
-
-STORE PRODUCT IMAGES IN CLOUD (IN PRODUCTION)
-Storage: AWS S3
-Frontend (React): Vercel (prob this) / Netlify
-Backend (Node.js): AWS Elastic Beanstalk (prob this) / Heroku / Render
-Database (PostgreSQL): Amazon RDS / Heroku Postgres (prob this) / Render Postgres
-
-cart:
-thêm số lượng tồn kho vào, để trừ thêm sản phẩm vào số lượng 
-
-+case mua sp a hết hàng ->sẽ có thông báo rằng nếu hết hàng sẽ đưa về trang products có gợi ý các sản phẩm tương tự còn sản phẩm,
-
-+case mua sp a hết hàng b còn hàng-> thông báo khác: thông báo rằng sản phẩm a đã hết hàng rồi, nhưng b còn hàng bạn có muốn tiếp tục thanh toán không
--> trường hợp ko thanh toán thì trở về và đưa sp a vào whilists, cũng đưa về gợi ý sản phẩm tương tự nhưng sản phẩm b vẫn còn ở trong giỏ hàng
-
-*tính năng bổ sung: api vnpay bị trục trặc (vì quá tải chẳng hạn token bị hạn chế,...) có thể sử dụng zalopay dùng qr code
-
-snackbar/toast notifications for user actions (e.g., "Product added to cart", "Profile updated successfully", etc.)
-profile page should have settings like default shipping address, payment methods, password change, etc.
-
-zalo/github/twitter login
-
-kill vnpay, use momo instead
 
 # openapi.yaml validation
 npm install -g @redocly/cli
@@ -102,12 +77,6 @@ feature has slice file: service file returns response.data
 feature doesn't: service file returns response.data.data
 modules should follow _template module
 
-Filtering options to the "Your Tickets" section on the support page (e.g., filter by status: open, closed)
-The support tickets on the support page are static. Make them clickable to view a detailed page for each ticket
-
-`import { xService } from "../../api";` must be used consistently no matter if the service file is in the exact same folder or not. That means no `import xService from "./xService";`
-
-
 frontend/src/hooks/useApi vs frontend/src/store/hooks:
 
 Server Cache State: This is data that actually lives on your backend server (e.g., products, orders, support tickets). Your frontend is just keeping a temporary, cached copy of it. This state has properties like loading, error, success, and can become "stale."
@@ -119,6 +88,13 @@ Redux is still the best tool for this. The classic examples in our app are:
 auth: The user's authentication status and profile info are needed everywhere (header, protected routes, etc.).
 cart: The cart contents and total need to be accessible from the product page, the header, and the cart page itself.
 Using Redux Thunks for every API call, as was done initially, mixes these concerns. It clutters the global Redux store with temporary server state that only one component might care about, leading to a lot of boilerplate (createAsyncThunk, extraReducers, etc.).
+
+snackbar/toast notifications for user actions (e.g., "Product added to cart", "Profile updated successfully", etc.)
+profile page should have settings like default shipping address, payment methods, password change, etc.
+
+`import { xService } from "../../api";` must be used consistently no matter if the service file is in the exact same folder or not. That means no `import xService from "./xService";`
+
+
 
 
 # Styling Conventions & Preferences
@@ -135,13 +111,34 @@ Using Redux Thunks for every API call, as was done initially, mixes these concer
   - **`SomePage.jsx`**:
     `<div className="max-w-6xl mx-auto px-4 py-8">...</div>`
 
-"save for later" functionality for cart items
-
 https://docs.stripe.com/testing#cards
 stripe test cards
 
+[STRIPE TEST]
+4242424242424242 visa
+4000056655665556 visa debit
+
 todo: stripe payment redirects to http://localhost:5173/checkout/success?session_id=cs_test_b13KX4CHmDBGG3bbGoM4cqDm7xzJJsky649V8ZhnRlrTWetBcMkirLtVHZ
 and http://localhost:5173/order-confirmation doesn't update
+
+
+blank card on home should be a bunch of rotating stock images
+category id in staff modal -> select category name instead
+future: add filtering on a bunch of things beside products, add more logging to admin logs
+
+
+
+GVHD:
++case mua sp a hết hàng ->sẽ có thông báo rằng nếu hết hàng sẽ đưa về trang products có gợi ý các sản phẩm tương tự còn sản phẩm,
+
++case mua sp a hết hàng b còn hàng-> thông báo khác: thông báo rằng sản phẩm a đã hết hàng rồi, nhưng b còn hàng bạn có muốn tiếp tục thanh toán không
+-> trường hợp ko thanh toán thì trở về và đưa sp a vào whilists, cũng đưa về gợi ý sản phẩm tương tự nhưng sản phẩm b vẫn còn ở trong giỏ hàng
+
+*tính năng bổ sung: api vnpay bị trục trặc (vì quá tải chẳng hạn token bị hạn chế,...) có thể sử dụng zalopay dùng qr code
+
+zalo/github/twitter login
+
+kill vnpay, use momo instead
 
 manage stock and multiple users using cart at once (give errors)
 momo/zalopay/giaohangnhanh
@@ -169,8 +166,3 @@ mở đầu
 chụp mô tả giao diện (phần chức năng)
 sơ đồ csdl
 class diagram
-
-
-blank card on home should be a bunch of rotating stock images
-category id in staff modal -> select category name instead
-future: add filtering on a bunch of things beside products, add more logging to admin logs

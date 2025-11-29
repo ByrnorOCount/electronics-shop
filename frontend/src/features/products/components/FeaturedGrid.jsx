@@ -40,9 +40,11 @@ export default function FeaturedGrid() {
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
-      {products?.map((p) => (
-        <ProductCard key={p.id} product={p} />
-      ))}
+      {products
+        ?.filter((p) => p.stock > 0)
+        .map((p) => (
+          <ProductCard key={p.id} product={p} />
+        ))}
     </div>
   );
 }

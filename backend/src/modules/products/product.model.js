@@ -1,8 +1,7 @@
 import db from "../../config/db.js";
 
 /**
- * Fetches a list of products from the database.
- * Can be filtered by various criteria.
+ * Builds a query for products with optional filters.
  * @param {object} filters - The filter criteria.
  * @param {string} [filters.search] - Search term for product name.
  * @param {string} [filters.category] - Filter by category.
@@ -10,9 +9,10 @@ import db from "../../config/db.js";
  * @param {boolean} [filters.is_featured] - Filter for featured products.
  * @param {number} [filters.min_price] - Minimum price.
  * @param {number} [filters.max_price] - Maximum price.
- * @returns {Promise<Array>} A promise that resolves to an array of products.
+ * @param {boolean} [filters.hide_out_of_stock] - If true, only returns products with stock > 0.
+ * @returns {import("knex").Knex.QueryBuilder} A Knex query builder instance.
  */
-export const find = async (filters = {}) => {
+const buildQuery = (filters = {}) => {
   const query = db("products").select(
     "products.*",
     "categories.name as category_name"
@@ -20,7 +20,7 @@ export const find = async (filters = {}) => {
 
   query.leftJoin("categories", "products.category_id", "categories.id");
 
-  if (filters.search) {
+  if (filters.search && filters.search.trim() !== "") {
     query.where("name", "ilike", `%${filters.search}%`);
   }
 
@@ -44,7 +44,55 @@ export const find = async (filters = {}) => {
     query.where("price", "<=", filters.max_price);
   }
 
+  if (filters.hide_out_of_stock) {
+    query.where("stock", ">", 0);
+  }
+
   return query;
+};
+
+/**
+ * Fetches a list of products from the database.
+ * Can be filtered by various criteria and paginated.
+ * @param {object} filters - The filter criteria.
+ * @param {object} pagination - Pagination options.
+ * @param {number} pagination.limit - Number of items per page.
+ * @param {number} pagination.offset - Number of items to skip.
+ * @param {object} sort - Sorting options.
+ * @param {string} sort.sortBy - The column to sort by.
+ * @param {string} sort.sortOrder - The sort order ('asc' or 'desc').
+ * @returns {Promise<Array>} A promise that resolves to an array of products.
+ */
+export const find = async (filters = {}, pagination = {}, sort = {}) => {
+  const query = buildQuery(filters);
+
+  if (pagination.limit) {
+    query.limit(pagination.limit);
+  }
+  if (pagination.offset) {
+    query.offset(pagination.offset);
+  }
+
+  const { sortBy = "created_at", sortOrder = "desc" } = sort;
+  // Ensure we are referencing the table for clarity, especially for 'created_at'
+  const sortColumn = sortBy === "created_at" ? "products.created_at" : sortBy;
+
+  return query.orderBy(sortColumn, sortOrder);
+};
+
+/**
+ * Counts the total number of products matching the filters.
+ * @param {object} filters - The filter criteria.
+ * @returns {Promise<number>} The total count of matching products.
+ */
+export const count = async (filters = {}) => {
+  // Clone the query, remove existing select columns, and then apply the count.
+  const query = buildQuery(filters);
+  const result = await query
+    .clearSelect()
+    .count("products.id as total")
+    .first();
+  return result ? parseInt(result.total, 10) : 0;
 };
 
 /**

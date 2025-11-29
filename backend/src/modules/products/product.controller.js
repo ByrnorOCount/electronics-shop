@@ -9,13 +9,13 @@ import ApiResponse from "../../core/utils/ApiResponse.js";
  */
 export const getProducts = async (req, res, next) => {
   try {
-    const products = await productService.getProducts(req.query);
+    const result = await productService.getProducts(req.query);
     res
       .status(httpStatus.OK)
       .json(
         new ApiResponse(
           httpStatus.OK,
-          products,
+          result,
           "Products retrieved successfully."
         )
       );
