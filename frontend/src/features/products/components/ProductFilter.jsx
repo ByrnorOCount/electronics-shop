@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import Icon from "../../../components/ui/Icon";
+import Spinner from "../../../components/ui/Spinner";
 
-const ProductFilter = ({ filters, onFilterChange, categories = [] }) => {
+const ProductFilter = ({
+  filters,
+  onFilterChange,
+  categories = [],
+  searchTerm,
+  isSearching,
+}) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const handleInputChange = (e) => {
@@ -33,12 +40,12 @@ const ProductFilter = ({ filters, onFilterChange, categories = [] }) => {
 
   const handleReset = () => {
     setActiveDropdown(null);
+    // Pass a minimal object. The parent component knows the defaults.
     onFilterChange({
       search: "",
-      category: "",
-      sortBy: "created_at",
-      sortOrder: "desc",
-      hide_out_of_stock: true,
+      ...Object.fromEntries(
+        Object.keys(filters).map((key) => [key, undefined])
+      ),
     });
   };
 
@@ -46,21 +53,24 @@ const ProductFilter = ({ filters, onFilterChange, categories = [] }) => {
     "w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 appearance-none";
 
   return (
-    <div
-      className="bg-white p-4 rounded-lg shadow-sm mb-6"
-      // Prevent border collapse issues in grid layout
-      style={{ borderCollapse: "separate", borderSpacing: 0 }}
-    >
+    <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Search Input */}
-        <input
-          type="text"
-          name="search"
-          value={filters.search}
-          onChange={handleInputChange}
-          placeholder="Search by name..."
-          className="lg:col-span-2 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-        />
+        <div className="relative lg:col-span-2">
+          <input
+            type="text"
+            name="search"
+            value={searchTerm}
+            onChange={handleInputChange}
+            placeholder="Search by name..."
+            className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+          {isSearching && (
+            <div className="absolute top-1/2 right-3 -translate-y-1/2">
+              <Spinner size={5} />
+            </div>
+          )}
+        </div>
 
         {/* Category Select */}
         <div className="relative">

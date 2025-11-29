@@ -23,10 +23,9 @@ export const getProducts = async (query = {}) => {
   let categoryId;
   if (category) {
     const categoryRecord = await productModel.findCategoryByName(category);
-    if (!categoryRecord) {
-      // return empty array when invalid category name provided
-      return [];
-    }
+    // If a category name is provided but not found, return no results.
+    // Otherwise, use its ID for filtering.
+    if (!categoryRecord) return { products: [], page: 1, totalPages: 0 };
     categoryId = categoryRecord.id;
   }
 

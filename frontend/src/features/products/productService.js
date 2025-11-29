@@ -13,7 +13,11 @@ const getProducts = async (filters) => {
     )
   );
   const response = await api.get("/products", { params: cleanFilters });
-  return response.data.data;
+  // The backend returns a pagination object: { products: [], page, totalPages }
+  // The useApi hook in components like ProductsPage expects this full object.
+  // However, for simple lists like featured or similar products, we might just want the array.
+  // We return the whole data object to be consistent. The caller can destructure what it needs.
+  return response.data.data; // This will be { products: [], ... }
 };
 
 /**
@@ -35,7 +39,8 @@ const getProductById = async (id) => {
 const getFeaturedProducts = async () => {
   // The backend controller `getProducts` expects a query parameter `?featured=true`
   const response = await api.get("/products", { params: { featured: true } });
-  return response.data.data;
+  // The API returns a pagination object, so we extract the products array from it.
+  return response.data.data.products;
 };
 
 /**

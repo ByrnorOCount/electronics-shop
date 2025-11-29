@@ -21,7 +21,7 @@ const buildQuery = (filters = {}) => {
   query.leftJoin("categories", "products.category_id", "categories.id");
 
   if (filters.search && filters.search.trim() !== "") {
-    query.where("name", "ilike", `%${filters.search}%`);
+    query.where("products.name", "ilike", `%${filters.search}%`);
   }
 
   if (filters.category_id) {

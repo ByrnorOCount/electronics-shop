@@ -17,7 +17,7 @@ const ProductDetailPage = () => {
     request: fetchProduct,
   } = useApi(productService.getProductById);
   const {
-    data: similarProducts,
+    data: similarProductsData,
     isLoading: isLoadingSimilar,
     request: fetchSimilarProducts,
   } = useApi(productService.getProducts);
@@ -28,12 +28,17 @@ const ProductDetailPage = () => {
     isLoading: isWishlistLoading,
   } = useWishlistActions();
 
+  const similarProducts = similarProductsData?.products;
+
   useEffect(() => {
     if (id) {
       fetchProduct(id)
         .then((p) => {
           if (p && p.category_name) {
-            fetchSimilarProducts({ category: p.category_name, limit: 4 });
+            // Fetch 5 products to ensure we have 4 recommendations
+            // even if the current product is in the result set.
+            const limit = 5;
+            fetchSimilarProducts({ category: p.category_name, limit });
           }
         })
         .catch(() => {

@@ -164,6 +164,7 @@
 |   |   |       |-- Input.jsx
 |   |   |       |-- ItemList.jsx
 |   |   |       |-- Modal.jsx
+|   |   |       |-- Pagination.jsx
 |   |   |       |-- QuantityInput.jsx
 |   |   |       `-- Spinner.jsx
 |   |   |-- features
@@ -241,7 +242,8 @@
 |   |   |       |-- wishlistService.js
 |   |   |       `-- wishlistSlice.js
 |   |   |-- hooks
-|   |   |   `-- useApi.js
+|   |   |   |-- useApi.js
+|   |   |   `-- useDebounce.js
 |   |   |-- main.jsx
 |   |   |-- pages
 |   |   |   |-- AboutPage.jsx
@@ -268,4 +270,4 @@
 |-- package.json
 `-- tree.txt
 
-59 directories, 209 files
+59 directories, 211 files
