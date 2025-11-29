@@ -51,7 +51,7 @@ CREATE TABLE "products" (
   "id" SERIAL PRIMARY KEY,
   "name" VARCHAR(255) NOT NULL,
   "description" TEXT,
-  "price" DECIMAL(10, 2) NOT NULL, 
+  "price" DECIMAL(10, 2) NOT NULL, -- USD is the default currency
   "stock" INTEGER NOT NULL DEFAULT 0,
   "image_url" VARCHAR(255),
   "category_id" INTEGER REFERENCES "categories"("id") ON DELETE SET NULL,

@@ -10,6 +10,7 @@ import supportRoutes from "./modules/support/support.routes.js";
 import notificationRoutes from "./modules/notifications/notification.routes.js";
 import staffRoutes from "./modules/staff/staff.routes.js";
 import adminRoutes from "./modules/admin/admin.routes.js";
+import shippingRoutes from "./modules/shipping/shipping.routes.js";
 import env from "./config/env.js";
 
 const apiRouter = Router();
@@ -41,5 +42,6 @@ apiRouter.use("/support", supportRoutes);
 apiRouter.use("/notifications", notificationRoutes);
 apiRouter.use("/staff", staffRoutes);
 apiRouter.use("/admin", adminRoutes);
+apiRouter.use("/shipping", shippingRoutes);
 
 export default apiRouter;

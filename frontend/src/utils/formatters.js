@@ -26,6 +26,19 @@ export const formatCurrency = (amount, currency = "USD") => {
 };
 
 /**
+ * Formats a number as a currency string in VND.
+ * @param {number} amount - The numerical amount to format.
+ * @returns {string} The formatted currency string.
+ */
+export const formatVND = (amount) => {
+  if (typeof amount !== "number" || amount === null || isNaN(amount)) return "";
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(amount);
+};
+
+/**
  * Formats a date string or Date object into a short format (e.g., MM/DD).
  * @param {string | Date} date - The date to format.
  * @returns {string} The formatted date string.
