@@ -48,6 +48,7 @@ const CartSyncManager = () => {
         price: item.price,
         qty: item.quantity,
         img: item.image_url,
+        stock: item.stock,
       }));
       dispatch(setCart(normalizedMergedCart));
       dispatch(setCartSyncStatus("synced")); // Use a final 'synced' status

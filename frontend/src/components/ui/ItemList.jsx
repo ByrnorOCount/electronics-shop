@@ -23,7 +23,7 @@ export default function ItemList({
           />
           <div className="flex-1 text-sm">
             <p className="font-medium">{item.name}</p>
-            <p className="text-gray-500">Qty: {item.qty}</p>
+            <p className="text-gray-500">Quantity: {item.qty}</p>
             {showStock && item.stock !== undefined && (
               <p className="text-xs text-gray-500">In Stock: {item.stock}</p>
             )}

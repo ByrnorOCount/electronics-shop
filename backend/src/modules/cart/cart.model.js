@@ -17,7 +17,8 @@ export const findByUserId = (userId, trx) => {
       "products.name",
       "products.price",
       "products.image_url",
-      "cart_items.quantity"
+      "cart_items.quantity",
+      "products.stock"
     )
     .orderBy("cart_items.id", "asc");
 };
@@ -37,7 +38,8 @@ export const findById = (itemId) => {
       "products.name",
       "products.price",
       "products.image_url",
-      "cart_items.quantity"
+      "cart_items.quantity",
+      "products.stock"
     )
     .first();
 };
