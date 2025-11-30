@@ -4,6 +4,7 @@
 -- Last updated after: 20251114121700_add_password_changed_at_to_users.js
 
 -- Drop tables in reverse order of creation to handle foreign key constraints
+DROP TABLE IF EXISTS "newsletter_subscriptions";
 DROP TABLE IF EXISTS "support_ticket_replies";
 DROP TABLE IF EXISTS "support_tickets";
 DROP TABLE IF EXISTS "notifications";
@@ -23,6 +24,15 @@ CREATE TABLE "categories" (
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Table: newsletter_subscriptions
+CREATE TABLE "newsletter_subscriptions" (
+  "id" SERIAL PRIMARY KEY,
+  "email" VARCHAR(255) NOT NULL UNIQUE,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 
 -- Table: users
 CREATE TABLE "users" (
