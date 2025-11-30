@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import Modal from "../../../components/ui/Modal";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
+import Select from "../../../components/ui/Select";
 import { useApi } from "../../../hooks/useApi";
-import { staffService } from "../../../api";
+import { staffService, productService } from "../../../api";
 import toast from "react-hot-toast";
 import logger from "../../../utils/logger";
 
@@ -31,12 +32,20 @@ const ProductFormModal = ({ isOpen, onClose, product, onSave }) => {
     staffService.uploadProductImage
   );
 
+  const { data: categories, request: fetchCategories } = useApi(
+    productService.getProductCategories,
+    { defaultData: [] }
+  );
+
   useEffect(() => {
     if (!isOpen) return; // Don't log when closing
 
     logger.info(
       `ProductFormModal opened in ${isEditing ? "edit" : "create"} mode.`
     );
+
+    // Fetch categories whenever the modal is opened
+    fetchCategories();
 
     if (isEditing && product) {
       setFormData({
@@ -62,7 +71,7 @@ const ProductFormModal = ({ isOpen, onClose, product, onSave }) => {
       });
       logger.info("Form reset for new product.");
     }
-  }, [product, isEditing, isOpen]);
+  }, [product, isEditing, isOpen, fetchCategories]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -183,22 +192,21 @@ const ProductFormModal = ({ isOpen, onClose, product, onSave }) => {
           />
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Input
+          <Select
             name="category_id"
-            label="Category ID"
-            type="number"
+            label="Category"
             value={formData.category_id}
             onChange={handleChange}
+            placeholder="Select a category"
+            options={categories.map((c) => ({ value: c.id, label: c.name }))}
           />
-          <div>
-            <Input
-              name="image_url"
-              label="Image URL"
-              type="text"
-              value={formData.image_url}
-              onChange={handleChange}
-            />
-          </div>
+          <Input
+            name="image_url"
+            label="Image URL"
+            type="text"
+            value={formData.image_url}
+            onChange={handleChange}
+          />
         </div>
         <div className="flex justify-between items-center pt-1">
           {/* Featured Product Checkbox */}

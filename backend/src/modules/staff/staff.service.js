@@ -97,7 +97,7 @@ export const deleteProduct = async (productId) => {
  */
 export const getAllProducts = async (options) => {
   // Future: Add logic to handle pagination based on options.limit and options.page
-  return staffModel.findAllProducts(options);
+  return productModel.find(options);
 };
 
 /**

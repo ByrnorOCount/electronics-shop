@@ -215,6 +215,13 @@ const icons = {
       d="M19.5 8.25l-7.5 7.5-7.5-7.5"
     />
   ),
+  check: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M4.5 12.75l6 6 9-13.5"
+    />
+  ),
 };
 
 /**
