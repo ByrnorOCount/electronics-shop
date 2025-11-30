@@ -31,8 +31,12 @@ export default function Hero() {
             </Link>
           </div>
         </div>
-        <div className="flex-1 w-full h-56 bg-white rounded-xl shadow-md">
-          {/* Replace with image later */}
+        <div className="flex-1">
+          <img
+            src="/hero.jpg"
+            alt="A modern desk setup with various electronic gadgets including a laptop, tablet, and speakers."
+            className="w-full h-56 md:h-64 object-cover rounded-xl shadow-md"
+          />
         </div>
       </div>
     </section>

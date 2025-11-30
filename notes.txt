@@ -173,6 +173,3 @@ mở đầu
 chụp mô tả giao diện (phần chức năng)
 sơ đồ csdl
 class diagram
-
-
-
