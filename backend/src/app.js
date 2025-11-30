@@ -31,11 +31,21 @@ app.use(cookieParser());
 // Initialize Passport and use session
 app.use(passport.initialize());
 
+// This custom middleware conditionally applies the JSON body parser.
+// It skips the Stripe webhook route, which needs a raw body for signature verification.
+app.use("/api", (req, res, next) => {
+  if (req.originalUrl === "/api/orders/webhook") {
+    return next(); // Skip JSON parsing for the webhook
+  }
+  // For all other /api routes, parse the JSON body.
+  express.json()(req, res, next);
+});
+
 // --- API Routes ---
-// Apply CSRF protection and a general JSON body parser before the main router.
-// Note: The Stripe webhook route will use a different parser and must be defined
-// before this general parser is used inside `apiRouter`.
+// Apply CSRF protection after the body has been parsed (for most routes).
 app.use("/api", csrfProtection);
+
+// Use the main API router.
 app.use("/api", apiRouter);
 
 // Root (API health check)

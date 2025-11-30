@@ -32,7 +32,7 @@ router.get("/dashboard", getDashboardMetrics);
 router.route("/users").get(validate(adminValidation.getAllUsers), getAllUsers);
 router
   .route("/users/:userId")
-  .put(express.json(), validate(adminValidation.updateUserRole), updateUserRole)
+  .put(validate(adminValidation.updateUserRole), updateUserRole)
   .delete(validate(adminValidation.deleteUser), deleteUser);
 
 // Analytics Routes
@@ -48,14 +48,10 @@ router.get("/logs", validate(adminValidation.getSystemLogs), getSystemLogs); // 
 router
   .route("/categories")
   .get(getAllCategories)
-  .post(
-    express.json(),
-    validate(adminValidation.createCategory),
-    createCategory
-  );
+  .post(validate(adminValidation.createCategory), createCategory);
 router
   .route("/categories/:categoryId")
-  .put(express.json(), validate(adminValidation.updateCategory), updateCategory)
+  .put(validate(adminValidation.updateCategory), updateCategory)
   .delete(validate(adminValidation.deleteCategory), deleteCategory);
 
 export default router;

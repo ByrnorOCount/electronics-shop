@@ -22,7 +22,6 @@ router
   .route("/")
   .get(authenticate, isAuthenticated, getCart)
   .post(
-    express.json(),
     authenticate,
     isAuthenticated,
     validate(cartValidation.addItem),
@@ -32,7 +31,6 @@ router
 // This route requires a logged-in user to merge the guest cart.
 router.post(
   "/sync",
-  express.json(),
   authenticate,
   isAuthenticated,
   validate(cartValidation.syncCart),
@@ -42,7 +40,6 @@ router.post(
 router
   .route("/items/:itemId") // All operations on a specific cart item require authentication
   .put(
-    express.json(),
     authenticate,
     isAuthenticated,
     validate(cartValidation.updateItem),

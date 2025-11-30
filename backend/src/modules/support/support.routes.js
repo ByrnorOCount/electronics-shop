@@ -16,7 +16,6 @@ router
   .route("/")
   // A user submits a ticket
   .post(
-    express.json(),
     authenticate,
     isAuthenticated,
     validate(supportValidation.submitTicket),
@@ -37,7 +36,6 @@ router
 router
   .route("/:ticketId/reply")
   .post(
-    express.json(),
     authenticate,
     isAuthenticated,
     validate(supportValidation.addTicketReply),
@@ -47,7 +45,6 @@ router
 router
   .route("/:ticketId/status")
   .put(
-    express.json(),
     authenticate,
     isAuthenticated,
     validate(supportValidation.updateTicketStatus),

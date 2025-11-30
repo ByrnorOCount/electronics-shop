@@ -59,7 +59,8 @@
 |       |-- core
 |       |   |-- integrations
 |       |   |   |-- email.service.js
-|       |   |   `-- payment.service.js
+|       |   |   |-- payment.service.js
+|       |   |   `-- shipping.service.js
 |       |   |-- middlewares
 |       |   |   |-- auth.middleware.js
 |       |   |   |-- csrf.middleware.js
@@ -68,6 +69,7 @@
 |       |   `-- utils
 |       |       |-- ApiError.js
 |       |       |-- ApiResponse.js
+|       |       |-- currency.js
 |       |       `-- generateToken.js
 |       |-- modules
 |       |   |-- _template
@@ -112,6 +114,11 @@
 |       |   |   |-- product.routes.js
 |       |   |   |-- product.service.js
 |       |   |   `-- product.validation.js
+|       |   |-- shipping
+|       |   |   |-- shipping.controller.js
+|       |   |   |-- shipping.routes.js
+|       |   |   |-- shipping.service.js
+|       |   |   `-- shipping.validation.js
 |       |   |-- staff
 |       |   |   |-- staff.controller.js
 |       |   |   |-- staff.model.js
@@ -195,6 +202,7 @@
 |   |   |   |   `-- useCartActions.js
 |   |   |   |-- checkout-orders
 |   |   |   |   |-- CheckoutPage.jsx
+|   |   |   |   |-- CheckoutSuccessPage.jsx
 |   |   |   |   |-- OrderConfirmationPage.jsx
 |   |   |   |   |-- OrderHistoryPage.jsx
 |   |   |   |   |-- components
@@ -270,4 +278,4 @@
 |-- package.json
 `-- tree.txt
 
-59 directories, 211 files
+60 directories, 218 files

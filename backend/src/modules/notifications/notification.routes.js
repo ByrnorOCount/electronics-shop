@@ -22,14 +22,10 @@ router
   .get(validate(notificationValidation.getNotifications), getNotifications);
 
 router.get("/unread-count", getUnreadCount);
-router.post("/mark-all-read", express.json(), markAllNotificationsAsRead);
+router.post("/mark-all-read", markAllNotificationsAsRead);
 
 router
   .route("/:id")
-  .put(
-    express.json(),
-    validate(notificationValidation.markAsRead),
-    markNotificationAsRead
-  );
+  .put(validate(notificationValidation.markAsRead), markNotificationAsRead);
 
 export default router;

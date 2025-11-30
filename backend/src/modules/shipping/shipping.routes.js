@@ -14,7 +14,6 @@ router.use(authenticate, isAuthenticated);
 
 router.post(
   "/calculate-fee",
-  express.json(),
   validate(shippingValidation.calculateFee),
   calculateFee
 );
