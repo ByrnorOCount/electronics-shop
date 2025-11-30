@@ -43,7 +43,7 @@ const ProductFormModal = ({ isOpen, onClose, product, onSave }) => {
         name: product.name || "",
         description: product.description || "",
         price: product.price || "",
-        stock: product.stock || "",
+        stock: product.stock ?? "",
         category_id: product.category_id || "",
         image_url: product.image_url || "",
         is_featured: product.is_featured || false,
