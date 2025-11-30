@@ -26,7 +26,7 @@ export default function OrderConfirmationPage() {
     if (isError) {
       toast.error("Could not retrieve order details.");
     }
-  }, [initialOrder, fetchOrders, isError]);
+  }, [initialOrder, fetchOrders, isError, location.key]);
 
   // Determine which order to display: the one from state, or the most recent from the fetch.
   const order = initialOrder || (orders && orders[0]);

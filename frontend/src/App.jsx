@@ -19,6 +19,7 @@ import CartPage from "./features/cart/CartPage";
 import CartSyncManager from "./features/cart/components/CartSyncManager";
 import WishlistPage from "./features/wishlist/WishlistPage";
 import CheckoutPage from "./features/checkout-orders/CheckoutPage";
+import CheckoutSuccessPage from "./features/checkout-orders/CheckoutSuccessPage";
 import OrderConfirmationPage from "./features/checkout-orders/OrderConfirmationPage";
 import OrderHistoryPage from "./features/checkout-orders/OrderHistoryPage";
 import SettingsPage from "./features/user/SettingsPage";
@@ -83,6 +84,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <CheckoutPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/checkout/success"
+              element={
+                <ProtectedRoute>
+                  <CheckoutSuccessPage />
                 </ProtectedRoute>
               }
             />

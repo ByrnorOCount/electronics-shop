@@ -29,9 +29,10 @@ const createCodOrder = async (shippingAddress, otp) => {
  * @param {'stripe'} paymentMethod The selected online payment method (e.g., 'stripe').
  * @returns {Promise<{url: string}>} A promise that resolves to an object containing the payment URL.
  */
-const createPaymentSession = async (paymentMethod) => {
+const createPaymentSession = async (paymentMethod, shippingAddress) => {
   const response = await api.post("/orders/create-payment-session", {
     paymentMethod,
+    shippingAddress,
   });
   return response.data.data;
 };
@@ -45,11 +46,23 @@ const getOrderHistory = async () => {
   return response.data.data;
 };
 
+/**
+ * Fetches a single order by the Stripe session ID.
+ * This is used on the success page to find the order created by the webhook.
+ * @param {string} sessionId The Stripe checkout session ID.
+ * @returns {Promise<object|null>} A promise that resolves to an order object or null if not found.
+ */
+const getOrderBySessionId = async (sessionId) => {
+  const response = await api.get(`/orders/by-session/${sessionId}`);
+  return response.data.data;
+};
+
 const orderService = {
   generateOtp,
   createCodOrder,
   createPaymentSession,
   getOrderHistory,
+  getOrderBySessionId,
 };
 
 export default orderService;

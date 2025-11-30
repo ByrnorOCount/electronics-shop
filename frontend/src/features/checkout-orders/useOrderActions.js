@@ -57,14 +57,14 @@ export const useOrderActions = () => {
     setError(null);
     try {
       if (paymentMethod === "cod") {
-        const { order } = await orderService.createCodOrder(
-          shippingAddress,
-          otp
-        );
+        const order = await orderService.createCodOrder(shippingAddress, otp);
         dispatch(clearCart());
-        navigate("/order-confirmation", { state: { order } });
+        navigate("/order-confirmation", { state: { order }, replace: true });
       } else {
-        const { url } = await orderService.createPaymentSession(paymentMethod);
+        const { url } = await orderService.createPaymentSession(
+          paymentMethod,
+          shippingAddress
+        );
         window.location.href = url;
       }
     } catch (err) {
