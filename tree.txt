@@ -3,7 +3,6 @@
 |-- backend
 |   |-- database
 |   |   |-- docs
-|   |   |   |-- database_schema.plantuml
 |   |   |   `-- schema.sql
 |   |   |-- knexfile.js
 |   |   |-- migrations
@@ -18,7 +17,8 @@
 |   |   |   |-- 20251031111400_add_timestamps_to_cart_items.js
 |   |   |   |-- 20251107111559_add_link_to_notifications.js
 |   |   |   |-- 20251111203527_add_provider_info_to_users.js
-|   |   |   `-- 20251114121700_add_password_changed_at_to_users.js
+|   |   |   |-- 20251114121700_add_password_changed_at_to_users.js
+|   |   |   `-- 20251130102833_create_newsletter_subscriptions_table.js
 |   |   `-- seeders
 |   |       |-- 00_cleanup.js
 |   |       |-- 01_initial_categories.js
@@ -96,6 +96,12 @@
 |       |   |   |-- cart.routes.js
 |       |   |   |-- cart.service.js
 |       |   |   `-- cart.validation.js
+|       |   |-- newsletter
+|       |   |   |-- newsletter.controller.js
+|       |   |   |-- newsletter.model.js
+|       |   |   |-- newsletter.routes.js
+|       |   |   |-- newsletter.service.js
+|       |   |   `-- newsletter.validation.js
 |       |   |-- notifications
 |       |   |   |-- notification.controller.js
 |       |   |   |-- notification.model.js
@@ -173,6 +179,7 @@
 |   |   |       |-- Modal.jsx
 |   |   |       |-- Pagination.jsx
 |   |   |       |-- QuantityInput.jsx
+|   |   |       |-- Select.jsx
 |   |   |       `-- Spinner.jsx
 |   |   |-- features
 |   |   |   |-- admin
@@ -209,6 +216,9 @@
 |   |   |   |   |   `-- OrderDetails.jsx
 |   |   |   |   |-- orderService.js
 |   |   |   |   `-- useOrderActions.js
+|   |   |   |-- newsletter
+|   |   |   |   |-- Newsletter.jsx
+|   |   |   |   `-- newsletterService.js
 |   |   |   |-- notifications
 |   |   |   |   |-- NotificationsPage.jsx
 |   |   |   |   |-- components
@@ -261,8 +271,7 @@
 |   |   |   |-- WarrantyPage.jsx
 |   |   |   `-- home
 |   |   |       |-- Hero.jsx
-|   |   |       |-- HomePage.jsx
-|   |   |       `-- Newsletter.jsx
+|   |   |       `-- HomePage.jsx
 |   |   |-- store
 |   |   |   |-- hooks.js
 |   |   |   `-- index.js
@@ -278,4 +287,4 @@
 |-- package.json
 `-- tree.txt
 
-60 directories, 218 files
+62 directories, 225 files
