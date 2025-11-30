@@ -64,7 +64,11 @@ router.use(authenticate, isAuthenticated, isStaff);
 
 router
   .route("/products")
-  .post(validate(staffValidation.createProduct), staffController.createProduct)
+  .post(
+    express.json(),
+    validate(staffValidation.createProduct),
+    staffController.createProduct
+  )
   .get(
     validate(staffValidation.getAllProducts),
     staffController.getAllProducts
@@ -72,7 +76,11 @@ router
 
 router
   .route("/products/:id")
-  .put(validate(staffValidation.updateProduct), staffController.updateProduct)
+  .put(
+    express.json(),
+    validate(staffValidation.updateProduct),
+    staffController.updateProduct
+  )
   .delete(
     validate(staffValidation.deleteProduct),
     staffController.deleteProduct
@@ -92,6 +100,7 @@ router
 router
   .route("/orders/:id")
   .put(
+    express.json(),
     validate(staffValidation.updateOrderStatus),
     staffController.updateOrderStatus
   );
@@ -105,11 +114,16 @@ router
 
 router
   .route("/support-tickets/:ticketId/reply")
-  .post(validate(staffValidation.replyToTicket), staffController.replyToTicket);
+  .post(
+    express.json(),
+    validate(staffValidation.replyToTicket),
+    staffController.replyToTicket
+  );
 
 router
   .route("/support-tickets/:ticketId/status")
   .put(
+    express.json(),
     validate(staffValidation.updateTicketStatus),
     staffController.updateTicketStatus
   );

@@ -18,6 +18,7 @@ router
     wishlistController.getWishlistItems
   )
   .post(
+    express.json(),
     validate(wishlistValidation.addToWishlist),
     wishlistController.addWishlistItem
   );

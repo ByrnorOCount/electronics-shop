@@ -136,13 +136,10 @@ export const removeCartItem = async (userId, itemId) => {
  */
 export const syncUserCart = async (userId, body) => {
   logger.info(`Starting cart sync for user ID: ${userId}`);
-  // Using an object for the second argument allows for structured logging.
-  logger.debug("Received raw body for sync:", { body });
 
   // The validation allows the body to be an array or an object { items: [...] }.
   // We normalize it to just the array of items.
   const itemsToSync = Array.isArray(body) ? body : body.items;
-  logger.debug("Normalized items to sync:", { itemsToSync });
 
   if (!itemsToSync) {
     logger.error(

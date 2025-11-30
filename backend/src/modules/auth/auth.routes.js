@@ -22,11 +22,16 @@ import env from "../../config/env.js";
 const router = express.Router();
 
 // --- Local Authentication ---
-router.post("/register", validate(authValidation.register), register);
-router.post("/login", validate(authValidation.login), login);
+router.post(
+  "/register",
+  express.json(),
+  validate(authValidation.register),
+  register
+);
+router.post("/login", express.json(), validate(authValidation.login), login);
 
 // --- Logout ---
-router.post("/logout", logout);
+router.post("/logout", express.json(), logout);
 
 // --- Get Current User ---
 // This route is crucial for the frontend to verify the user's session on page load,

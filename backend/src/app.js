@@ -24,7 +24,6 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
 
 // Initialize cookie-parser without a secret. The Double-Submit pattern does not require signed cookies.
 app.use(cookieParser());
@@ -33,7 +32,9 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 // --- API Routes ---
-// Apply CSRF protection before the main router.
+// Apply CSRF protection and a general JSON body parser before the main router.
+// Note: The Stripe webhook route will use a different parser and must be defined
+// before this general parser is used inside `apiRouter`.
 app.use("/api", csrfProtection);
 app.use("/api", apiRouter);
 

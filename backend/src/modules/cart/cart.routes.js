@@ -20,12 +20,19 @@ const router = express.Router();
 // Only the sync endpoint requires authentication (to merge guest cart into user cart).
 router
   .route("/")
-  .get(authenticate, getCart)
-  .post(authenticate, validate(cartValidation.addItem), addItemToCart); // Ensure authenticate is here
+  .get(authenticate, isAuthenticated, getCart)
+  .post(
+    express.json(),
+    authenticate,
+    isAuthenticated,
+    validate(cartValidation.addItem),
+    addItemToCart
+  );
 
 // This route requires a logged-in user to merge the guest cart.
 router.post(
   "/sync",
+  express.json(),
   authenticate,
   isAuthenticated,
   validate(cartValidation.syncCart),
@@ -34,13 +41,25 @@ router.post(
 
 router
   .route("/items/:itemId") // All operations on a specific cart item require authentication
-  .put(authenticate, validate(cartValidation.updateItem), updateCartItem)
-  .delete(authenticate, validate(cartValidation.removeItem), removeCartItem);
+  .put(
+    express.json(),
+    authenticate,
+    isAuthenticated,
+    validate(cartValidation.updateItem),
+    updateCartItem
+  )
+  .delete(
+    authenticate,
+    isAuthenticated,
+    validate(cartValidation.removeItem),
+    removeCartItem
+  );
 
 router.post(
   "/save-for-later/:itemId",
   authenticate,
   isAuthenticated,
+  validate(cartValidation.removeItem), // Use removeItem validation for the param
   saveForLater
 );
 
