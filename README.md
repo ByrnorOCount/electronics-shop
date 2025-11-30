@@ -1,45 +1,37 @@
 # Software Requirements Specification (SRS) for Electronics Shop Web Application
 
+**GitHub Repository:** [https://github.com/your-username/your-repository-name]
+
 ## 1. Introduction
 
 ### 1.1 Objectives
 
-The E-Commerce Web App enables online shopping by allowing users to browse, select, and purchase electronics products efficiently, while providing administrators and staff with tools to manage products and orders.  
-The system streamlines the shopping experience, increases customer accessibility, and ensures scalability for business growth, with a foundation for future enhancements like payment gateways and analytics.
+The E-Commerce Web App enables online shopping by allowing users to browse, select, and purchase electronics products efficiently, while providing administrators with tools to manage electronics products and orders. The system aims to streamline the shopping experience, increase customer accessibility, ensure scalability for business growth, and lay a foundation for future enhancements like payment gateways and analytics, ultimately improving customer satisfaction and operational efficiency.
 
 ### 1.2 Scope
 
-The web application allows customers to:
-
-- Browse and search for electronics products.
-- Manage a shopping cart, wishlist, and personal account.
-- Place orders and view order history.
-- Staff and Administrators have dedicated portals to manage products, orders, and users.
-The project is under continuous development, with a roadmap for future enhancements outlined at the end of this document.
-
-### 1.3 Overview
-
-Users can browse or search for products, add items to the cart, and complete purchases via a checkout process using cash-on-delivery.  
-Registered users can view order history and receive notifications, while staff manage products and orders and administrators manage users and settings.
+The application allows customers to browse electronics products, manage shopping carts, and place orders, with features for user registration, login, secure checkout using cash-on-delivery or online payments, and an admin dashboard for managing products and viewing orders. It targets customers (guests and registered users), staff (for managing products and orders), and administrators (for system oversight). The system is intended to be expandable in future semesters, beginning with a set of core features and supporting additional functionalities later.
 
 ---
 
 ## 2. Overall Description
 
-### 2.1 User Personas and Characteristics
+### 2.1 User Characteristics
 
 #### Customers
 
-- **Unregistered Customers (Guests)**: Can browse and view products; must register to purchase.  
-- **Registered Customers**: Can log in, manage carts, place orders, and view order history.  
+Needs: Browsing electronics products, managing shopping carts, placing orders, and tracking order statuses.  
+Technical Experience: Familiar with web applications and online shopping platforms.
 
 #### Staff
 
-- Manage product listings and orders, assist customers, and update product details.  
+Needs: Managing product listings, processing orders, and assisting customers with inquiries.  
+Technical Experience: Proficient in using internal e-commerce tools and managing product data.
 
 #### Administrators
 
-- Oversee users, staff, products, and orders, ensuring data integrity and platform security.
+Needs: Overseeing system operations, managing user accounts, and ensuring platform security.  
+Technical Experience: Advanced knowledge of e-commerce system management and data administration.
 
 ### 2.2 Operating Environment
 
@@ -47,11 +39,12 @@ The application is a browser-based, responsive web platform, accessible from des
 
 ### 2.3 Design and Implementation Constraints
 
-- **Backend:** Node.js (Express.js)
-- **Frontend:** React (SPA)
-- **Database:** PostgreSQL
-- **Compatibility:** Chrome, Firefox, Edge, Safari
-- **Security:** HTTPS encryption, XSS/SQLi/CSRF protection, encrypted credentials
+- **Backend:** Node.js with the Express.js framework.
+- **Frontend:** React with Vite. State management is handled by Redux Toolkit for global state and custom hooks for server cache state.
+- **Database:** PostgreSQL.
+- **Styling:** Tailwind CSS.
+- **Compatibility:** Chrome, Firefox, Edge, Safari.
+- **Security:** Protection against CSRF, SQL Injection, and XSS attacks.
 
 ---
 
@@ -59,113 +52,28 @@ The application is a browser-based, responsive web platform, accessible from des
 
 ### Customer Features
 
-#### FR1: User Registration
-
-Users can create accounts using name, email, password, and optional phone number. Email verification is required before activation.
-
-#### FR2: User Login
-
-Registered users can log in with email and password.
-
-#### FR3: Password Hashing
-
-Passwords are encrypted before being stored in the database.
-
-#### FR4: Session Management
-
-The system uses tokens (JWT) to manage sessions and protect user routes.
-
-#### FR5: Browse Products
-
-All electronics products are displayed in a paginated list or grid, grouped by category.
-
-#### FR6: Search and Filter
-
-Customers can search by keyword and filter products by price, category, or brand.
-
-#### FR7: View Product Details
-
-Each product displays full details including images, specifications, price, and stock status.
-
-#### FR8: Shopping Cart Management
-
-Customers can add, remove, or update quantities of items in their shopping cart.
-
-#### FR9: Checkout (Cash on Delivery)
-
-Customers provide shipping details and confirm orders via cash-on-delivery payment.
-
-#### FR10: Order Confirmation
-
-A confirmation page and email are sent after order placement.
-
-#### FR11: Order History
-
-Registered customers can view their past orders with details and statuses.
-
-#### FR12: Account Management
-
-Users can update profile information such as name, address, and contact details.
-
-#### FR13: Wishlist
-
-Customers can save products to a wishlist for future reference.
-
-#### FR14: Notifications
-
-Users receive order updates, stock alerts, or promotions via email or in-app alerts.
-
-#### FR15: Password Reset
-
-Users can reset passwords through their registered email or phone.
-
-#### FR16: Support Requests
-
-Users can access FAQs or submit customer support tickets.
-
-#### FR17: OTP Authentication (Checkout Security)
-
-Users receive one-time passwords for checkout verification to enhance security.
+- **FR1, FR2: User Registration & Login:** Create a local account with email verification or sign in using third-party providers like Google and Facebook.
+- **FR5, FR6, FR7: Browse & Search Products:** Explore products by category, view featured items, and search using keywords with filters for price, category, and brand.
+- **FR8, FR13: Shopping Cart & Wishlist:** Add, remove, and update items in the shopping cart. Save products to a personal wishlist for future consideration.
+- **FR9, FR10, FR17: Secure Checkout:** Complete purchases using either cash-on-delivery (with OTP verification) or secure online payments via Stripe.
+- **FR11, FR12, FR15: Account Management:** View order history, manage personal information, and reset passwords securely.
+- **FR14, FR16: Notifications & Support:** Receive updates on order status and back-in-stock alerts. Access FAQs or submit support tickets.
 
 ---
 
 ### Staff Features
 
-#### FR18: Staff Login / Logout
-
-Staff access the system using employee credentials.
-
-#### FR19: Product Management
-
-Staff perform CRUD (create, read, update, delete) operations on products, including prices and stock levels.
-
-#### FR20: Order Management
-
-Staff can view, process, and update order statuses (e.g., pending, shipped, delivered).
-
-#### FR21: Customer Support
-
-Staff respond to customer inquiries and resolve order-related issues.
+- **FR19: Advanced Product & Inventory Management:** Perform CRUD operations on products. The system includes robust stock management with atomic updates during checkout to prevent overselling.
+- **FR20: Order Management:** View and update order statuses (e.g., from "Pending" to "Shipped").
+- **FR21: Customer Support:** Respond to customer inquiries via a dedicated support interface.
 
 ---
 
 ### Administrator Features
 
-#### FR22: Admin Login / Logout
-
-Administrators log in with elevated privileges to oversee the system.
-
-#### FR23: User Management
-
-Admins can create, modify, deactivate, or delete customer and staff accounts.
-
-#### FR24: Product Catalog Management
-
-Admins oversee all product categories and featured items.
-
-#### FR25: Order Log and Dashboard
-
-Admins monitor orders and logs via a dashboard summarizing sales and activity.
+- **FR23: User Management:** Create, modify, deactivate, or delete customer and staff accounts and manage their roles.
+- **FR24: Catalog Management:** Oversee and update the product catalog, including managing categories.
+- **FR25: Analytics Dashboard & System Monitoring:** Access a centralized dashboard to view key metrics on sales, user registrations, and order volumes. View detailed system application logs to monitor application health.
 
 ---
 
@@ -221,20 +129,13 @@ This document serves as a living specification for the Electronics Shop Web App,
 
 ---
 
-## 7. Development Roadmap
+## 6. Future Enhancements
 
 The following features are identified for future development cycles to enhance the platform's capabilities:
 
-### 7.1 Enhanced Authentication
-
-- **Social Login:** Allow users to register and log in using third-party accounts like Google and Facebook.
-
-### 7.2 Advanced E-Commerce Features
-
-- **Payment Gateway Integration:** Integrate with payment APIs (e.g., Stripe) to enable online payments.
-- **Shipping API Integration:** Connect with shipping providers (e.g., Giao Hàng Nhanh) for real-time shipping quotes and tracking.
-
-### 7.3 Advanced Administrator Dashboard
-
-- **Detailed Analytics:** Enhance the admin dashboard with advanced statistics on sales by product, user activity, and order trends.
-- **User Loyalty System:** Implement a tier-based system (e.g., premium status) to reward frequent customers.
+- **Shipping API Integration:** Integrate with a logistics provider (e.g., Giao Hàng Nhanh) to calculate real-time shipping fees and provide delivery tracking.
+- **Alternative Payment Methods:** Integrate local payment gateways like MoMo or ZaloPay to cater to a wider user base.
+- **Customer Reviews & Ratings:** Allow verified customers to submit product reviews and ratings.
+- **Advanced Recommendation System:** Develop a system to provide personalized product suggestions based on user browsing history and purchase patterns.
+- **Two-Factor Authentication (2FA):** Add an extra layer of security for user accounts by implementing 2FA during the login process.
+- **Promotional Campaigns:** Build a module for administrators to create and manage promotional codes, discounts, and loyalty point systems.
