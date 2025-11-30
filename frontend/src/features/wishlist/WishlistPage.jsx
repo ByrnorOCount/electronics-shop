@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { fetchWishlist } from "./wishlistSlice";
 import ProductCard from "../products/components/ProductCard";
+import Spinner from "../../components/ui/Spinner";
 import { Link } from "react-router-dom";
 
 export default function WishlistPage() {
@@ -19,7 +20,11 @@ export default function WishlistPage() {
   let content;
 
   if (status === "loading") {
-    content = <p className="text-center">Loading your wishlist...</p>;
+    content = (
+      <div className="flex justify-center py-12">
+        <Spinner size={10} />
+      </div>
+    );
   } else if (status === "succeeded" && items.length === 0) {
     content = (
       <div className="text-center bg-white p-12 rounded-lg shadow-sm">

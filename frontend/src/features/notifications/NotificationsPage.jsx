@@ -5,6 +5,7 @@ import { notificationService } from "../../api";
 import toast from "react-hot-toast";
 import { renderFormattedNotificationMessage } from "../../utils/notificationUtils.jsx";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import Spinner from "../../components/ui/Spinner.jsx";
 import { decrementUnreadCount, setUnreadCount } from "./notificationSlice.js";
 
 export default function NotificationsPage() {
@@ -78,7 +79,9 @@ export default function NotificationsPage() {
       </div>
 
       {isLoading && (
-        <p className="text-center text-gray-500">Loading notifications...</p>
+        <div className="flex justify-center py-12">
+          <Spinner size={10} />
+        </div>
       )}
       {!isLoading && notifications.length === 0 && (
         <div className="text-center bg-white p-12 rounded-lg shadow-sm">

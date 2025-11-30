@@ -4,6 +4,7 @@ import { orderService } from "../../api";
 import OrderDetails from "./components/OrderDetails";
 import toast from "react-hot-toast";
 import logger from "../../utils/logger";
+import Spinner from "../../components/ui/Spinner";
 
 const OrderItem = ({ order }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -76,7 +77,11 @@ export default function OrderHistoryPage() {
 
   let content;
   if (isLoading) {
-    content = <p>Loading your order history...</p>;
+    content = (
+      <div className="flex justify-center py-12">
+        <Spinner size={10} />
+      </div>
+    );
   } else if (isError) {
     logger.error("Failed to load order history:", error);
     toast.error("Could not load your order history.");

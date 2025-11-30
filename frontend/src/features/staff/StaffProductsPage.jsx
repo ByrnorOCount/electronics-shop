@@ -226,7 +226,14 @@ const StaffProductsPage = () => {
             onClick={confirmDeleteProduct}
             disabled={isDeleting}
           >
-            {isDeleting ? "Deleting..." : "Delete"}
+            {isDeleting ? (
+              <div className="flex items-center gap-2">
+                <Spinner size={4} className="text-white" />
+                <span>Deleting...</span>
+              </div>
+            ) : (
+              "Delete"
+            )}
           </Button>
         </div>
       </Modal>

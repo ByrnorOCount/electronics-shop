@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { useCartActions } from "../cart/useCartActions";
 import { useWishlistActions } from "../wishlist/useWishlistActions";
 import ProductCard from "./components/ProductCard";
+import Spinner from "../../components/ui/Spinner";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -103,7 +104,13 @@ const ProductDetailPage = () => {
     );
   };
 
-  if (isLoading) return <div className="text-center p-8">Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <Spinner size={12} />
+      </div>
+    );
+  }
   if (isError)
     return (
       <div className="text-center p-8 text-red-500">Product not found.</div>

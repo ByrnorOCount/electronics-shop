@@ -3,6 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import OrderDetails from "./components/OrderDetails";
 import { useApi } from "../../hooks/useApi";
 import { orderService } from "../../api";
+import Spinner from "../../components/ui/Spinner";
 import toast from "react-hot-toast";
 
 export default function OrderConfirmationPage() {
@@ -34,7 +35,10 @@ export default function OrderConfirmationPage() {
   if (isLoading && !initialOrder) {
     return (
       <main className="flex-grow max-w-6xl mx-auto px-4 py-12 text-center">
-        <p>Loading your order details...</p>
+        <div className="flex justify-center">
+          <Spinner size={10} />
+        </div>
+        <p className="mt-4 text-gray-600">Loading your order details...</p>
       </main>
     );
   } else if (isError || !order) {

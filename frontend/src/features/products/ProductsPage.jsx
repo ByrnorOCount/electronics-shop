@@ -6,6 +6,7 @@ import ProductFilter from "./components/ProductFilter";
 import Pagination from "../../components/ui/Pagination";
 import { productService } from "../../api";
 import { useDebounce } from "../../hooks/useDebounce";
+import Spinner from "../../components/ui/Spinner";
 
 const ProductsPage = () => {
   const {
@@ -131,7 +132,9 @@ const ProductsPage = () => {
         categories={categories || []}
       />
       {isLoading && (!products || products.length === 0) ? (
-        <div className="text-center p-8">Loading products...</div>
+        <div className="flex justify-center py-12">
+          <Spinner size={10} />
+        </div>
       ) : products && products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (

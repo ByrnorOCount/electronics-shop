@@ -126,6 +126,19 @@ blank card on home should be a bunch of rotating stock images
 category id in staff modal -> select category name instead
 future: add filtering on a bunch of things beside products, add more logging to admin logs
 
+Shipping API Integration:
+Implement a backend service to get shipping rates (e.g., from Giao Hàng Nhanh).
+Display shipping options and costs in the frontend checkout flow.
+Add UI elements in the CheckoutPage for the user to select their address. [Service] provides APIs to fetch provinces, districts, and wards.
+Display the calculated shipping fee and add it to the order total.
+
+Manage Products category id -> name
+0 stock show 0 in edit 
+
+Manage Orders: update status -> click details -> react-router-dom.js?v=8c317fd0:9875 Uncaught TypeError: Cannot destructure property 'basename' of 'React10.useContext(...)' as it is null.
+ErrorBoundary.jsx:35 An error occurred in the <Link> component.
+
+future: spinner in place of loading text for all loading states
 
 
 GVHD:
@@ -169,14 +182,3 @@ class diagram
 
 
 
-Shipping API Integration:
-Implement a backend service to get shipping rates (e.g., from Giao Hàng Nhanh).
-Display shipping options and costs in the frontend checkout flow.
-Add UI elements in the CheckoutPage for the user to select their address. [Service] provides APIs to fetch provinces, districts, and wards.
-Display the calculated shipping fee and add it to the order total.
-
-Manage Products category id -> name
-0 stock show 0 in edit 
-
-Manage Orders: update status -> click details -> react-router-dom.js?v=8c317fd0:9875 Uncaught TypeError: Cannot destructure property 'basename' of 'React10.useContext(...)' as it is null.
-ErrorBoundary.jsx:35 An error occurred in the <Link> component.

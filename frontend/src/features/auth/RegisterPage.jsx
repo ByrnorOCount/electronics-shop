@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Spinner from "../../components/ui/Spinner";
 import { useAppSelector } from "../../store/hooks";
 import { useAuthActions } from "./useAuthActions";
 
@@ -81,7 +82,14 @@ const RegisterPage = () => {
             disabled={status === "loading"}
             className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300"
           >
-            {status === "loading" ? "Registering..." : "Register"}
+            {status === "loading" ? (
+              <div className="flex items-center justify-center gap-2">
+                <Spinner size={4} className="text-white" />
+                <span>Registering...</span>
+              </div>
+            ) : (
+              "Register"
+            )}
           </button>
         </form>
         <p className="text-center text-sm text-gray-600 mt-4">

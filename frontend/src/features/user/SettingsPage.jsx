@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { useForm } from "react-hook-form";
 import Icon from "../../components/ui/Icon";
+import Spinner from "../../components/ui/Spinner";
 import { useUserActions } from "./useUserActions";
 
 export default function SettingsPage() {
@@ -64,7 +65,11 @@ export default function SettingsPage() {
 
   if (!user) {
     return (
-      <main className="flex-grow text-center py-12">Loading user data...</main>
+      <main className="flex-grow flex justify-center items-center py-12">
+        <div className="text-center">
+          <Spinner size={10} />
+        </div>
+      </main>
     );
   }
 
@@ -162,7 +167,14 @@ export default function SettingsPage() {
                 disabled={isLoading || !isProfileDirty}
                 className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Saving..." : "Save Changes"}
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <Spinner size={4} className="text-white" />
+                    <span>Saving...</span>
+                  </div>
+                ) : (
+                  "Save Changes"
+                )}
               </button>
             </div>
           </form>
@@ -310,7 +322,14 @@ export default function SettingsPage() {
                 disabled={isLoading}
                 className="px-6 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Saving..." : "Change Password"}
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <Spinner size={4} className="text-white" />
+                    <span>Saving...</span>
+                  </div>
+                ) : (
+                  "Change Password"
+                )}
               </button>
             </div>
           </form>

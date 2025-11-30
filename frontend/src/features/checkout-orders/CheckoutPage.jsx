@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import CartSummary from "../cart/components/CartSummary";
 import Button from "../../components/ui/Button";
 import toast from "react-hot-toast";
+import Spinner from "../../components/ui/Spinner";
 import { useOrderActions } from "./useOrderActions";
 
 // Use stripe public key here?
@@ -121,7 +122,14 @@ export default function CheckoutPage() {
                   onClick={handleGenerateOtp}
                   disabled={isLoading}
                 >
-                  {isLoading ? "Sending..." : "Get OTP"}
+                  {isLoading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <Spinner size={4} className="text-white" />
+                      <span>Sending...</span>
+                    </div>
+                  ) : (
+                    "Get OTP"
+                  )}
                 </Button>
               </div>
             </div>
@@ -135,11 +143,16 @@ export default function CheckoutPage() {
           )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading
-              ? "Processing..."
-              : paymentMethod === "cod"
-              ? "Place Order"
-              : "Proceed to Payment"}
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <Spinner size={4} className="text-white" />
+                <span>Processing...</span>
+              </div>
+            ) : paymentMethod === "cod" ? (
+              "Place Order"
+            ) : (
+              "Proceed to Payment"
+            )}
           </Button>
         </form>
 

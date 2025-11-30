@@ -9,6 +9,7 @@ import {
   decrementUnreadCount,
 } from "../notificationSlice";
 import Icon from "../../../components/ui/Icon";
+import Spinner from "../../../components/ui/Spinner";
 import { renderFormattedNotificationMessage } from "../../../utils/notificationUtils.jsx";
 
 export default function NotificationDropdown() {
@@ -110,7 +111,9 @@ export default function NotificationDropdown() {
           </div>
           <div className="max-h-96 overflow-y-auto">
             {isLoading && (
-              <p className="p-4 text-center text-gray-500">Loading...</p>
+              <div className="flex justify-center items-center p-4">
+                <Spinner size={6} />
+              </div>
             )}
             {isError && (
               <p className="p-4 text-center text-red-500">
@@ -122,43 +125,44 @@ export default function NotificationDropdown() {
                 You have no notifications.
               </p>
             )}
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`p-3 border-b hover:bg-gray-50 ${
-                  !notification.is_read ? "bg-indigo-50" : ""
-                }`}
-              >
-                <Link
-                  to={notification.link || "#"}
-                  onClick={() => setIsOpen(false)}
+            {!isLoading &&
+              notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className={`p-3 border-b hover:bg-gray-50 ${
+                    !notification.is_read ? "bg-indigo-50" : ""
+                  }`}
                 >
-                  <p className="text-sm text-gray-800">
-                    {renderFormattedNotificationMessage(notification.message)}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {new Date(notification.created_at).toLocaleString()}
-                  </p>
-                </Link>
-                {!notification.is_read && (
-                  <button
-                    onClick={() => handleMarkAsRead(notification.id)}
-                    className="text-xs text-indigo-500 hover:underline mt-1"
+                  <Link
+                    to={notification.link || "#"}
+                    onClick={() => setIsOpen(false)}
                   >
-                    Mark as read
-                  </button>
-                )}
-              </div>
-            ))}
-            <div className="p-2 text-center border-t">
-              <Link
-                to="/notifications"
-                onClick={() => setIsOpen(false)}
-                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
-              >
-                View all notifications
-              </Link>
-            </div>
+                    <p className="text-sm text-gray-800">
+                      {renderFormattedNotificationMessage(notification.message)}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {new Date(notification.created_at).toLocaleString()}
+                    </p>
+                  </Link>
+                  {!notification.is_read && (
+                    <button
+                      onClick={() => handleMarkAsRead(notification.id)}
+                      className="text-xs text-indigo-500 hover:underline mt-1"
+                    >
+                      Mark as read
+                    </button>
+                  )}
+                </div>
+              ))}
+          </div>
+          <div className="p-2 text-center border-t">
+            <Link
+              to="/notifications"
+              onClick={() => setIsOpen(false)}
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+            >
+              View all notifications
+            </Link>
           </div>
         </div>
       )}

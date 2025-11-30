@@ -3,6 +3,7 @@ import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import QuantityInput from "../../components/ui/QuantityInput";
 import CartSummary from "./components/CartSummary";
 import { Link } from "react-router-dom";
+import Spinner from "../../components/ui/Spinner";
 import { useCartActions } from "./useCartActions";
 
 export default function CartPage() {
@@ -15,8 +16,13 @@ export default function CartPage() {
   } = useCartActions();
 
   // Show a loading indicator if the initial sync is happening or if we are fetching.
-  if (cartStatus === "syncing" && token)
-    return <p className="text-center py-12">Loading your cart...</p>;
+  if (cartStatus === "syncing" && token) {
+    return (
+      <div className="flex justify-center py-12">
+        <Spinner size={10} />
+      </div>
+    );
+  }
   // Show error state only for logged-in users.
   if (cartStatus === "failed" && token)
     return (

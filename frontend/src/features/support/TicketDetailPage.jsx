@@ -183,7 +183,14 @@ const TicketDetailPage = () => {
               }}
               disabled={isUpdatingStatus}
             >
-              {isUpdatingStatus ? "Closing..." : "Close Ticket"}
+              {isUpdatingStatus ? (
+                <div className="flex items-center gap-2">
+                  <Spinner size={4} className="text-white" />
+                  <span>Closing...</span>
+                </div>
+              ) : (
+                "Close Ticket"
+              )}
             </Button>
           </div>
         )}
@@ -231,11 +238,16 @@ const TicketDetailPage = () => {
               required
             ></textarea>
             <Button type="submit" disabled={isSubmitting} className="mt-4">
-              {isSubmitting
-                ? "Sending..."
-                : ticket.status === "closed"
-                ? "Submit & Reopen Ticket"
-                : "Send Reply"}
+              {isSubmitting ? (
+                <div className="flex items-center gap-2">
+                  <Spinner size={4} className="text-white" />
+                  <span>Sending...</span>
+                </div>
+              ) : ticket.status === "closed" ? (
+                "Submit & Reopen Ticket"
+              ) : (
+                "Send Reply"
+              )}
             </Button>
           </form>
         </div>

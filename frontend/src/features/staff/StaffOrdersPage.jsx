@@ -217,7 +217,14 @@ const StaffOrdersPage = () => {
                 onClick={handleSaveStatus}
                 disabled={isUpdating || selectedStatus === modalOrder.status}
               >
-                {isUpdating ? "Saving..." : "Save Status"}
+                {isUpdating ? (
+                  <div className="flex items-center gap-2">
+                    <Spinner size={4} className="text-white" />
+                    <span>Saving...</span>
+                  </div>
+                ) : (
+                  "Save Status"
+                )}
               </Button>
             </div>
           </div>

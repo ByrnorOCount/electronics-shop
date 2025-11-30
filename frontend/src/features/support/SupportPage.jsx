@@ -138,7 +138,14 @@ const SupportPage = () => {
                   ></textarea>
                 </div>
                 <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Submitting..." : "Submit Ticket"}
+                  {isSubmitting ? (
+                    <div className="flex items-center gap-2">
+                      <Spinner size={4} className="text-white" />
+                      <span>Submitting...</span>
+                    </div>
+                  ) : (
+                    "Submit Ticket"
+                  )}
                 </Button>
               </form>
             </div>
