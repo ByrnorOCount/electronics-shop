@@ -42,26 +42,48 @@ async function getTransporter() {
 }
 
 /**
- * Sends an order confirmation email.
+ * Sends an email using the configured transporter.
+ * @param {object} mailOptions - Options for nodemailer sendMail.
+ * @returns {Promise<void>}
+ */
+export const sendEmail = async (mailOptions) => {
+  try {
+    const mailer = await getTransporter();
+    const info = await mailer.sendMail(mailOptions);
+
+    if (env.NODE_ENV !== "production") {
+      logger.info(
+        `Email sent. Preview URL: ${nodemailer.getTestMessageUrl(info)}`
+      );
+    }
+  } catch (error) {
+    logger.error("Failed to send email:", error);
+    // In production, you might want to throw the error to be handled by a monitoring service
+  }
+};
+
+/**
+ * Sends an order confirmation email to the user.
  * @param {object} user - The user object (with email, first_name).
- * @param {object} order - The order object (with id, total_amount).
+ * @param {object} order - The order object with items.
  */
 export const sendOrderConfirmationEmail = async (user, order) => {
-  const mailer = await getTransporter();
-  const info = await mailer.sendMail({
+  const subject = `Your Order #${order.id} is Confirmed!`;
+  const text = `Hi ${user.first_name},\n\nThank you for your order! Your order #${order.id} has been placed successfully.\n\nYou can view your order details here: ${env.FRONTEND_URL}/orders\n\nThanks for shopping with us!`;
+  // TODO: Add a more detailed HTML email template
+  const html = `<p>Hi ${user.first_name},</p><p>Thank you for your order! Your order #${order.id} has been placed successfully.</p><p>You can view your order details <a href="${env.FRONTEND_URL}/orders">here</a>.</p><p>Thanks for shopping with us!</p>`;
+
+  await sendEmail({
     from: '"Electronics Shop" <noreply@electronics-shop.com>',
     to: user.email,
-    subject: `Order Confirmation #${order.id}`,
-    html: `<h1>Hi ${user.first_name},</h1><p>Thank you for your order! Your order #${order.id} for a total of $${order.total_amount} has been placed successfully.</p>`,
+    subject,
+    text,
+    html,
   });
 
   if (env.NODE_ENV !== "production") {
-    logger.log(
+    logger.info(
       `\n--- ORDER CONFIRMATION --- \nUser: ${user.email}\nOrder ID: ${order.id}\nTotal: $${order.total_amount}\n--------------------------\n`
-    );
-    logger.log(
-      "Order confirmation email sent. Preview URL: %s",
-      nodemailer.getTestMessageUrl(info)
     );
   }
 };
@@ -72,11 +94,10 @@ export const sendOrderConfirmationEmail = async (user, order) => {
  * @param {string} token - The password reset token.
  */
 export const sendPasswordResetEmail = async (user, token) => {
-  const mailer = await getTransporter();
   // In a real app, the URL should point to your frontend's reset page
   const resetUrl = `http://localhost:3000/reset-password?token=${token}`;
 
-  const info = await mailer.sendMail({
+  await sendEmail({
     from: '"Electronics Shop" <noreply@electronics-shop.com>',
     to: user.email,
     subject: "Your Password Reset Request",
@@ -85,9 +106,7 @@ export const sendPasswordResetEmail = async (user, token) => {
 
   if (env.NODE_ENV !== "production") {
     logger.info(
-      `Password reset email sent. Preview URL: ${nodemailer.getTestMessageUrl(
-        info
-      )}`
+      `\n--- PASSWORD RESET --- \nUser: ${user.email}\nToken: ${token}\n----------------------\n`
     );
   }
 };
@@ -98,11 +117,10 @@ export const sendPasswordResetEmail = async (user, token) => {
  * @param {string} token - The verification token.
  */
 export const sendVerificationEmail = async (user, token) => {
-  const mailer = await getTransporter();
   // The URL should point to your backend's verification endpoint
   const verificationUrl = `http://localhost:3001/api/users/verify-email/${token}`;
 
-  const info = await mailer.sendMail({
+  await sendEmail({
     from: '"Electronics Shop" <noreply@electronics-shop.com>',
     to: user.email,
     subject: "Verify Your Email Address",
@@ -111,9 +129,7 @@ export const sendVerificationEmail = async (user, token) => {
 
   if (env.NODE_ENV !== "production") {
     logger.info(
-      `Verification email sent. Preview URL: ${nodemailer.getTestMessageUrl(
-        info
-      )}`
+      `\n--- EMAIL VERIFICATION --- \nUser: ${user.email}\nToken: ${token}\n--------------------------\n`
     );
   }
 };
@@ -124,8 +140,7 @@ export const sendVerificationEmail = async (user, token) => {
  * @param {string} otp - The One-Time Password.
  */
 export const sendOtpEmail = async (user, otp) => {
-  const mailer = await getTransporter();
-  const info = await mailer.sendMail({
+  await sendEmail({
     from: '"Electronics Shop" <noreply@electronics-shop.com>',
     to: user.email,
     subject: "Your Checkout Verification Code",
@@ -135,9 +150,6 @@ export const sendOtpEmail = async (user, otp) => {
   if (env.NODE_ENV !== "production") {
     logger.info(
       `\n--- CHECKOUT OTP --- \nUser: ${user.email}\nOTP: ${otp}\n--------------------\n`
-    );
-    logger.info(
-      `OTP email sent. Preview URL: ${nodemailer.getTestMessageUrl(info)}`
     );
   }
 };

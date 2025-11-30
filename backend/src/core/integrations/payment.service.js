@@ -1,7 +1,6 @@
 import db from "../../config/db.js";
 import { createNotification } from "../../modules/notifications/notification.service.js";
 import logger from "../../config/logger.js";
-import { sendOrderConfirmationEmail } from "./email.service.js";
 import ApiError from "../utils/ApiError.js";
 import httpStatus from "http-status";
 
@@ -105,8 +104,9 @@ export const createOrderFromCart = async (
     trx
   );
 
-  // Log the successful order creation.
-  logger.info("Order confirmation email triggered.", {
+  // Log the successful order creation for staging/debugging purposes.
+  // The actual confirmation email is sent via the webhook handler after payment is confirmed.
+  logger.info("Order created within transaction.", {
     orderId: order.id,
     userEmail: user.email,
     total: order.total_amount,

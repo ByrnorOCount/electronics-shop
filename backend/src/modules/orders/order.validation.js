@@ -14,6 +14,7 @@ export const createOrder = {
 export const createPaymentSession = {
   body: Joi.object({
     paymentMethod: Joi.string().valid("stripe").required(),
+    shippingAddress: Joi.string().required(),
   }),
 };
 

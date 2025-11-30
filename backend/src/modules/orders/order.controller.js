@@ -36,13 +36,14 @@ export const generateCheckoutOtp = async (req, res) => {
  */
 export const createPaymentSession = async (req, res, next) => {
   // 'stripe'
-  const { paymentMethod } = req.body; // 'stripe'
+  const { paymentMethod, shippingAddress } = req.body;
   const userId = req.user.id;
 
   try {
     const paymentData = await orderService.createOnlinePaymentSession(
       paymentMethod,
-      userId
+      userId,
+      shippingAddress
     );
     res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, paymentData));
   } catch (error) {
@@ -96,6 +97,26 @@ export const getOrders = async (req, res, next) => {
 };
 
 /**
+ * Get an order by its Stripe session ID.
+ * @route GET /api/orders/by-session/:sessionId
+ * @access Private
+ */
+export const getOrderBySessionId = async (req, res, next) => {
+  try {
+    const { sessionId } = req.params;
+    const order = await orderService.getOrderBySessionId(
+      sessionId,
+      req.user.id
+    );
+    res
+      .status(httpStatus.OK)
+      .json(new ApiResponse(httpStatus.OK, order, "Order retrieved."));
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * Handles incoming webhooks from payment providers (Stripe).
  * @route POST /api/orders/webhook
  * @access Public (verified by signature/hash)
@@ -110,7 +131,7 @@ export const handlePaymentWebhook = async (req, res) => {
 
     try {
       event = stripe.webhooks.constructEvent(
-        req.body,
+        req.body, // Use req.body, as express.raw() populates it with the buffer
         stripeSignature,
         endpointSecret
       );
@@ -119,29 +140,41 @@ export const handlePaymentWebhook = async (req, res) => {
       return res.sendStatus(400);
     }
 
+    logger.info(`Received Stripe webhook event: ${event.type}`);
+
     // Handle the checkout.session.completed event
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
-      const { userId } = session.metadata;
-      // NOTE: In a real app, you'd get the shipping address from session.shipping_details
-      // or pass it in metadata if you collected it before creating the session.
-      const shippingAddress = session.shipping_details?.address
-        ? Object.values(session.shipping_details.address).join(", ")
-        : "Address from Stripe";
+      // Retrieve userId and shippingAddress from the metadata we set earlier.
+      const { userId, shippingAddress } = session.metadata;
 
       try {
-        await orderService.createOrderInTransaction(
+        // Create the order and get the new order's ID
+        const newOrder = await orderService.createOrderInTransaction(
           Number(userId),
           shippingAddress,
           "stripe",
           {
             transactionId: session.payment_intent,
+            sessionId: session.id, // Pass the session ID here
           }
         );
-        logger.info(`✅ Order created for user ${userId} via Stripe.`);
+
+        // After successful creation, trigger the confirmation email.
+        // This requires fetching the full order details.
+        await orderService.sendOrderConfirmationEmailForOrder(newOrder.id);
+
+        logger.info(
+          `✅ Order #${newOrder.id} created successfully for user ${userId} via Stripe.`
+        );
       } catch (error) {
-        logger.error("Failed to create order from Stripe webhook:", error);
-        // You might want to send an alert here
+        logger.error(
+          "❌ Failed to create order from Stripe webhook. Session data included for debugging.",
+          {
+            error: { message: error.message, stack: error.stack },
+            stripeSession: session,
+          }
+        );
         return res.status(500).json({ message: "Error processing order." });
       }
     }

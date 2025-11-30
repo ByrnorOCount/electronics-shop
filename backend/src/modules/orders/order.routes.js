@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createOrder,
+  getOrderBySessionId,
   getOrders,
   generateCheckoutOtp,
   createPaymentSession,
@@ -19,6 +20,7 @@ const router = express.Router();
 // It also needs the raw body for signature verification.
 router.post(
   "/webhook",
+  // Use express.raw to get the raw body, which is required for Stripe signature verification
   express.raw({ type: "application/json" }),
   handlePaymentWebhook
 );
@@ -28,8 +30,10 @@ router.use(authenticate, isAuthenticated);
 
 router
   .route("/")
-  .get(getOrders)
-  .post(validate(orderValidation.createOrder), createOrder);
+  .post(validate(orderValidation.createOrder), createOrder)
+  .get(getOrders);
+
+router.get("/by-session/:sessionId", getOrderBySessionId);
 
 router.post("/generate-otp", generateCheckoutOtp);
 router.post(

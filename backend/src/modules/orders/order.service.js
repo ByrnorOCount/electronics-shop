@@ -5,7 +5,10 @@ import Stripe from "stripe";
 import * as orderModel from "./order.model.js";
 import * as productModel from "../products/product.model.js";
 import * as cartModel from "../cart/cart.model.js";
-import { sendOtpEmail } from "../../core/integrations/email.service.js";
+import {
+  sendOrderConfirmationEmail,
+  sendOtpEmail,
+} from "../../core/integrations/email.service.js";
 import ApiError from "../../core/utils/ApiError.js";
 import env from "../../config/env.js";
 
@@ -28,7 +31,7 @@ export const generateAndSendOtp = async (user) => {
  * @param {number} userId - The ID of the user.
  * @returns {Promise<object>} An object containing the session URL.
  */
-const createStripeSession = async (cartItems, userId) => {
+const createStripeSession = async (cartItems, userId, shippingAddress) => {
   // --- Preliminary Stock Check ---
   // This provides a better UX by failing early if something is out of stock.
   // The real atomic check happens in the webhook after payment.
@@ -59,8 +62,8 @@ const createStripeSession = async (cartItems, userId) => {
     })),
     mode: "payment",
     success_url: `${env.FRONTEND_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${env.FRONTEND_URL}/checkout/cancel`,
-    metadata: { userId },
+    cancel_url: `${env.FRONTEND_URL}/checkout`,
+    metadata: { userId, shippingAddress }, // Add shippingAddress to metadata
   });
   return { url: session.url };
 };
@@ -76,7 +79,11 @@ const paymentStrategies = {
  * @param {string} ipAddr
  * @returns {Promise<object>}
  */
-export const createOnlinePaymentSession = async (paymentMethod, userId) => {
+export const createOnlinePaymentSession = async (
+  paymentMethod,
+  userId,
+  shippingAddress
+) => {
   const cartItems = await cartModel.findByUserId(userId);
   if (cartItems.length === 0) {
     throw new ApiError(
@@ -93,7 +100,7 @@ export const createOnlinePaymentSession = async (paymentMethod, userId) => {
     );
   }
 
-  const paymentData = await paymentHandler(cartItems, userId);
+  const paymentData = await paymentHandler(cartItems, userId, shippingAddress);
   return { ...paymentData, paymentMethod };
 };
 
@@ -158,4 +165,38 @@ export const createOrderInTransaction = (
  */
 export const getOrdersForUser = (userId) => {
   return orderModel.findOrdersByUserIdWithItems(userId);
+};
+
+/**
+ * Fetches a newly created order and sends a confirmation email.
+ * This is typically called after a successful payment webhook.
+ * @param {number} orderId - The ID of the order to confirm.
+ */
+export const sendOrderConfirmationEmailForOrder = async (orderId) => {
+  const orderWithDetails = await orderModel.findOrderByIdWithItems(orderId);
+  if (!orderWithDetails) {
+    throw new Error(
+      `Order with ID ${orderId} not found for email confirmation.`
+    );
+  }
+
+  const user = await orderModel.findUserById(orderWithDetails.user_id);
+  if (!user) {
+    throw new Error(`User for order ID ${orderId} not found.`);
+  }
+
+  await sendOrderConfirmationEmail(user, orderWithDetails);
+};
+
+/**
+ * Finds an order by its Stripe session ID for a specific user.
+ * @param {string} sessionId The Stripe checkout session ID.
+ * @param {number} userId The ID of the user who owns the order.
+ * @returns {Promise<object|null>} The order object or null if not found.
+ */
+export const getOrderBySessionId = async (sessionId, userId) => {
+  const order = await orderModel.findOrderBySessionId(sessionId, userId);
+  if (!order) return null; // Return null instead of throwing an error, as polling is expected to fail initially.
+
+  return orderModel.findOrderByIdWithItems(order.id);
 };

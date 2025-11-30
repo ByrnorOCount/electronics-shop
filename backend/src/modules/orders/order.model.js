@@ -150,3 +150,19 @@ export const createOrderFromCartInTransaction = (
     return order;
   });
 };
+
+/**
+ * Finds an order by the Stripe session ID stored in payment_details.
+ * @param {string} sessionId The Stripe checkout session ID.
+ * @param {number} userId The ID of the user.
+ * @returns {Promise<object|undefined>} The order object or undefined.
+ */
+export const findOrderBySessionId = (sessionId, userId) => {
+  return db("orders")
+    .where({
+      user_id: userId,
+      payment_method: "stripe",
+    })
+    .whereRaw("payment_details->>'sessionId' = ?", [sessionId])
+    .first();
+};

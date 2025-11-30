@@ -29,7 +29,12 @@ winston.addColors(colors);
 const baseFormat = [
   winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
   winston.format.printf(
-    (info) => `${info.timestamp} ${info.level}: ${info.message}`
+    (info) =>
+      `${info.timestamp} ${info.level}: ${info.message}` +
+      // If there's a splat (extra object), stringify and append it.
+      (info[Symbol.for("splat")]
+        ? ` ${JSON.stringify(info[Symbol.for("splat")][0])}`
+        : "")
   ),
 ];
 
@@ -45,12 +50,19 @@ const transports = [
   new winston.transports.File({
     filename: "logs/error.log",
     level: "error",
-    format: winston.format.combine(...baseFormat),
+    // For file logs, it's better to use JSON format to capture the full object structure.
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.json()
+    ),
   }),
   // File transport for all logs (without colorization)
   new winston.transports.File({
     filename: "logs/all.log",
-    format: winston.format.combine(...baseFormat),
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.json()
+    ),
   }),
 ];
 
