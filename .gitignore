@@ -49,4 +49,4 @@ database/knexfile-local.js
 *.pid
 tree.bat
 # tree.txt
-# z_docs/
+z_ran/
