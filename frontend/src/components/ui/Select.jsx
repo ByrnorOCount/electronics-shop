@@ -51,6 +51,11 @@ const Select = ({
     setIsOpen(false);
   };
 
+  const handlePlaceholderClick = () => {
+    // Clear the selection but keep the dropdown open.
+    onChange({ target: { name, value: "" } });
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Escape") {
       setIsOpen(false);
@@ -96,7 +101,7 @@ const Select = ({
             >
               {placeholder && (
                 <li
-                  onClick={() => handleOptionClick("")}
+                  onClick={handlePlaceholderClick}
                   className="cursor-default select-none relative py-2 px-4 bg-gray-50"
                 >
                   <span className="font-semibold block truncate text-gray-500">

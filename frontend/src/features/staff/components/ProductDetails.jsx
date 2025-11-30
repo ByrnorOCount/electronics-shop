@@ -27,8 +27,7 @@ const ProductDetails = ({ product }) => {
             <strong>Stock:</strong> {product.stock}
           </p>
           <p>
-            <strong>Category:</strong>{" "}
-            {product.category_name || product.category_id || "N/A"}
+            <strong>Category:</strong> {product.category_name || "N/A"}
           </p>
           <p>
             <strong>Featured:</strong> {product.is_featured ? "Yes" : "No"}

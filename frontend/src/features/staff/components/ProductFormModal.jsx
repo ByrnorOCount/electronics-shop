@@ -74,7 +74,14 @@ const ProductFormModal = ({ isOpen, onClose, product, onSave }) => {
   }, [product, isEditing, isOpen, fetchCategories]);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    let { name, value, type, checked } = e.target;
+
+    // The custom Select component uses an empty string "" to signify clearing the selection.
+    // We should treat this as null for the category_id.
+    if (name === "category_id" && value === "") {
+      value = null;
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -195,10 +202,13 @@ const ProductFormModal = ({ isOpen, onClose, product, onSave }) => {
           <Select
             name="category_id"
             label="Category"
-            value={formData.category_id}
+            value={formData.category_id ?? ""}
             onChange={handleChange}
             placeholder="Select a category"
-            options={categories.map((c) => ({ value: c.id, label: c.name }))}
+            options={categories.map((c) => ({
+              value: String(c.id),
+              label: c.name,
+            }))}
           />
           <Input
             name="image_url"
