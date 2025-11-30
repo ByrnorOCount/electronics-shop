@@ -90,7 +90,7 @@ router
   .get(validate(staffValidation.getAllOrders), staffController.getAllOrders);
 
 router
-  .route("/orders/:id")
+  .route("/orders/:id/status")
   .put(
     validate(staffValidation.updateOrderStatus),
     staffController.updateOrderStatus

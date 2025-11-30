@@ -123,18 +123,26 @@ export const getAllOrders = async (options) => {
  * @returns {Promise<object>}
  */
 export const updateOrderStatus = async (orderId, status) => {
-  const updated = await staffModel.updateOrderStatus(orderId, status);
-  if (!updated) {
+  const updatedOrderRecord = await staffModel.updateOrderStatus(
+    orderId,
+    status
+  );
+  if (!updatedOrderRecord) {
     throw new ApiError(httpStatus.NOT_FOUND, "Order not found");
   }
 
   // Notify the user about the order status update
   await createNotification(
-    updated.user_id,
+    updatedOrderRecord.user_id,
     `Your order #${orderId} has been updated to "${status}".`,
     `/orders/${orderId}`
   );
-  return updated;
+
+  // After updating, refetch the full order details to return a consistent object
+  const fullOrder = await staffModel.findOrderById(orderId);
+  const items = await staffModel.findOrderItems(orderId);
+
+  return { ...fullOrder, items };
 };
 
 /**

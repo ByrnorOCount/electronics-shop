@@ -84,6 +84,21 @@ export const findOrderItems = (orderId) => {
 };
 
 /**
+ * Finds a single order by its ID.
+ * @param {number} orderId - The ID of the order.
+ * @returns {Promise<object|undefined>} An order object or undefined if not found.
+ */
+export const findOrderById = (orderId) => {
+  return db("orders")
+    .select(
+      "orders.*",
+      db.raw("CONCAT(users.first_name, ' ', users.last_name) as customer_name")
+    )
+    .join("users", "orders.user_id", "users.id")
+    .where("orders.id", orderId)
+    .first();
+};
+/**
  * Updates the status of an order.
  * @param {number} orderId - The ID of the order to update.
  * @param {string} status - The new status.

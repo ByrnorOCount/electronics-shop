@@ -55,7 +55,7 @@ const getAllOrders = async (query = {}) => {
  * @returns {Promise<object>} The updated order.
  */
 const updateOrderStatus = async (orderId, statusData) => {
-  const response = await api.put(`/staff/orders/${orderId}`, statusData);
+  const response = await api.put(`/staff/orders/${orderId}/status`, statusData);
   return response.data.data;
 };
 
