@@ -1,7 +1,5 @@
 # Software Requirements Specification (SRS) for Electronics Shop Web Application
 
-**GitHub Repository:** [https://github.com/your-username/your-repository-name]
-
 ## 1. Introduction
 
 ### 1.1 Objectives
