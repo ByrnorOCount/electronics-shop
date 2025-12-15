@@ -40,9 +40,9 @@ const envVarsSchema = Joi.object()
       .description("Facebook App Secret"),
 
     // Shipping & Currency
-    USD_TO_VND_RATE: Joi.number()
-      .required()
-      .description("USD to VND exchange rate"),
+    // USD_TO_VND_RATE: Joi.number()
+    //   .required()
+    //   .description("USD to VND exchange rate"),
   })
   .unknown();
 
