@@ -41,7 +41,7 @@ export const useOrderActions = () => {
       const errorMessage =
         err.response?.data?.message || "Failed to send OTP. Please try again.";
       toast.error(errorMessage);
-      setError(errorMessage);
+      setError(err);
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +72,7 @@ export const useOrderActions = () => {
       const errorMessage =
         err.response?.data?.message || "An unexpected error occurred.";
       toast.error(errorMessage);
-      setError(errorMessage);
+      setError(err);
     } finally {
       setIsLoading(false);
     }

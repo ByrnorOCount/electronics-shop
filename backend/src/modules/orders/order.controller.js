@@ -122,10 +122,16 @@ export const getOrderBySessionId = async (req, res, next) => {
  * @access Public (verified by signature/hash)
  */
 export const handlePaymentWebhook = async (req, res) => {
+  logger.info("Stripe webhook endpoint was hit."); // <-- ADD THIS LINE
   const stripe = new Stripe(env.STRIPE_SECRET_KEY);
   // --- Stripe Webhook Handling ---
   const stripeSignature = req.headers["stripe-signature"];
   if (stripeSignature) {
+    // Log the raw body to ensure it's being received correctly before parsing.
+    logger.info("Received a request to the Stripe webhook endpoint.", {
+      stripeSignature,
+      bodyLength: req.body.length,
+    });
     const endpointSecret = env.STRIPE_WEBHOOK_SECRET;
     let event;
 
@@ -136,7 +142,12 @@ export const handlePaymentWebhook = async (req, res) => {
         endpointSecret
       );
     } catch (err) {
-      logger.warn(`⚠️  Webhook signature verification failed.`, err.message);
+      logger.error(
+        "⚠️ Webhook signature verification failed. Check that the `STRIPE_WEBHOOK_SECRET` is correct and that the request body is raw.",
+        {
+          errorMessage: err.message,
+        }
+      );
       return res.sendStatus(400);
     }
 
@@ -145,6 +156,10 @@ export const handlePaymentWebhook = async (req, res) => {
     // Handle the checkout.session.completed event
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
+      logger.info("Processing 'checkout.session.completed' event.", {
+        sessionId: session.id,
+        paymentIntent: session.payment_intent,
+      });
       // Retrieve userId and shippingAddress from the metadata we set earlier.
       const { userId, shippingAddress } = session.metadata;
 
@@ -171,7 +186,7 @@ export const handlePaymentWebhook = async (req, res) => {
         logger.error(
           "❌ Failed to create order from Stripe webhook. Session data included for debugging.",
           {
-            error: { message: error.message, stack: error.stack },
+            errorMessage: error.message,
             stripeSession: session,
           }
         );

@@ -42,6 +42,10 @@ const createStripeSession = async (cartItems, userId, shippingAddress) => {
   for (const item of cartItems) {
     const product = productMap.get(item.product_id);
     if (!product || product.stock < item.quantity) {
+      logger.warn("Preliminary stock check failed for Stripe session.", {
+        productId: item.product_id,
+        requested: item.quantity,
+      });
       throw new ApiError(
         httpStatus.CONFLICT,
         `Sorry, '${item.name}' is out of stock or has insufficient quantity.`

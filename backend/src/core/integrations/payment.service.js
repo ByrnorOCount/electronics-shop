@@ -22,6 +22,11 @@ export const createOrderFromCart = async (
   paymentDetails = {},
   trx
 ) => {
+  logger.info("Attempting to create order from cart within transaction.", {
+    userId,
+    paymentMethod,
+  });
+
   const user = await trx("users").where({ id: userId }).first();
   if (!user) throw new Error("User not found");
 
@@ -35,6 +40,8 @@ export const createOrderFromCart = async (
       "products.name",
       "products.stock"
     );
+
+  logger.info(`Found ${cartItems.length} cart items for user ${userId}.`);
 
   if (cartItems.length === 0) {
     throw new ApiError(
@@ -96,21 +103,21 @@ export const createOrderFromCart = async (
   // 4. Clear the user's cart.
   await trx("cart_items").where({ user_id: userId }).del();
 
-  // 5. Create a notification.
+  // 5. Create a notification for the user.
   await createNotification(
     userId,
     `Your order #${order.id} has been placed successfully.`,
     "/orders",
     trx
   );
-
-  // Log the successful order creation for staging/debugging purposes.
-  // The actual confirmation email is sent via the webhook handler after payment is confirmed.
-  logger.info("Order created within transaction.", {
-    orderId: order.id,
-    userEmail: user.email,
-    total: order.total_amount,
-  });
+  logger.info(
+    `Order #${order.id} and associated records created in transaction.`,
+    {
+      orderId: order.id,
+      userEmail: user.email,
+      total: order.total_amount,
+    }
+  );
 
   return order;
 };

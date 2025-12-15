@@ -37,18 +37,37 @@ For the initial setup, you need to build the Docker images. This command will bu
 docker-compose up --build
 ```
 
-**Subsequent Runs**
-
-Run that command again should you need to rebuild the images (only necessary when the code is changed, mainly through new github pushes). Otherwise, you can just run
-
-```bash
-docker-compose up
-```
+Run that command again should you need to rebuild the images (only necessary when the code is changed, mainly through new github pushes).
 
 ### 3. Accessing the Services
 
 - **Frontend:** http://localhost:5173
 - **Backend API:** http://localhost:3001
+
+### 4. Local Development Workflow
+
+This section outlines the typical workflow for running the application locally for development, including handling real-time services like Stripe webhooks.
+
+1.  **Start the Application:** In your root directory, run the application using Docker Compose.
+
+    ```bash
+    docker-compose up
+    ```
+
+2.  **Handle Stripe Webhooks (for Online Payments):**
+    [Ignore this if you already have the .env in full]
+    Stripe sends webhook events to notify your backend about payment success. Since your backend is running on `localhost` (inside Docker), you need a tunnel for Stripe's servers to reach it. The Stripe CLI provides this.
+
+    - **Install & Login:** If you haven't already, install the Stripe CLI and log in:
+      ```bash
+      stripe login
+      ```
+    - **Forward Webhooks:** Open a **new, separate terminal window** and run the following command. This command must remain running in the background while you test payments.
+      ```bash
+      stripe listen --forward-to http://localhost:3001/api/orders/webhook
+      ```
+    - **Set Webhook Secret:** The command will output a webhook signing secret (e.g., `whsec_...`). Copy this secret and paste it as the value for `STRIPE_WEBHOOK_SECRET` in your `backend/.env` file.
+    - **Restart Backend:** If you update the `.env` file, you'll need to restart the services for the changes to take effect: press `Ctrl+C` in the `docker-compose` terminal and run `docker-compose up` again.
 
 ## 1. Introduction
 
