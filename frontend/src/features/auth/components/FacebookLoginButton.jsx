@@ -2,7 +2,8 @@ import React from "react";
 import Icon from "../../../components/ui/Icon";
 
 const FacebookLoginButton = () => {
-  const facebookLoginUrl = "http://localhost:3001/api/auth/facebook";
+  const apiUrl = import.meta.env.VITE_API_BASE_URL.replace("/api", "");
+  const facebookLoginUrl = `${apiUrl}/api/auth/facebook`;
 
   return (
     <a

@@ -75,13 +75,4 @@ const handleSocialLogin = async (user) => {
   return generateAuthTokens(user);
 };
 
-/**
- * Get the currently authenticated user.
- * @param {object} user - The user object from the request (attached by middleware).
- * @returns {Promise<object>}
- */
-const getMe = async (user) => {
-  return user;
-};
-
-export { register, login, handleSocialLogin, getMe };
+export { register, login, handleSocialLogin };

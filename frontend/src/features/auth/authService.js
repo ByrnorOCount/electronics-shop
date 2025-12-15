@@ -33,7 +33,7 @@ const logout = async () => {
  * @returns {Promise<object>} The user object.
  */
 const getMe = async () => {
-  const response = await api.get("/auth/me");
+  const response = await api.get("/users/me"); // This now uses the unified endpoint
   return response.data.data;
 };
 

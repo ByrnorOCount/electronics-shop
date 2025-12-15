@@ -35,6 +35,8 @@ import AdminCategoriesPage from "./features/admin/AdminCategoriesPage";
 import AdminUsersPage from "./features/admin/AdminUsersPage";
 import AdminAnalyticsPage from "./features/admin/AdminAnalyticsPage";
 import AdminLogsPage from "./features/admin/AdminLogsPage";
+import { useAppDispatch } from "./store/hooks";
+import { checkAuthStatus } from "./features/auth/authSlice";
 
 /**
  * Fetches the CSRF token from the backend to enable secure requests.
@@ -50,6 +52,7 @@ const initializeCsrf = async () => {
 };
 
 function App() {
+  const dispatch = useAppDispatch();
   // Fetch the CSRF token when the application first loads.
   // This ensures that subsequent state-changing API calls (POST, PUT, DELETE)
   // will have the necessary token to pass the backend's security check.
@@ -65,7 +68,8 @@ function App() {
     }
 
     initializeCsrf();
-  }, []);
+    dispatch(checkAuthStatus());
+  }, [dispatch]);
   return (
     <>
       <CartSyncManager />

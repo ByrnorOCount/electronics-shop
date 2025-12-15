@@ -2,8 +2,8 @@ import React from "react";
 import Icon from "../../../components/ui/Icon";
 
 const GoogleLoginButton = () => {
-  // This URL points DIRECTLY to the backend (port 3001)
-  const googleLoginUrl = "http://localhost:3001/api/auth/google";
+  const apiUrl = import.meta.env.VITE_API_BASE_URL.replace("/api", "");
+  const googleLoginUrl = `${apiUrl}/api/auth/google`;
 
   return (
     <a

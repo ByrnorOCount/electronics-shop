@@ -9,6 +9,7 @@ const envVarsSchema = Joi.object()
       .valid("production", "development", "test")
       .required(),
     PORT: Joi.number().default(3001),
+    BACKEND_URL: Joi.string().required().description("Backend base URL"),
     FRONTEND_URL: Joi.string().required().description("Frontend base URL"),
 
     // Security

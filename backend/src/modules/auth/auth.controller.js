@@ -61,30 +61,17 @@ export const socialAuthCallback = async (req, res, next) => {
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
-    // Redirect to the frontend.
-    res.redirect(env.FRONTEND_URL);
+    // Redirect to the frontend login page with a success status.
+    // This is the critical step that tells the frontend to fetch the user's
+    // profile and finalize the login state.
+    logger.info(
+      `Social login successful for user ID: ${req.user.id}. Redirecting to frontend.`
+    );
+    res.redirect(`${env.FRONTEND_URL}/login?status=success`);
   } catch (error) {
     // If anything goes wrong, redirect to the login page with an error.
     logger.error("Social login error:", error);
     res.redirect(`${env.FRONTEND_URL}/login?error=social_login_failed`);
-  }
-};
-
-/**
- * @route GET /api/auth/me
- * @summary Get the currently authenticated user's profile.
- * @description This endpoint is used by the frontend to verify an existing session (e.g., on page load).
- * @access Private
- */
-export const getMe = async (req, res, next) => {
-  try {
-    // The user object is already attached to the request by the `authenticate` middleware.
-    const user = await authService.getMe(req.user);
-    res
-      .status(httpStatus.OK)
-      .json(new ApiResponse(httpStatus.OK, user, "User profile retrieved."));
-  } catch (error) {
-    next(error);
   }
 };
 

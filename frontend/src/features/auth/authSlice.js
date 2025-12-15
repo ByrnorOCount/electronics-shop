@@ -62,22 +62,25 @@ export const logoutUser = createAsyncThunk(
 // Async thunk to check auth status via httpOnly cookie
 export const checkAuthStatus = createAsyncThunk(
   "auth/checkStatus",
-  async (_, { getState, rejectWithValue }) => {
-    const { token } = getState().auth;
-    // Only proceed if there's a token in the state. This prevents unnecessary
-    // checks for guest users on every page load.
-    if (!token) {
-      return rejectWithValue("No token found, skipping session check.");
+  async (_, { getState, rejectWithValue, fulfillWithValue }) => {
+    // If a social login is being processed on the login page, it will set a temporary
+    // token in localStorage. We check for this to avoid a race condition where
+    // this thunk and the login page both try to fetch the user.
+    if (localStorage.getItem("token") === "social_login_in_progress") {
+      // By rejecting with a specific string, we can identify this case in the reducer
+      // and prevent any state changes, avoiding the logout/login race condition.
+      // We use `rejectWithValue` so it hits the 'rejected' case.
+      return rejectWithValue("social_login_in_progress");
     }
     try {
       // This service relies on the httpOnly cookie being sent by the browser.
       const user = await authService.getMe();
-      // If we get a user, the session is valid.
-      // We return the user object. We also check if a token already exists in the state.
-      // If it does (from localStorage), we preserve it. If not, it was a social login,
-      // and we can use a placeholder. This prevents overwriting a valid JWT.
+      // If we get a user, the session is valid. We return the user object.
+      // We also check if a token already exists in the state. If it does (from localStorage),
+      // we preserve it. If not, it was a social login, and we can use a placeholder.
+      // This prevents overwriting a valid JWT.
       const existingToken = getState().auth.token;
-      return { user, token: existingToken || "social_login" };
+      return fulfillWithValue({ user, token: existingToken || "social_login" });
     } catch (error) {
       // This will happen if the cookie is invalid or not present (e.g., guest user).
       // It's not a "real" error, just a failed check, so we reject to prevent state changes.
@@ -156,7 +159,12 @@ const authSlice = createSlice({
         authSlice.caseReducers.setCredentials(state, action);
       })
       .addCase(checkAuthStatus.rejected, (state, action) => {
-        // If the session check fails (e.g., invalid token), log the user out completely.
+        // If the rejection is because a social login is already being handled,
+        // do nothing to prevent state churn.
+        if (action.payload === "social_login_in_progress") {
+          return;
+        }
+        // Otherwise, the session is truly invalid, so log the user out.
         authSlice.caseReducers.logout(state);
       });
   },

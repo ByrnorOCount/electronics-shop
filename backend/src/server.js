@@ -11,6 +11,7 @@ const startServer = async () => {
   try {
     server = app.listen(PORT, () => {
       logger.info(`🚀 Server running on http://localhost:${PORT}`);
+      logger.info(`✨ Frontend should be available at ${env.FRONTEND_URL}`);
     });
 
     // 2. After the server is listening, test the database connection.

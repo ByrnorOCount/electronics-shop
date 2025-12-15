@@ -14,6 +14,7 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
+  const [isSocialLoginProcessing, setIsSocialLoginProcessing] = useState(false);
 
   const dispatch = useAppDispatch();
   const { login } = useAuthActions();
@@ -27,12 +28,17 @@ const LoginPage = () => {
   useEffect(() => {
     // This effect runs when the component mounts. If the URL contains
     // `?status=success`, it means we've returned from a social login.
-    if (socialLoginSuccess) {
+    if (socialLoginSuccess && !isSocialLoginProcessing) {
+      setIsSocialLoginProcessing(true); // Prevent re-entry
+      // By setting the token in localStorage, we signal to `checkAuthStatus`
+      // that a login is in progress, preventing it from running concurrently.
+      localStorage.setItem("token", "social_login_in_progress");
+
       const fetchUser = async () => {
         try {
           // The browser automatically sends the 'jwt' cookie with this request.
-          const response = await api.get("/users/me");
-          const user = response.data;
+          const response = await api.get("/users/me"); // Use the unified endpoint
+          const user = response.data.data;
           // The token is in an httpOnly cookie, so we don't have it here.
           // We pass a placeholder string to satisfy the Redux state.
           dispatch(setCredentials({ token: "social_login", user }));
@@ -40,6 +46,10 @@ const LoginPage = () => {
           navigate("/profile");
         } catch (err) {
           toast.error("Failed to fetch user profile after social login.");
+          setIsSocialLoginProcessing(false); // Allow retry on error
+        } finally {
+          // Clean up the temporary token from localStorage.
+          localStorage.removeItem("token");
         }
       };
 
@@ -48,7 +58,7 @@ const LoginPage = () => {
     // The dependency array is empty to ensure this runs only once on mount.
     // We read `socialLoginSuccess` inside the effect to avoid re-running on location change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [socialLoginSuccess]); // Add socialLoginSuccess to dependency array
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

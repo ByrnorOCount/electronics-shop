@@ -12,6 +12,12 @@ import logger from "./logger.js";
  * @param {function} done - The Passport done callback.
  */
 const findOrCreateUser = async (provider, profile, done) => {
+  logger.debug(`[Passport] Received profile from ${provider}`, {
+    provider: provider,
+    id: profile.id,
+    displayName: profile.displayName,
+    emails: profile.emails,
+  });
   let email =
     profile.emails && profile.emails[0] ? profile.emails[0].value : null;
   const providerId = profile.id;
@@ -24,6 +30,9 @@ const findOrCreateUser = async (provider, profile, done) => {
   }
 
   if (!email) {
+    logger.error(`[Passport] '${provider}' did not return an email address.`, {
+      profile,
+    });
     return done(
       new Error(`'${provider}' did not return an email address.`),
       null
@@ -36,6 +45,10 @@ const findOrCreateUser = async (provider, profile, done) => {
       .where({ provider, provider_id: providerId })
       .first();
     if (user) {
+      logger.info(`[Passport] Found existing user by provider ID.`, {
+        userId: user.id,
+        provider,
+      });
       return done(null, user);
     }
 
@@ -53,6 +66,10 @@ const findOrCreateUser = async (provider, profile, done) => {
             is_verified: true, // Social logins are considered verified.
           })
           .returning("*");
+        logger.info(`[Passport] Linked existing user to new provider.`, {
+          userId: linkedUser.id,
+          provider,
+        });
         return done(null, linkedUser);
       }
     }
@@ -60,8 +77,14 @@ const findOrCreateUser = async (provider, profile, done) => {
     // 3. If no account matches, create a new user.
     const [newUser] = await db("users")
       .insert({
-        first_name: profile.name.givenName || profile.displayName || "User",
-        last_name: profile.name.familyName || ".",
+        first_name:
+          profile.name?.givenName ||
+          profile.displayName?.split(" ")[0] ||
+          "User",
+        last_name:
+          profile.name?.familyName ||
+          profile.displayName?.split(" ").slice(1).join(" ") ||
+          ".",
         email: email,
         provider: provider,
         provider_id: providerId,
@@ -69,6 +92,10 @@ const findOrCreateUser = async (provider, profile, done) => {
       })
       .returning("*");
 
+    logger.info(`[Passport] Created new user from social login.`, {
+      userId: newUser.id,
+      provider,
+    });
     return done(null, newUser);
   } catch (error) {
     logger.error(`Error in Passport ${provider} Strategy:`, error);
@@ -86,7 +113,7 @@ export const useGoogleStrategy = () => {
       {
         clientID: env.GOOGLE_CLIENT_ID,
         clientSecret: env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "/api/auth/google/callback",
+        callbackURL: `${env.BACKEND_URL}/api/auth/google/callback`,
         proxy: true,
       },
       (accessToken, refreshToken, profile, done) => {
@@ -106,7 +133,7 @@ export const useFacebookStrategy = () => {
       {
         clientID: env.FACEBOOK_APP_ID,
         clientSecret: env.FACEBOOK_APP_SECRET,
-        callbackURL: "/api/auth/facebook/callback",
+        callbackURL: `${env.BACKEND_URL}/api/auth/facebook/callback`,
         proxy: true,
         profileFields: ["id", "emails", "name"],
       },

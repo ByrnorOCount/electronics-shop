@@ -19,12 +19,6 @@ export const authenticate = async (req, res, next) => {
     // 2. Fallback to the cookie (for social login session verification)
     else if (req.cookies.jwt) {
       token = req.cookies.jwt;
-      // The cookie is a one-time use token for session establishment.
-      // Clear it after reading to prevent it from being used again on subsequent requests,
-      // forcing the client to rely on the Authorization header.
-      res.clearCookie("jwt", {
-        httpOnly: true,
-      });
     }
 
     if (!token) {
