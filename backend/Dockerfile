@@ -18,7 +18,13 @@ COPY --from=base /usr/src/app/node_modules ./node_modules
 # Copy the rest of your application code
 COPY . .
 
+# Copy the entrypoint script and make it executable
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
+
 # Expose the port the app runs on
 EXPOSE 3001
 
+# Set the entrypoint script. The CMD will be passed as arguments to this script.
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["npm", "run", "start"]

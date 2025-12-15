@@ -1,16 +1,26 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:16-alpine
     container_name: electronics-shop-db
     restart: always
+    # This loads all variables from backend/.env into the container.
+    # The postgres image will automatically use DB_USER, DB_PASSWORD, and DB_DATABASE
+    # if they are present in the environment, but it's best practice to be explicit.
+    env_file:
+      - ./backend/.env
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_DATABASE}
+      - POSTGRES_USER=${DB_USER} # Substitutes from the root .env
+      - POSTGRES_PASSWORD=${DB_PASSWORD} # Substitutes from the root .env
+      - POSTGRES_DB=${DB_DATABASE} # Substitutes from the root .env
     ports:
       - "5432:5432"
+    # The healthcheck tells Docker to periodically check if the Postgres server
+    # is ready to accept connections.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_DATABASE}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - pgdata:/var/lib/postgresql/data
 
@@ -20,36 +30,34 @@ services:
       dockerfile: Dockerfile
     container_name: electronics-shop-backend
     restart: always
+    # This now waits for the 'db' service to not only start, but to become 'healthy'
+    # as defined by its healthcheck.
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
-      - "3001:3001"
+      - "3001:3001" # This loads all variables from backend/.env directly into the container.
+    env_file:
+      - ./backend/.env
     environment:
-      # Connect to the database service named 'db'
-      DB_HOST: db
-      # Pass other variables from the backend .env file
-      NODE_ENV: ${NODE_ENV}
-      PORT: ${PORT}
-      FRONTEND_URL: ${FRONTEND_URL}
-      DB_CLIENT: ${DB_CLIENT}
-      DB_PORT: ${DB_PORT}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_DATABASE: ${DB_DATABASE}
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID}
-      FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET}
+      # This overrides the DB_HOST from the .env file,
+      # ensuring the backend connects to the 'db' container.
+      - DB_HOST=db
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      # These args are populated from the env_file below and passed to the Dockerfile
+      # during the build process, making them available to Vite.
+      # The values are substituted from the root .env file.
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+        - VITE_STRIPE_PUBLIC_KEY=${VITE_STRIPE_PUBLIC_KEY}
     container_name: electronics-shop-frontend
+    # The frontend is a static build; it doesn't need runtime environment variables
+    # from an env_file after it's built. The build args are sufficient.
     ports:
       - "5173:80" # Map host 5173 to container 80 (Nginx)
-
 volumes:
   pgdata:

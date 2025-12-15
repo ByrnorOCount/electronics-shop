@@ -45,7 +45,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] **OTP Authentication (FR17):**
   - [x] Generate OTP on checkout and verify before confirming order.
 - [x] **Profile Management (FR12):**
-  - [x] Implement `/api/users/me` for updating user info.
+  - [x] Implement `/api/auth/me` for updating user info.
 - [x] **Notifications (FR14):**
   - [x] Send notifications via email and store them in DB.
 

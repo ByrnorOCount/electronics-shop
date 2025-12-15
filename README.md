@@ -1,5 +1,55 @@
 # Software Requirements Specification (SRS) for Electronics Shop Web Application
 
+## Docker Instructions
+
+This project is fully containerized using Docker and Docker Compose, simplifying setup and ensuring a consistent development environment.
+
+### Prerequisites
+
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+### 1. Environment Configuration
+
+Before running the application, you need to configure environment variables for both the backend and frontend.
+
+#### Backend Configuration
+
+1.  Navigate to the `backend` directory.
+2.  Create a new file named `.env`.
+3.  Copy the contents from the provided `.env.example`, then fill in your own secret values.
+
+#### Frontend Configuration
+
+Follow the same steps in the previous section, except now in the `frontend` directory.
+
+#### Root `.env` Generation
+
+Run `npm run docker:prepare` to generate the root `.env` file. This file is used by Docker Compose to substitute variables.
+
+### 2. Running the Application
+
+**First-Time Setup**
+
+For the initial setup, you need to build the Docker images. This command will build the images and start the containers in the foreground. You will see logs from all services directly in your terminal.
+
+```bash
+docker-compose up --build
+```
+
+**Subsequent Runs**
+
+Run that command again should you need to rebuild the images (only necessary when the code is changed, mainly through new github pushes). Otherwise, you can just run
+
+```bash
+docker-compose up
+```
+
+### 3. Accessing the Services
+
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:3001
+
 ## 1. Introduction
 
 ### 1.1 Objectives

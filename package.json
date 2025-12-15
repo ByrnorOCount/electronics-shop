@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "concurrently \"npm run dev --workspace=backend\" \"npm run dev --workspace=frontend\"",
     "install-all": "npm install --workspaces",
+    "docker:prepare": "node scripts/generate-root-env.js",
     "build": "npm run build --workspace=frontend",
     "start": "npm run start --workspace=backend"
   },
@@ -13,6 +14,7 @@
   ],
   "devDependencies": {
     "baseline-browser-mapping": "^2.8.31",
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.2.3"
   }
 }

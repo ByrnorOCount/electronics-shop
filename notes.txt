@@ -173,3 +173,6 @@ mở đầu
 chụp mô tả giao diện (phần chức năng)
 sơ đồ csdl
 class diagram
+
+
+Provide a more robust solution to prevent race conditions during social login

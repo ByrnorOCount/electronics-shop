@@ -1,6 +1,7 @@
 .
 |-- CHECKLIST.md
 |-- backend
+|   |-- Dockerfile
 |   |-- database
 |   |   |-- docs
 |   |   |   `-- schema.sql
@@ -28,6 +29,7 @@
 |   |       |-- 05_initial_orders.js
 |   |       |-- 06_initial_support_tickets.js
 |   |       `-- 07_initial_notifications.js
+|   |-- docker-entrypoint.sh
 |   |-- logs
 |   |   |-- all.log
 |   |   `-- error.log
@@ -151,8 +153,11 @@
 |       |       `-- wishlist.validation.js
 |       |-- routes.js
 |       `-- server.js
+|-- docker-compose.yml
 |-- frontend
+|   |-- Dockerfile
 |   |-- index.html
+|   |-- nginx.conf
 |   |-- package.json
 |   |-- postcss.config.mjs
 |   |-- public
@@ -285,6 +290,8 @@
 |-- notes.txt
 |-- package-lock.json
 |-- package.json
+|-- scripts
+|   `-- generate-root-env.js
 `-- tree.txt
 
-62 directories, 225 files
+63 directories, 231 files

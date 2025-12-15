@@ -1,6 +1,14 @@
 # Stage 1: Build the React application
 FROM node:20-alpine AS build
 
+# Define build-time arguments
+ARG VITE_API_BASE_URL
+ARG VITE_STRIPE_PUBLIC_KEY
+
+# Set them as environment variables for the build process
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_STRIPE_PUBLIC_KEY=$VITE_STRIPE_PUBLIC_KEY
+
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json
