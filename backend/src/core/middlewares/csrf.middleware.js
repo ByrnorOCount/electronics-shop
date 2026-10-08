@@ -36,8 +36,21 @@ export const csrfProtection = (req, res, next) => {
   const tokenFromCookie = req.cookies["XSRF-TOKEN"];
   const tokenFromHeader = req.headers["x-xsrf-token"];
 
-  if (!tokenFromCookie || !tokenFromHeader) {
-    return next(new ApiError(httpStatus.FORBIDDEN, "CSRF token is missing."));
+  if (!tokenFromCookie) {
+    return next(
+      new ApiError(
+        httpStatus.FORBIDDEN,
+        "CSRF token is missing (Cookie not found)."
+      )
+    );
+  }
+  if (!tokenFromHeader) {
+    return next(
+      new ApiError(
+        httpStatus.FORBIDDEN,
+        "CSRF token is missing (Header 'x-xsrf-token' not found)."
+      )
+    );
   }
 
   // Use a timing-safe comparison to prevent timing attacks

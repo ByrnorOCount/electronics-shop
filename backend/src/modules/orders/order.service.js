@@ -19,7 +19,13 @@ const stripe = new Stripe(env.STRIPE_SECRET_KEY);
  * @param {object} user - The authenticated user object.
  */
 export const generateAndSendOtp = async (user) => {
-  const otp = crypto.randomInt(100000, 999999).toString();
+  let otp;
+  // In development, use a fixed OTP for easier testing/automation
+  if (env.NODE_ENV === "development") {
+    otp = "123456";
+  } else {
+    otp = crypto.randomInt(100000, 999999).toString();
+  }
   const otpHash = await bcrypt.hash(otp, 10);
   await orderModel.saveOtpForUser(user.id, otpHash);
   await sendOtpEmail(user, otp);

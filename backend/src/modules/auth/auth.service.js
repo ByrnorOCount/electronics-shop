@@ -26,9 +26,10 @@ const register = async (userData) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
   }
 
-  const hashedPassword = await bcrypt.hash(userData.password, 10);
+  const { password, ...userFields } = userData;
+  const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = await authModel.create({
-    ...userData,
+    ...userFields,
     password_hash: hashedPassword,
     role: "customer", // Assign default role
   });

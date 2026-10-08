@@ -17,7 +17,7 @@ export const authenticate = async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
     }
     // 2. Fallback to the cookie (for social login session verification)
-    else if (req.cookies.jwt) {
+    else if (req.cookies && req.cookies.jwt) {
       token = req.cookies.jwt;
     }
 
@@ -74,6 +74,7 @@ export const authenticate = async (req, res, next) => {
     logger.warn(
       `Authentication failed: ${error.message}. Proceeding as guest.`
     );
+    req.authError = error; // Attach error so isAuthenticated can report the specific reason
     next();
   }
 };
@@ -87,12 +88,12 @@ export const isAuthenticated = (req, res, next) => {
   if (req.user) {
     return next();
   }
-  next(
-    new ApiError(
-      httpStatus.UNAUTHORIZED,
-      "Authentication required. Please log in."
-    )
-  );
+
+  // Use the specific error message if available (e.g. "jwt expired"), otherwise generic.
+  const message = req.authError
+    ? `Authentication failed: ${req.authError.message}`
+    : "Authentication required. Please log in.";
+  next(new ApiError(httpStatus.UNAUTHORIZED, message));
 };
 
 export const isStaff = (req, res, next) => {
