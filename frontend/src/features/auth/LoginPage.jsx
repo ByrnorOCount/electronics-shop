@@ -1,8 +1,8 @@
 // frontend/src/pages/LoginPage.jsx
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAppDispatch } from "../../store/hooks";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import { setCredentials } from "./authSlice";
+import { logout, setCredentials } from "./authSlice";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
 import { useAuthActions } from "./useAuthActions";
@@ -14,7 +14,7 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
-  const [isSocialLoginProcessing, setIsSocialLoginProcessing] = useState(false);
+  const socialLoginStarted = useRef(false);
 
   const dispatch = useAppDispatch();
   const { login } = useAuthActions();
@@ -28,8 +28,9 @@ const LoginPage = () => {
   useEffect(() => {
     // This effect runs when the component mounts. If the URL contains
     // `?status=success`, it means we've returned from a social login.
-    if (socialLoginSuccess && !isSocialLoginProcessing) {
-      setIsSocialLoginProcessing(true); // Prevent re-entry
+    if (socialLoginSuccess && !socialLoginStarted.current) {
+      socialLoginStarted.current = true;
+      dispatch(logout());
       // By setting the token in localStorage, we signal to `checkAuthStatus`
       // that a login is in progress, preventing it from running concurrently.
       localStorage.setItem("token", "social_login_in_progress");
@@ -46,7 +47,6 @@ const LoginPage = () => {
           navigate("/profile");
         } catch (err) {
           toast.error("Failed to fetch user profile after social login.");
-          setIsSocialLoginProcessing(false); // Allow retry on error
         } finally {
           // Clean up the temporary token from localStorage.
           localStorage.removeItem("token");

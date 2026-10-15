@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import logger from "./utils/logger";
@@ -53,6 +53,7 @@ const initializeCsrf = async () => {
 
 function App() {
   const dispatch = useAppDispatch();
+  const authCheckStarted = useRef(false);
   // Fetch the CSRF token when the application first loads.
   // This ensures that subsequent state-changing API calls (POST, PUT, DELETE)
   // will have the necessary token to pass the backend's security check.
@@ -68,7 +69,12 @@ function App() {
     }
 
     initializeCsrf();
-    dispatch(checkAuthStatus());
+    const isSocialLoginCallback =
+      new URLSearchParams(window.location.search).get("status") === "success";
+    if (!isSocialLoginCallback && !authCheckStarted.current) {
+      authCheckStarted.current = true;
+      dispatch(checkAuthStatus());
+    }
   }, [dispatch]);
   return (
     <>
