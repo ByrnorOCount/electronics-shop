@@ -296,9 +296,37 @@ This section lists tasks for future development cycles, based on the expanded re
   - [ ] Backend logic to assign user tiers (e.g., 'premium') based on purchase history.
   - [ ] Display user status in the frontend account page and admin user list.
 
-### **Additional Future Features**
+### **Product Discovery & Engagement**
 
-- [ ] **Customer Reviews & Ratings:** Allow verified customers to submit product reviews and ratings, and display them on product detail pages.
-- [ ] **Advanced Recommendations:** Provide personalized product suggestions based on users' browsing and purchase history.
-- [ ] **Two-Factor Authentication:** Add an extra layer of security to user accounts by implementing 2FA during login.
-- [ ] **Promotional Campaigns:** Build an admin module to create and manage promotional codes, discounts, and loyalty point systems.
+- [ ] **Customer Reviews & Ratings:**
+  - [ ] Allow verified customers to submit product ratings and written reviews.
+  - [ ] Display ratings and reviews on product detail pages.
+  - [ ] Prevent customers from reviewing products they have not purchased.
+- [ ] **Advanced Recommendations:**
+  - [ ] Use browsing and purchase history to personalize product suggestions.
+  - [ ] Display recommended products in relevant storefront and account pages.
+
+### **Account Security**
+
+- [ ] **Two-Factor Authentication:**
+  - [ ] Let users enable and configure 2FA for their accounts.
+  - [ ] Require a second verification step during login for users with 2FA enabled.
+  - [ ] Provide a secure recovery process for users who lose access to their second factor.
+
+### **Promotions & Loyalty**
+
+- [ ] **Promotional Campaigns:**
+  - [ ] Allow administrators to create, edit, activate, and deactivate promotional codes.
+  - [ ] Configure discounts and campaign eligibility rules.
+  - [ ] Apply eligible promotional codes during checkout and show the discount to customers.
+  - [ ] Award and redeem loyalty points for eligible purchases.
+  - [ ] Show customers their loyalty points and available rewards.
+
+### **AI Chatbot Support**
+
+- [ ] **AI Product Support Chatbot:**
+  - [ ] Answer customer questions using product catalog information.
+  - [ ] Explain product features and compare products in plain language.
+  - [ ] Guide customers toward suitable products based on their stated needs.
+  - [ ] Clearly say when the available information cannot answer a question.
+  - [ ] Offer a way to contact customer support when the chatbot cannot help.
