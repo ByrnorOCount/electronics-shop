@@ -20,10 +20,10 @@ const app = express();
 app.use(
   cors({
     // Explicitly allow your frontend origin
-    origin: env.FRONTEND_URL || "http://localhost:5173",
+    origin: env.FRONTEND_URL || "http://localhost:3100",
     // Allow cookies and other credentials to be sent
     credentials: true,
-  })
+  }),
 );
 
 // Initialize cookie-parser without a secret. The Double-Submit pattern does not require signed cookies.

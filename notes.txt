@@ -118,8 +118,8 @@ stripe test cards
 4242424242424242 visa
 4000056655665556 visa debit
 
-todo: stripe payment redirects to http://localhost:5173/checkout/success?session_id=cs_test_b13KX4CHmDBGG3bbGoM4cqDm7xzJJsky649V8ZhnRlrTWetBcMkirLtVHZ
-and http://localhost:5173/order-confirmation doesn't update
+todo: stripe payment redirects to http://localhost:3100/checkout/success?session_id=cs_test_b13KX4CHmDBGG3bbGoM4cqDm7xzJJsky649V8ZhnRlrTWetBcMkirLtVHZ
+and http://localhost:3100/order-confirmation doesn't update
 
 
 blank card on home should be a bunch of rotating stock images

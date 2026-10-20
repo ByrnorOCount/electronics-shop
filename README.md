@@ -41,7 +41,7 @@ Run that command again should you need to rebuild the images (only necessary whe
 
 ### 3. Accessing the Services
 
-- **Frontend:** http://localhost:5173
+- **Frontend:** http://localhost:3100
 - **Backend API:** http://localhost:3001
 
 ### 4. Local Development Workflow
@@ -57,7 +57,6 @@ This section outlines the typical workflow for running the application locally f
 2.  **Handle Stripe Webhooks (for Online Payments):**
     [Ignore this if you already have the .env in full]
     Stripe sends webhook events to notify your backend about payment success. Since your backend is running on `localhost` (inside Docker), you need a tunnel for Stripe's servers to reach it. The Stripe CLI provides this.
-
     - **Install & Login:** If you haven't already, install the Stripe CLI and log in:
       ```bash
       stripe login

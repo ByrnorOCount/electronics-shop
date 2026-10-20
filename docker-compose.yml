@@ -58,6 +58,6 @@ services:
     # The frontend is a static build; it doesn't need runtime environment variables
     # from an env_file after it's built. The build args are sufficient.
     ports:
-      - "5173:80" # Map host 5173 to container 80 (Nginx)
+      - "3100:80" # Map host 5173 to container 80 (Nginx)
 volumes:
   pgdata:

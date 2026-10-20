@@ -89,7 +89,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
   - [x] Use **Nodemailer** to send confirmation emails.
 - [x] **Order History (`GET /api/orders`)**
   - [x] Return all orders for the current user.
-- [ ] **Online Payments:**
+- [x] **Online Payments:**
   - [x] Add `payment_method` and `payment_details` to `orders` table.
   - [x] Create `/api/orders/create-payment-session` endpoint for Stripe.
   - [x] Create `/api/orders/webhook` endpoint to handle payment success notifications.
@@ -215,7 +215,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 - [x] **Notifications:** Display new alerts in real-time or via polling.
 - [x] **Support System:** Allow message submission and viewing.
 - [x] **Role-based Access:** Protect pages by role (user, staff, admin).
-- [ ] **Responsiveness (NFR5):** Ensure full mobile and tablet support.
+- [x] **Responsiveness (NFR5):** Ensure full mobile and tablet support.
 
 ---
 
@@ -239,14 +239,14 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ### **Security**
 
-- [ ] Use HTTPS in production.
+- [x] Use HTTPS in production.
 - [x] Sanitize all inputs (handled by Knex for SQLi and React for XSS).
 - [x] Prevent CSRF (Double-Submit Cookie CSRF), XSS (React), and SQL (Knex) injection.
 - [x] Encrypt sensitive user data.
 
 ### **Compatibility**
 
-- [ ] Test across Chrome, Firefox, Edge, Safari.
+- [x] Test across Chrome, Firefox, Edge, Safari.
 
 ### **Usability**
 
@@ -284,7 +284,7 @@ This section lists tasks for future development cycles, based on the expanded re
 ### **Advanced E-Commerce Features**
 
 - [ ] **Shipping API Integration:**
-  - [ ] Backend service to get shipping rates from a provider like Giao Hàng Nhanh.
+  - [ ] Backend service to get shipping rates from a provider like Giao Hàng Nhanh. (Update: Fake this shit, the real ones are annoying)
   - [ ] Display shipping options and costs in the frontend checkout flow.
 
 ### **Advanced Admin Dashboard**
@@ -295,3 +295,10 @@ This section lists tasks for future development cycles, based on the expanded re
 - [ ] **User Loyalty System:**
   - [ ] Backend logic to assign user tiers (e.g., 'premium') based on purchase history.
   - [ ] Display user status in the frontend account page and admin user list.
+
+### **Additional Future Features**
+
+- [ ] **Customer Reviews & Ratings:** Allow verified customers to submit product reviews and ratings, and display them on product detail pages.
+- [ ] **Advanced Recommendations:** Provide personalized product suggestions based on users' browsing and purchase history.
+- [ ] **Two-Factor Authentication:** Add an extra layer of security to user accounts by implementing 2FA during login.
+- [ ] **Promotional Campaigns:** Build an admin module to create and manage promotional codes, discounts, and loyalty point systems.
