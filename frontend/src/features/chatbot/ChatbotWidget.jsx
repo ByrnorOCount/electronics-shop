@@ -37,7 +37,7 @@ const markdownComponents = {
 
     return <>{children}</>;
   },
-  p: ({ children }) => <p className="my-1">{children}</p>,
+  p: ({ children }) => <p className="my-1 first:mt-0 last:mb-0">{children}</p>,
   ul: ({ children }) => <ul className="my-2 list-disc space-y-1 pl-5">{children}</ul>,
   ol: ({ children }) => <ol className="my-2 list-decimal space-y-1 pl-5">{children}</ol>,
   li: ({ children }) => <li>{children}</li>,
@@ -45,7 +45,14 @@ const markdownComponents = {
 };
 
 function AssistantMarkdown({ children }) {
-  return <ReactMarkdown components={markdownComponents}>{children}</ReactMarkdown>;
+  const content = children
+    .replace(/\r\n?/g, "\n")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/:\n{2,}(?=(?:\*\*)?\[[^\]]+\]\(\/products\/\d+\))/g, ": ")
+    .trim();
+
+  return <ReactMarkdown components={markdownComponents}>{content}</ReactMarkdown>;
 }
 
 export default function ChatbotWidget() {
@@ -182,11 +189,11 @@ export default function ChatbotWidget() {
             ref={transcriptRef}
           >
             {messages.map((item, index) => (
-              <p
+              <div
                 className={`max-w-[88%] whitespace-pre-wrap rounded-lg px-3 py-2 text-sm leading-5 ${
                   item.role === "user"
                     ? "ml-auto bg-amber-200 text-slate-900"
-                    : "mr-auto border border-slate-200 bg-white text-slate-800"
+                    : "mr-auto whitespace-normal border border-slate-200 bg-white text-slate-800"
                 }`}
                 key={`${index}-${item.role}`}
               >
@@ -195,7 +202,7 @@ export default function ChatbotWidget() {
                 ) : (
                   item.content
                 )}
-              </p>
+              </div>
             ))}
             {isSending && !streamingAnswer && (
               <p className="text-sm text-slate-500" role="status">
@@ -203,13 +210,13 @@ export default function ChatbotWidget() {
               </p>
             )}
             {streamingAnswer && (
-              <p
-                className="mr-auto max-w-[88%] whitespace-pre-wrap rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm leading-5 text-slate-800"
+              <div
+                className="mr-auto max-w-[88%] whitespace-normal rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm leading-5 text-slate-800"
                 role="status"
               >
                 <AssistantMarkdown>{streamingAnswer}</AssistantMarkdown>
                 <span aria-hidden="true" className="animate-pulse">|</span>
-              </p>
+              </div>
             )}
           </div>
 
