@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
 import api from "../../api/axios";
 import Icon from "../../components/ui/Icon";
 
@@ -7,6 +8,45 @@ const WELCOME_MESSAGE = {
   role: "assistant",
   content: "Hi! Ask me about electronics, projects, or anything in our catalog.",
 };
+
+const markdownComponents = {
+  a: ({ href = "", children }) => {
+    if (/^\/(products\/\d+|support(?:\/[\w-]+)*)$/.test(href)) {
+      return (
+        <Link
+          className="font-medium text-amber-800 underline underline-offset-2 hover:text-amber-950"
+          to={href}
+        >
+          {children}
+        </Link>
+      );
+    }
+
+    if (/^https:\/\//i.test(href)) {
+      return (
+        <a
+          className="font-medium text-amber-800 underline underline-offset-2 hover:text-amber-950"
+          href={href}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {children}
+        </a>
+      );
+    }
+
+    return <>{children}</>;
+  },
+  p: ({ children }) => <p className="my-1">{children}</p>,
+  ul: ({ children }) => <ul className="my-2 list-disc space-y-1 pl-5">{children}</ul>,
+  ol: ({ children }) => <ol className="my-2 list-decimal space-y-1 pl-5">{children}</ol>,
+  li: ({ children }) => <li>{children}</li>,
+  strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+};
+
+function AssistantMarkdown({ children }) {
+  return <ReactMarkdown components={markdownComponents}>{children}</ReactMarkdown>;
+}
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -150,7 +190,11 @@ export default function ChatbotWidget() {
                 }`}
                 key={`${index}-${item.role}`}
               >
-                {item.content}
+                {item.role === "assistant" ? (
+                  <AssistantMarkdown>{item.content}</AssistantMarkdown>
+                ) : (
+                  item.content
+                )}
               </p>
             ))}
             {isSending && !streamingAnswer && (
@@ -163,7 +207,7 @@ export default function ChatbotWidget() {
                 className="mr-auto max-w-[88%] whitespace-pre-wrap rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm leading-5 text-slate-800"
                 role="status"
               >
-                {streamingAnswer}
+                <AssistantMarkdown>{streamingAnswer}</AssistantMarkdown>
                 <span aria-hidden="true" className="animate-pulse">|</span>
               </p>
             )}

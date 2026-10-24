@@ -19,6 +19,7 @@ describe("chatbot service", () => {
     productService.getProducts.mockResolvedValue({
       products: [
         {
+          id: 42,
           name: "Laptop A",
           brand: "Electro",
           category_name: "Laptops",
@@ -66,6 +67,8 @@ describe("chatbot service", () => {
     expect(payload.model).toBe(env.OLLAMA_MODEL);
     expect(payload.stream).toBe(true);
     expect(payload.messages[0].content).toContain("Laptop A");
+    expect(payload.messages[0].content).toContain('"id":42');
+    expect(payload.messages[0].content).toContain("/products/product-id");
     expect(payload.messages[0].content).toContain("5-7 business days");
     expect(payload.messages[0].content).not.toContain("internal_note");
     expect(payload.messages.at(-1)).toEqual({
