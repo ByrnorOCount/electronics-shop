@@ -29,6 +29,8 @@ tags:
     description: Operations related to the authenticated user's profile.
   - name: Support
     description: Customer support tickets and FAQs
+  - name: AI Assistant
+    description: Local catalog and FAQ product assistance
   - name: Staff
     description: Operations for staff members
   - name: Admin
@@ -74,6 +76,7 @@ paths:
   /support: { $ref: "./paths/support.yaml#/support" }
   "/support/{ticketId}": { $ref: "./paths/support.yaml#/support~1{ticketId}" }
   /faq: { $ref: "./paths/support.yaml#/faq" }
+  /chatbot: { $ref: "./paths/chatbot.yaml#/chatbot" }
   # Staff
   /staff/products: { $ref: "./paths/staff.yaml#/staff~1products" }
   "/staff/products/{id}": { $ref: "./paths/staff.yaml#/staff~1products~1{id}" }

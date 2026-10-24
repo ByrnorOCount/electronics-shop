@@ -193,6 +193,22 @@ Maintain stable performance and correct transaction handling.
 
 This document serves as a living specification for the Electronics Shop Web App, outlining its features, architecture, and user roles. The project's development is ongoing, with a roadmap for planned enhancements detailed below.
 
+## Local AI Assistant (Windows)
+
+The product assistant uses a local Ollama server and does not send chat requests to a hosted AI provider.
+
+1. Install and start Ollama for Windows from [ollama.com/download](https://ollama.com/download).
+2. In PowerShell, download the model:
+
+  ```powershell
+  ollama pull llama3.2
+  ```
+
+3. Set `OLLAMA_BASE_URL=http://127.0.0.1:11434` and `OLLAMA_MODEL=llama3.2` in `backend/.env` (these are the defaults in `backend/.env.example`).
+4. Start the backend and frontend using the project's normal local development commands. Ollama must remain running while using the assistant.
+
+The assistant uses public product catalog and FAQ data. It does not retain conversation history; the browser sends up to eight recent customer questions with each request. If the model cannot answer from the supplied information, it directs customers to `/support`.
+
 ---
 
 ## 6. Future Enhancements

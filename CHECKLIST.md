@@ -326,9 +326,9 @@ This section lists tasks for future development cycles, based on the expanded re
 
 ### **AI Chatbot Support**
 
-- [ ] **AI Product Support Chatbot:**
-  - [ ] Answer customer questions using product catalog information.
-  - [ ] Explain product features and compare products in plain language.
-  - [ ] Guide customers toward suitable products based on their stated needs.
-  - [ ] Clearly say when the available information cannot answer a question.
-  - [ ] Offer a way to contact customer support when the chatbot cannot help.
+- [x] **AI Product Support Chatbot:**
+  - [x] Answer customer questions using product catalog information.
+  - [x] Explain product features and compare products in plain language.
+  - [x] Guide customers toward suitable products based on their stated needs.
+  - [x] Clearly say when the available information cannot answer a question.
+  - [x] Offer a way to contact customer support when the chatbot cannot help.

@@ -1,0 +1,60 @@
+chatbot:
+  post:
+    summary: Ask the local product assistant
+    description: Answers using the current product catalog and support FAQs. Chat history is not stored.
+    operationId: chatWithProductAssistant
+    tags:
+      - AI Assistant
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                minLength: 1
+                maxLength: 1000
+              history:
+                type: array
+                maxItems: 8
+                items:
+                  type: object
+                  additionalProperties: false
+                  required:
+                    - role
+                    - content
+                  properties:
+                    role:
+                      type: string
+                      enum: [user]
+                    content:
+                      type: string
+                      minLength: 1
+                      maxLength: 1000
+    responses:
+      "200":
+        description: Assistant response generated.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                data:
+                  type: object
+                  properties:
+                    answer:
+                      type: string
+                message:
+                  type: string
+      "400":
+        description: Invalid message or conversation history.
+      "503":
+        description: Local Ollama service is unavailable.
