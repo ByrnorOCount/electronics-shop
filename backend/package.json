@@ -11,8 +11,8 @@
     "seed": "knex seed:run --knexfile ./database/knexfile.js",
     "make:migration": "knex migrate:make --knexfile ./database/knexfile.js",
     "make:seed": "knex seed:make --knexfile ./database/knexfile.js",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "node ./tests/prepare-test-database.js && vitest run",
+    "test:watch": "node ./tests/prepare-test-database.js && vitest"
   },
   "knex": {
     "knexfile": "./database/knexfile.js"

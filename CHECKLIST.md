@@ -260,7 +260,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ### **Testing**
 
-- [x] Backend baseline: Vitest + Supertest for product/catalog routes and checkout/order service behavior.
+- [x] Backend baseline: Vitest + Supertest for product/catalog routes, PostgreSQL queries, and checkout/order transactions.
 - [ ] Expand backend tests to cover the remaining API routes and edge cases.
 - [ ] Frontend: React Testing Library + Cypress for E2E tests.
 
