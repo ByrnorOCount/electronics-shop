@@ -1,7 +1,7 @@
 chatbot:
   post:
     summary: Ask the local product assistant
-    description: Answers using the current product catalog and support FAQs. Chat history is not stored.
+    description: Streams an answer using general knowledge and current catalog/FAQ context. Chat history is not stored.
     operationId: chatWithProductAssistant
     tags:
       - AI Assistant
@@ -19,10 +19,10 @@ chatbot:
               message:
                 type: string
                 minLength: 1
-                maxLength: 1000
+                maxLength: 4000
               history:
                 type: array
-                maxItems: 8
+                maxItems: 12
                 items:
                   type: object
                   additionalProperties: false
@@ -32,28 +32,18 @@ chatbot:
                   properties:
                     role:
                       type: string
-                      enum: [user]
+                      enum: [user, assistant]
                     content:
                       type: string
                       minLength: 1
-                      maxLength: 1000
+                      maxLength: 4000
     responses:
       "200":
-        description: Assistant response generated.
+        description: Newline-delimited stream of loading, token, done, or error events.
         content:
-          application/json:
+          application/x-ndjson:
             schema:
-              type: object
-              properties:
-                success:
-                  type: boolean
-                data:
-                  type: object
-                  properties:
-                    answer:
-                      type: string
-                message:
-                  type: string
+              type: string
       "400":
         description: Invalid message or conversation history.
       "503":
