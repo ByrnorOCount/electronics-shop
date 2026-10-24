@@ -30,5 +30,22 @@ export default {
     },
   },
 
+  test: {
+    client: "pg",
+    connection: {
+      host: process.env.TEST_DB_HOST || "localhost",
+      port: process.env.TEST_DB_PORT || 5432,
+      user: process.env.TEST_DB_USER || "test",
+      password: process.env.TEST_DB_PASSWORD || "test",
+      database: process.env.DB_TEST_DATABASE || "electronics_shop_test",
+    },
+    migrations: {
+      directory: path.join(__dirname, "/migrations"),
+    },
+    seeds: {
+      directory: path.join(__dirname, "/seeders"),
+    },
+  },
+
   // Production configuration can be added here later
 };

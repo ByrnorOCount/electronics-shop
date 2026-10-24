@@ -10,7 +10,9 @@
     "rollback": "knex migrate:rollback --knexfile ./database/knexfile.js",
     "seed": "knex seed:run --knexfile ./database/knexfile.js",
     "make:migration": "knex migrate:make --knexfile ./database/knexfile.js",
-    "make:seed": "knex seed:make --knexfile ./database/knexfile.js"
+    "make:seed": "knex seed:make --knexfile ./database/knexfile.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "knex": {
     "knexfile": "./database/knexfile.js"
@@ -40,6 +42,8 @@
     "winston": "^3.18.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4",
+    "vitest": "^3.2.4"
   }
 }

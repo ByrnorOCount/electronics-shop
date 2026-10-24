@@ -1,0 +1,15 @@
+process.env.NODE_ENV = "test";
+process.env.BACKEND_URL = "http://localhost:3001";
+process.env.FRONTEND_URL = "http://localhost:3100";
+process.env.JWT_SECRET = "test-only-jwt-secret";
+process.env.STRIPE_SECRET_KEY = "sk_test_local_test_key";
+process.env.STRIPE_WEBHOOK_SECRET = "whsec_local_test_secret";
+process.env.GOOGLE_CLIENT_ID = "test-google-client";
+process.env.GOOGLE_CLIENT_SECRET = "test-google-secret";
+process.env.FACEBOOK_APP_ID = "test-facebook-app";
+process.env.FACEBOOK_APP_SECRET = "test-facebook-secret";
+process.env.TEST_DB_HOST = "localhost";
+process.env.TEST_DB_PORT = "5432";
+process.env.TEST_DB_USER = "test";
+process.env.TEST_DB_PASSWORD = "test";
+process.env.DB_TEST_DATABASE = "electronics_shop_test";

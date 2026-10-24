@@ -121,6 +121,13 @@ stripe test cards
 todo: stripe payment redirects to http://localhost:3100/checkout/success?session_id=cs_test_b13KX4CHmDBGG3bbGoM4cqDm7xzJJsky649V8ZhnRlrTWetBcMkirLtVHZ
 and http://localhost:3100/order-confirmation doesn't update
 
+Testing tools
+- Backend test runner: Vitest (native fit for this ESM project).
+- Backend HTTP route tests: Supertest.
+- Backend tests: `cd backend` then `npm test`; use `npm run test:watch` while developing.
+- Tests use mocked catalog/order models and test-only environment values. The Knex `test` config targets `electronics_shop_test`; it does not use the development database.
+- Frontend component and end-to-end test tools have not been selected or installed yet.
+
 
 blank card on home should be a bunch of rotating stock images
 category id in staff modal -> select category name instead
