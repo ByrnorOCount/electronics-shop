@@ -127,7 +127,7 @@ Testing tools
 - Backend tests: `cd backend` then `npm test`; use `npm run test:watch` while developing.
 - `npm test` creates `electronics_shop_test` if it is missing and applies migrations; it never truncates or drops the development database.
 - PostgreSQL integration tests use deterministic per-test records and clean up only those records. They do not run the full, randomized project seeders.
-- Unit tests mock catalog/order models; integration tests exercise product queries and real checkout transactions, including stock conflicts and concurrent attempts. Test-only environment values are used.
+- Unit tests mock catalog/order and other module models; integration tests exercise product queries and real checkout transactions, including stock conflicts and concurrent attempts. Tests also cover authentication, role authorization, cart/wishlist ownership, support-ticket access, shipping calculations, and admin/staff service behavior.
 - Frontend component and end-to-end test tools have not been selected or installed yet.
 
 
