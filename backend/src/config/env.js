@@ -40,6 +40,13 @@ const envVarsSchema = Joi.object()
       .required()
       .description("Facebook App Secret"),
 
+    // Local AI assistant
+    OLLAMA_BASE_URL: Joi.string()
+      .uri()
+      .default("http://127.0.0.1:11434")
+      .description("Local Ollama server URL"),
+    OLLAMA_MODEL: Joi.string().default("llama3.2").description("Ollama model"),
+
     // Shipping & Currency
     // USD_TO_VND_RATE: Joi.number()
     //   .required()

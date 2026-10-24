@@ -12,6 +12,7 @@ import staffRoutes from "./modules/staff/staff.routes.js";
 import adminRoutes from "./modules/admin/admin.routes.js";
 import shippingRoutes from "./modules/shipping/shipping.routes.js";
 import newsletterRoutes from "./modules/newsletter/newsletter.routes.js";
+import chatbotRoutes from "./modules/chatbot/chatbot.routes.js";
 import env from "./config/env.js";
 
 const apiRouter = Router();
@@ -45,5 +46,6 @@ apiRouter.use("/staff", staffRoutes);
 apiRouter.use("/admin", adminRoutes);
 apiRouter.use("/shipping", shippingRoutes);
 apiRouter.use("/newsletter", newsletterRoutes);
+apiRouter.use("/chatbot", chatbotRoutes);
 
 export default apiRouter;
