@@ -3,6 +3,7 @@ import { Outlet, useOutletContext } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import ErrorBoundary from "../ErrorBoundary";
+import ChatbotWidget from "../../features/chatbot/ChatbotWidget";
 
 // No longer needs useOutletContext as openSupportModal is removed from App.jsx context
 const Layout = () => {
@@ -18,6 +19,7 @@ const Layout = () => {
         </ErrorBoundary>
       </main>
       <Footer />
+      <ChatbotWidget />
     </div>
   );
 };
