@@ -34,11 +34,23 @@ describe("chatbot service", () => {
     ]);
   });
 
+  const ollamaResponse = (chunks) => ({
+    ok: true,
+    body: new ReadableStream({
+      start(controller) {
+        const encoder = new TextEncoder();
+        for (const content of chunks) {
+          controller.enqueue(
+            encoder.encode(`${JSON.stringify({ message: { content } })}\n`),
+          );
+        }
+        controller.close();
+      },
+    }),
+  });
+
   it("sends catalog and FAQ context to the configured local model", async () => {
-    fetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ message: { content: "Laptop A is in stock." } }),
-    });
+    fetch.mockResolvedValue(ollamaResponse(["Laptop A", " is in stock."]));
 
     const answer = await reply({
       message: "Compare this laptop",
@@ -48,11 +60,11 @@ describe("chatbot service", () => {
     expect(answer).toBe("Laptop A is in stock.");
     expect(fetch).toHaveBeenCalledWith(
       `${env.OLLAMA_BASE_URL}/api/chat`,
-      expect.objectContaining({ method: "POST" })
+      expect.objectContaining({ method: "POST" }),
     );
     const payload = JSON.parse(fetch.mock.calls[0][1].body);
     expect(payload.model).toBe(env.OLLAMA_MODEL);
-    expect(payload.stream).toBe(false);
+    expect(payload.stream).toBe(true);
     expect(payload.messages[0].content).toContain("Laptop A");
     expect(payload.messages[0].content).toContain("5-7 business days");
     expect(payload.messages[0].content).not.toContain("internal_note");
@@ -65,11 +77,11 @@ describe("chatbot service", () => {
   it("returns a service-unavailable error when Ollama is unreachable", async () => {
     fetch.mockRejectedValue(new Error("connection refused"));
 
-    await expect(reply({ message: "Recommend a laptop" })).rejects.toMatchObject(
-      {
-        statusCode: 503,
-        message: expect.stringContaining("assistant is unavailable"),
-      }
-    );
+    await expect(
+      reply({ message: "Recommend a laptop" }),
+    ).rejects.toMatchObject({
+      statusCode: 503,
+      message: expect.stringContaining("local model did not finish"),
+    });
   });
 });

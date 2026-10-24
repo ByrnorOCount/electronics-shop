@@ -205,9 +205,19 @@ The product assistant uses a local Ollama server and does not send chat requests
   ```
 
 3. Set `OLLAMA_BASE_URL=http://127.0.0.1:11434` and `OLLAMA_MODEL=llama3.2` in `backend/.env` (these are the defaults in `backend/.env.example`).
-4. Start the backend and frontend using the project's normal local development commands. Ollama must remain running while using the assistant.
+4. In two PowerShell terminals at the project root, start the backend and frontend:
 
-The assistant uses public product catalog and FAQ data. It does not retain conversation history; the browser sends up to eight recent customer questions with each request. If the model cannot answer from the supplied information, it directs customers to `/support`.
+  ```powershell
+  npm run dev --workspace=backend
+  ```
+
+  ```powershell
+  npm run dev --workspace=frontend
+  ```
+
+  Ollama must remain running while using the assistant.
+
+The assistant can answer general electronics questions and uses the public product catalog and FAQ for store-specific facts. Responses stream into the chat as the local model generates them. It does not retain conversation history; the browser sends up to 12 recent conversation turns with each request.
 
 ---
 

@@ -5,8 +5,7 @@ import Icon from "../../components/ui/Icon";
 
 const WELCOME_MESSAGE = {
   role: "assistant",
-  content:
-    "Hi! I can help you compare products or answer questions about shipping and returns.",
+  content: "Hi! Ask me about electronics, projects, or anything in our catalog.",
 };
 
 export default function ChatbotWidget() {
@@ -14,6 +13,7 @@ export default function ChatbotWidget() {
   const [messages, setMessages] = useState([WELCOME_MESSAGE]);
   const [draft, setDraft] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [streamingAnswer, setStreamingAnswer] = useState("");
   const [error, setError] = useState("");
   const inputRef = useRef(null);
   const transcriptRef = useRef(null);
@@ -35,27 +35,79 @@ export default function ChatbotWidget() {
     if (!message || isSending) return;
 
     const history = messages
-      .filter((item) => item.role === "user")
-      .slice(-8)
+      .slice(1)
+      .slice(-12)
       .map(({ role, content }) => ({ role, content }));
 
     setMessages((current) => [...current, { role: "user", content: message }]);
     setDraft("");
     setError("");
+    setStreamingAnswer("");
     setIsSending(true);
 
+    let fullResponse = "";
+    let pendingLine = "";
+    let streamedText = "";
+    let streamError = "";
+
+    const handleLine = (line) => {
+      if (!line.trim()) return;
+      try {
+        const event = JSON.parse(line);
+        if (event.error) {
+          streamError = event.error;
+          return;
+        }
+        if (event.token) {
+          streamedText += event.token;
+          setStreamingAnswer(streamedText);
+        }
+      } catch {
+        streamError = "The assistant returned an invalid response.";
+      }
+    };
+
+    const consumeResponse = (text) => {
+      if (typeof text !== "string" || text.length <= fullResponse.length) return;
+      pendingLine += text.slice(fullResponse.length);
+      fullResponse = text;
+      const lines = pendingLine.split("\n");
+      pendingLine = lines.pop() || "";
+      lines.forEach(handleLine);
+    };
+
     try {
-      const response = await api.post("/chatbot", { message, history });
+      const response = await api.post(
+        "/chatbot",
+        { message, history },
+        {
+          responseType: "text",
+          onDownloadProgress: ({ event }) => {
+            consumeResponse(event?.target?.responseText);
+          },
+        }
+      );
+      consumeResponse(response.data);
+      if (pendingLine.trim()) handleLine(pendingLine);
+      if (streamError) throw new Error(streamError);
+      if (!streamedText.trim()) throw new Error("The assistant returned no answer.");
       setMessages((current) => [
         ...current,
-        { role: "assistant", content: response.data.data.answer },
+        { role: "assistant", content: streamedText.trim() },
       ]);
     } catch (requestError) {
-      setError(
-        requestError.response?.data?.message ||
-          "The assistant could not respond. Try again or visit Support."
-      );
+      const responseBody = requestError.response?.data;
+      let messageFromServer = responseBody?.message;
+      if (typeof responseBody === "string") {
+        try {
+          messageFromServer = JSON.parse(responseBody).message;
+        } catch {
+          messageFromServer = "";
+        }
+      }
+      setError(messageFromServer || requestError.message || "The request failed.");
     } finally {
+      setStreamingAnswer("");
       setIsSending(false);
     }
   };
@@ -72,7 +124,7 @@ export default function ChatbotWidget() {
           <header className="flex items-center justify-between bg-slate-900 px-4 py-3 text-white">
             <div>
               <h2 className="font-semibold">Product assistant</h2>
-              <p className="text-xs text-slate-300">Powered by local Llama 3.2</p>
+              <p className="text-xs text-slate-300">Local Llama 3.2</p>
             </div>
             <button
               aria-label="Close product assistant"
@@ -101,9 +153,18 @@ export default function ChatbotWidget() {
                 {item.content}
               </p>
             ))}
-            {isSending && (
+            {isSending && !streamingAnswer && (
               <p className="text-sm text-slate-500" role="status">
-                Thinking...
+                Connecting to the assistant...
+              </p>
+            )}
+            {streamingAnswer && (
+              <p
+                className="mr-auto max-w-[88%] whitespace-pre-wrap rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm leading-5 text-slate-800"
+                role="status"
+              >
+                {streamingAnswer}
+                <span aria-hidden="true" className="animate-pulse">|</span>
               </p>
             )}
           </div>
@@ -120,9 +181,8 @@ export default function ChatbotWidget() {
               </label>
               <textarea
                 className="max-h-24 min-h-10 flex-1 resize-none rounded border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
-                disabled={isSending}
                 id="chatbot-message"
-                maxLength={1000}
+                maxLength={4000}
                 onChange={(event) => setDraft(event.target.value)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" && !event.shiftKey) {
@@ -130,7 +190,7 @@ export default function ChatbotWidget() {
                     event.currentTarget.form?.requestSubmit();
                   }
                 }}
-                placeholder="Ask a question..."
+                placeholder="Ask anything..."
                 ref={inputRef}
                 rows={1}
                 value={draft}
@@ -138,7 +198,7 @@ export default function ChatbotWidget() {
               <button
                 aria-label="Send message"
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-amber-500 text-slate-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-amber-700"
-                disabled={isSending || !draft.trim()}
+                disabled={!draft.trim() || isSending}
                 type="submit"
               >
                 <Icon name="chevron-right" className="h-5 w-5" />
