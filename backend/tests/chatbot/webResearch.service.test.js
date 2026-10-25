@@ -13,7 +13,13 @@ describe("product web research", () => {
         ok: true,
         json: async () => ({
           query: {
-            search: [{ pageid: 97531, title: "RP2040" }],
+            search: [
+              {
+                pageid: 97531,
+                title: "RP2040",
+                snippet: "Microcontroller used in the Raspberry Pi Pico board.",
+              },
+            ],
           },
         }),
       })
@@ -40,13 +46,21 @@ describe("product web research", () => {
     const firstResult = await researchProduct(product);
     const cachedResult = await researchProduct(product);
 
-    expect(firstResult).toEqual([
+    expect(firstResult).toEqual(
+      expect.arrayContaining([
+        {
+          title: "Raspberry Pi Pico MicroPython documentation",
+          url: "https://www.raspberrypi.com/documentation/microcontrollers/micropython.html",
+          extract:
+            "Official Raspberry Pi documentation for programming Pico boards with MicroPython, including setup and examples.",
+        },
       {
         title: "RP2040",
         url: "https://en.wikipedia.org/wiki/RP2040",
         extract: "A dual-core microcontroller used in the Pico.",
       },
-    ]);
+      ]),
+    );
     expect(cachedResult).toEqual(firstResult);
     expect(fetch).toHaveBeenCalledTimes(2);
     expect(
