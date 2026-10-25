@@ -6,7 +6,8 @@ import Icon from "../../components/ui/Icon";
 
 const WELCOME_MESSAGE = {
   role: "assistant",
-  content: "Hi! Ask me about electronics, projects, or anything in our catalog.",
+  content:
+    "Hi! Ask me about electronics, projects, or anything in our catalog.",
 };
 
 const markdownComponents = {
@@ -14,7 +15,7 @@ const markdownComponents = {
     if (/^\/(products\/\d+|support(?:\/[\w-]+)*)$/.test(href)) {
       return (
         <Link
-          className="font-medium text-amber-800 underline underline-offset-2 hover:text-amber-950"
+          className="font-medium text-indigo-700 underline underline-offset-2 hover:text-indigo-900"
           to={href}
         >
           {children}
@@ -25,7 +26,7 @@ const markdownComponents = {
     if (/^https:\/\//i.test(href)) {
       return (
         <a
-          className="font-medium text-amber-800 underline underline-offset-2 hover:text-amber-950"
+          className="font-medium text-indigo-700 underline underline-offset-2 hover:text-indigo-900"
           href={href}
           rel="noopener noreferrer"
           target="_blank"
@@ -38,10 +39,16 @@ const markdownComponents = {
     return <>{children}</>;
   },
   p: ({ children }) => <p className="my-1 first:mt-0 last:mb-0">{children}</p>,
-  ul: ({ children }) => <ul className="my-2 list-disc space-y-1 pl-5">{children}</ul>,
-  ol: ({ children }) => <ol className="my-2 list-decimal space-y-1 pl-5">{children}</ol>,
+  ul: ({ children }) => (
+    <ul className="my-2 list-disc space-y-1 pl-5">{children}</ul>
+  ),
+  ol: ({ children }) => (
+    <ol className="my-2 list-decimal space-y-1 pl-5">{children}</ol>
+  ),
   li: ({ children }) => <li>{children}</li>,
-  strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+  strong: ({ children }) => (
+    <strong className="font-semibold">{children}</strong>
+  ),
 };
 
 function AssistantMarkdown({ children }) {
@@ -52,7 +59,9 @@ function AssistantMarkdown({ children }) {
     .replace(/:\n{2,}(?=(?:\*\*)?\[[^\]]+\]\(\/products\/\d+\))/g, ": ")
     .trim();
 
-  return <ReactMarkdown components={markdownComponents}>{content}</ReactMarkdown>;
+  return (
+    <ReactMarkdown components={markdownComponents}>{content}</ReactMarkdown>
+  );
 }
 
 export default function ChatbotWidget() {
@@ -115,7 +124,8 @@ export default function ChatbotWidget() {
     };
 
     const consumeResponse = (text) => {
-      if (typeof text !== "string" || text.length <= fullResponse.length) return;
+      if (typeof text !== "string" || text.length <= fullResponse.length)
+        return;
       pendingLine += text.slice(fullResponse.length);
       fullResponse = text;
       const lines = pendingLine.split("\n");
@@ -132,12 +142,13 @@ export default function ChatbotWidget() {
           onDownloadProgress: ({ event }) => {
             consumeResponse(event?.target?.responseText);
           },
-        }
+        },
       );
       consumeResponse(response.data);
       if (pendingLine.trim()) handleLine(pendingLine);
       if (streamError) throw new Error(streamError);
-      if (!streamedText.trim()) throw new Error("The assistant returned no answer.");
+      if (!streamedText.trim())
+        throw new Error("The assistant returned no answer.");
       setMessages((current) => [
         ...current,
         { role: "assistant", content: streamedText.trim() },
@@ -152,7 +163,9 @@ export default function ChatbotWidget() {
           messageFromServer = "";
         }
       }
-      setError(messageFromServer || requestError.message || "The request failed.");
+      setError(
+        messageFromServer || requestError.message || "The request failed.",
+      );
     } finally {
       setStreamingAnswer("");
       setIsSending(false);
@@ -165,17 +178,17 @@ export default function ChatbotWidget() {
         <section
           aria-label="ElectroShop product assistant"
           aria-modal="false"
-          className="flex h-[min(34rem,calc(100dvh-7rem))] w-[min(22rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl"
+          className="flex h-[min(34rem,calc(100dvh-7rem))] w-[min(22rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-lg border border-amber-200 bg-white shadow-2xl"
           role="dialog"
         >
-          <header className="flex items-center justify-between bg-slate-900 px-4 py-3 text-white">
+          <header className="flex items-center justify-between bg-amber-200 px-4 py-3 text-indigo-900">
             <div>
               <h2 className="font-semibold">Product assistant</h2>
-              <p className="text-xs text-slate-300">Local Llama 3.2</p>
+              <p className="text-xs text-indigo-800/75">Local Llama 3.2</p>
             </div>
             <button
               aria-label="Close product assistant"
-              className="rounded p-2 text-slate-200 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-300"
+              className="rounded p-2 text-indigo-800 hover:bg-amber-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               onClick={() => setIsOpen(false)}
               type="button"
             >
@@ -185,15 +198,15 @@ export default function ChatbotWidget() {
 
           <div
             aria-live="polite"
-            className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-4"
+            className="flex-1 space-y-3 overflow-y-auto bg-yellow-50 p-4"
             ref={transcriptRef}
           >
             {messages.map((item, index) => (
               <div
                 className={`max-w-[88%] whitespace-pre-wrap rounded-lg px-3 py-2 text-sm leading-5 ${
                   item.role === "user"
-                    ? "ml-auto bg-amber-200 text-slate-900"
-                    : "mr-auto whitespace-normal border border-slate-200 bg-white text-slate-800"
+                    ? "ml-auto bg-indigo-600 text-white"
+                    : "mr-auto whitespace-normal border border-amber-100 bg-white text-gray-800"
                 }`}
                 key={`${index}-${item.role}`}
               >
@@ -205,22 +218,24 @@ export default function ChatbotWidget() {
               </div>
             ))}
             {isSending && !streamingAnswer && (
-              <p className="text-sm text-slate-500" role="status">
+              <p className="text-sm text-gray-600" role="status">
                 Connecting to the assistant...
               </p>
             )}
             {streamingAnswer && (
               <div
-                className="mr-auto max-w-[88%] whitespace-normal rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm leading-5 text-slate-800"
+                className="mr-auto max-w-[88%] whitespace-normal rounded-lg border border-amber-100 bg-white px-3 py-2 text-sm leading-5 text-gray-800"
                 role="status"
               >
                 <AssistantMarkdown>{streamingAnswer}</AssistantMarkdown>
-                <span aria-hidden="true" className="animate-pulse">|</span>
+                <span aria-hidden="true" className="animate-pulse">
+                  |
+                </span>
               </div>
             )}
           </div>
 
-          <div className="border-t border-slate-200 bg-white p-3">
+          <div className="border-t border-amber-200 bg-white p-3">
             {error && (
               <p className="mb-2 text-xs text-red-700" role="alert">
                 {error}
@@ -231,7 +246,7 @@ export default function ChatbotWidget() {
                 Ask about products or store policies
               </label>
               <textarea
-                className="max-h-24 min-h-10 flex-1 resize-none rounded border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                className="max-h-24 min-h-10 flex-1 resize-none rounded border border-amber-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 id="chatbot-message"
                 maxLength={4000}
                 onChange={(event) => setDraft(event.target.value)}
@@ -248,7 +263,7 @@ export default function ChatbotWidget() {
               />
               <button
                 aria-label="Send message"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-amber-500 text-slate-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-amber-700"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 disabled={!draft.trim() || isSending}
                 type="submit"
               >
@@ -256,7 +271,7 @@ export default function ChatbotWidget() {
               </button>
             </form>
             <Link
-              className="mt-2 inline-block text-xs font-medium text-slate-600 underline decoration-slate-400 underline-offset-2 hover:text-slate-950"
+              className="mt-2 inline-block text-xs font-medium text-indigo-700 underline decoration-indigo-300 underline-offset-2 hover:text-indigo-900"
               to="/support"
             >
               Contact customer support
@@ -267,8 +282,10 @@ export default function ChatbotWidget() {
 
       <button
         aria-expanded={isOpen}
-        aria-label={isOpen ? "Close product assistant" : "Open product assistant"}
-        className="flex h-14 items-center gap-2 rounded-full bg-slate-900 px-5 text-sm font-semibold text-white shadow-lg transition hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+        aria-label={
+          isOpen ? "Close product assistant" : "Open product assistant"
+        }
+        className="flex h-14 items-center gap-2 rounded-full bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
         onClick={() => setIsOpen((open) => !open)}
         type="button"
       >
