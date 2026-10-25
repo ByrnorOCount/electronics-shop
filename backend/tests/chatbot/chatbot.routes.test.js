@@ -29,6 +29,7 @@ describe("chatbot routes", () => {
       .send({
         message: "Is the laptop in stock?",
         history: [{ role: "assistant", content: "What are you looking for?" }],
+        productId: 29,
       });
 
     expect(response.status).toBe(200);
@@ -38,6 +39,7 @@ describe("chatbot routes", () => {
     expect(chatbotService.streamReply).toHaveBeenCalledWith({
       message: "Is the laptop in stock?",
       history: [{ role: "assistant", content: "What are you looking for?" }],
+      productId: 29,
     });
   });
 
