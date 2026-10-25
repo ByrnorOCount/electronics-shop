@@ -217,7 +217,7 @@ npm run dev --workspace=frontend
 
 Ollama must remain running while using the assistant.
 
-The assistant can answer general electronics questions and uses the public product catalog and FAQ for store-specific facts. On product-detail pages, it can look up short Wikipedia extracts about the selected item and cite the source; only the product name and brand are sent to Wikipedia, not the customer's question. Responses stream into the chat as the local model generates them. It does not retain conversation history; the browser sends up to 12 recent conversation turns with each request.
+The assistant can answer general electronics questions and uses the public product catalog and FAQ for store-specific facts. On product-detail pages, it can retrieve relevant Wikipedia extracts and cite manufacturer guides for supported boards; only the product name and brand are sent to Wikipedia, not the customer's question. For coding questions, it uses MicroPython for Pico boards, Arduino C++ for Arduino boards, and CircuitPython for the Feather M4 unless the customer requests another language. Responses stream into the chat as the local model generates them. It does not retain conversation history; the browser sends up to 12 recent conversation turns with each request.
 
 ---
 

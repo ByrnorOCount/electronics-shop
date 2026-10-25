@@ -1,7 +1,7 @@
 chatbot:
   post:
     summary: Ask the local product assistant
-    description: Streams an answer using general knowledge and current catalog/FAQ context. Product-detail requests may include a product ID for supplemental public research. Chat history is not stored.
+    description: Streams an answer using general knowledge and current catalog/FAQ context. Product-detail requests may include a product ID for relevant public research. Chat history is not stored.
     operationId: chatWithProductAssistant
     tags:
       - AI Assistant

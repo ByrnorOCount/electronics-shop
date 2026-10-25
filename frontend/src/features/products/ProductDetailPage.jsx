@@ -219,8 +219,8 @@ const ProductDetailPage = () => {
         </div>
         <ChatbotWidget product={product} />
         <p className="mt-2 text-xs text-gray-500">
-          Supplemental research is sourced from Wikipedia; store price and stock
-          come from ElectroShop.
+          Supplemental research may use manufacturer guides and Wikipedia; store
+          price and stock come from ElectroShop.
         </p>
       </section>
 
