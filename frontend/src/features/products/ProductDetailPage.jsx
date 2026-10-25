@@ -8,6 +8,7 @@ import { useCartActions } from "../cart/useCartActions";
 import { useWishlistActions } from "../wishlist/useWishlistActions";
 import ProductCard from "./components/ProductCard";
 import Spinner from "../../components/ui/Spinner";
+import ChatbotWidget from "../chatbot/ChatbotWidget";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -188,8 +189,8 @@ const ProductDetailPage = () => {
                     {isCurrentlyLoading
                       ? "Updating..."
                       : isWishlistHovered
-                      ? "Remove from Wishlist"
-                      : "Added to Wishlist"}
+                        ? "Remove from Wishlist"
+                        : "Added to Wishlist"}
                   </span>
                 </button>
               ) : (
@@ -205,6 +206,23 @@ const ProductDetailPage = () => {
           </div>
         </div>
       </div>
+
+      <section aria-labelledby="product-guide-heading" className="mt-10">
+        <div className="mb-4">
+          <h2 id="product-guide-heading" className="text-2xl font-bold">
+            Product guide
+          </h2>
+          <p className="mt-1 text-gray-600">
+            Ask about specifications, project ideas, or coding with this
+            product.
+          </p>
+        </div>
+        <ChatbotWidget product={product} />
+        <p className="mt-2 text-xs text-gray-500">
+          Supplemental research is sourced from Wikipedia; store price and stock
+          come from ElectroShop.
+        </p>
+      </section>
 
       {similarProducts && similarProducts.length > 1 && (
         <div className="mt-12">

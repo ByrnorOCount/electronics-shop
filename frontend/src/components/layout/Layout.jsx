@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, useOutletContext } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import ErrorBoundary from "../ErrorBoundary";
@@ -7,6 +7,9 @@ import ChatbotWidget from "../../features/chatbot/ChatbotWidget";
 
 // No longer needs useOutletContext as openSupportModal is removed from App.jsx context
 const Layout = () => {
+  const { pathname } = useLocation();
+  const isProductDetailPage = /^\/products\/\d+$/.test(pathname);
+
   return (
     <div className="flex flex-col min-h-screen bg-yellow-50">
       <Header />
@@ -19,7 +22,7 @@ const Layout = () => {
         </ErrorBoundary>
       </main>
       <Footer />
-      <ChatbotWidget />
+      {!isProductDetailPage && <ChatbotWidget />}
     </div>
   );
 };

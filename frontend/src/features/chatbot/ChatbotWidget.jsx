@@ -64,15 +64,31 @@ function AssistantMarkdown({ children }) {
   );
 }
 
-export default function ChatbotWidget() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([WELCOME_MESSAGE]);
+export default function ChatbotWidget({ product }) {
+  const isEmbedded = Boolean(product);
+  const [isOpen, setIsOpen] = useState(isEmbedded);
+  const [messages, setMessages] = useState(() => [WELCOME_MESSAGE]);
   const [draft, setDraft] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [streamingAnswer, setStreamingAnswer] = useState("");
   const [error, setError] = useState("");
   const inputRef = useRef(null);
   const transcriptRef = useRef(null);
+
+  useEffect(() => {
+    if (product) {
+      setMessages([
+        {
+          role: "assistant",
+          content: `Ask me about ${product.name}, its specifications, applications, or coding.`,
+        },
+      ]);
+      setDraft("");
+      setError("");
+      setStreamingAnswer("");
+      setIsOpen(true);
+    }
+  }, [product?.id, product?.name]);
 
   useEffect(() => {
     transcriptRef.current?.scrollTo({
@@ -136,7 +152,7 @@ export default function ChatbotWidget() {
     try {
       const response = await api.post(
         "/chatbot",
-        { message, history },
+        { message, history, ...(product ? { productId: product.id } : {}) },
         {
           responseType: "text",
           onDownloadProgress: ({ event }) => {
@@ -173,27 +189,49 @@ export default function ChatbotWidget() {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-[60] flex flex-col items-end gap-3">
-      {isOpen && (
+    <div
+      className={
+        isEmbedded
+          ? "w-full"
+          : "fixed bottom-5 right-5 z-[60] flex flex-col items-end gap-3"
+      }
+    >
+      {(isEmbedded || isOpen) && (
         <section
-          aria-label="ElectroShop product assistant"
-          aria-modal="false"
-          className="flex h-[min(34rem,calc(100dvh-7rem))] w-[min(22rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-lg border border-amber-200 bg-white shadow-2xl"
-          role="dialog"
+          aria-label={
+            product
+              ? `Assistant for ${product.name}`
+              : "ElectroShop product assistant"
+          }
+          aria-modal={isEmbedded ? undefined : false}
+          className={`flex flex-col overflow-hidden rounded-lg border border-amber-200 bg-white shadow-md ${
+            isEmbedded
+              ? "h-[min(34rem,75vh)] w-full"
+              : "h-[min(34rem,calc(100dvh-7rem))] w-[min(22rem,calc(100vw-2rem))] shadow-2xl"
+          }`}
+          role={isEmbedded ? "region" : "dialog"}
         >
           <header className="flex items-center justify-between bg-amber-200 px-4 py-3 text-indigo-900">
             <div>
-              <h2 className="font-semibold">Product assistant</h2>
-              <p className="text-xs text-indigo-800/75">Local Llama 3.2</p>
+              <h2 className="font-semibold">
+                {product ? `Ask about ${product.name}` : "Product assistant"}
+              </h2>
+              <p className="text-xs text-indigo-800/75">
+                {product
+                  ? "Specs, projects, and coding help"
+                  : "Local Llama 3.2"}
+              </p>
             </div>
-            <button
-              aria-label="Close product assistant"
-              className="rounded p-2 text-indigo-800 hover:bg-amber-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              onClick={() => setIsOpen(false)}
-              type="button"
-            >
-              <Icon name="x" className="h-5 w-5" />
-            </button>
+            {!isEmbedded && (
+              <button
+                aria-label="Close product assistant"
+                className="rounded p-2 text-indigo-800 hover:bg-amber-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                onClick={() => setIsOpen(false)}
+                type="button"
+              >
+                <Icon name="x" className="h-5 w-5" />
+              </button>
+            )}
           </header>
 
           <div
@@ -280,18 +318,20 @@ export default function ChatbotWidget() {
         </section>
       )}
 
-      <button
-        aria-expanded={isOpen}
-        aria-label={
-          isOpen ? "Close product assistant" : "Open product assistant"
-        }
-        className="flex h-14 items-center gap-2 rounded-full bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
-        onClick={() => setIsOpen((open) => !open)}
-        type="button"
-      >
-        <Icon name={isOpen ? "x" : "message-circle"} className="h-5 w-5" />
-        <span>{isOpen ? "Close" : "Ask ElectroShop"}</span>
-      </button>
+      {!isEmbedded && (
+        <button
+          aria-expanded={isOpen}
+          aria-label={
+            isOpen ? "Close product assistant" : "Open product assistant"
+          }
+          className="flex h-14 items-center gap-2 rounded-full bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+          onClick={() => setIsOpen((open) => !open)}
+          type="button"
+        >
+          <Icon name={isOpen ? "x" : "message-circle"} className="h-5 w-5" />
+          <span>{isOpen ? "Close" : "Ask ElectroShop"}</span>
+        </button>
+      )}
     </div>
   );
 }
