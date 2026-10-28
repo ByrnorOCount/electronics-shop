@@ -34,6 +34,15 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     let active = true;
+    if (cartItems.length === 0) {
+      setIsQuoteLoading(false);
+      setQuoteError("");
+      setShippingQuote(null);
+      return () => {
+        active = false;
+      };
+    }
+
     setIsQuoteLoading(true);
     setQuoteError("");
     setShippingQuote(null);
