@@ -38,7 +38,7 @@ export async function seed(knex) {
 
   // --- Add more users for analytics ---
   const providers = ["local", "google", "facebook"];
-  for (let i = 0; i < 25; i++) {
+  for (let i = 0; i < 50; i++) {
     const daysAgo = Math.floor(Math.random() * 30); // Random day in the last 30 days
     const provider = providers[Math.floor(Math.random() * providers.length)];
 

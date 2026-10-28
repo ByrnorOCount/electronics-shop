@@ -8,13 +8,18 @@ export async function seed(knex) {
   const products = await knex("products").select("id", "price", "stock");
   const statuses = [
     "Pending",
+    "Pending",
+    "Processing",
     "Processing",
     "Shipped",
+    "Shipped",
+    "Delivered",
+    "Delivered",
     "Delivered",
     "Cancelled",
   ];
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 150; i++) {
     const user = users[Math.floor(Math.random() * users.length)];
     const daysAgo = Math.floor(Math.random() * 30);
     const status = statuses[Math.floor(Math.random() * statuses.length)];

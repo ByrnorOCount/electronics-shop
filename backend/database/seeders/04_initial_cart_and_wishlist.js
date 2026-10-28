@@ -34,6 +34,32 @@ export async function seed(knex) {
     },
   ]);
 
+  const additionalCustomers = await knex("users")
+    .where("role", "customer")
+    .whereNot("id", userId)
+    .orderBy("id", "asc")
+    .limit(20);
+
+  const additionalCartItems = additionalCustomers.flatMap((customer, index) => [
+    {
+      user_id: customer.id,
+      product_id: (index % 20) + 1,
+      quantity: (index % 3) + 1,
+    },
+    {
+      user_id: customer.id,
+      product_id: ((index + 7) % 20) + 1,
+      quantity: 1,
+    },
+  ]);
+  const additionalWishlistItems = additionalCustomers.flatMap((customer, index) => [
+    { user_id: customer.id, product_id: ((index + 10) % 20) + 1 },
+    { user_id: customer.id, product_id: ((index + 15) % 20) + 1 },
+  ]);
+
+  await knex("cart_items").insert(additionalCartItems);
+  await knex("wishlists").insert(additionalWishlistItems);
+
   // Reset sequences if the tables have auto-incrementing primary keys.
   try {
     await knex.raw(

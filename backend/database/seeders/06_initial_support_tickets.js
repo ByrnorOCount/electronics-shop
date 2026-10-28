@@ -26,7 +26,7 @@ export async function seed(knex) {
     "My payment was declined but I'm not sure why. Can you check?",
   ];
 
-  for (let i = 0; i < 15; i++) {
+  for (let i = 0; i < 40; i++) {
     const user = users[Math.floor(Math.random() * users.length)];
     const daysAgo = Math.floor(Math.random() * 30);
 
