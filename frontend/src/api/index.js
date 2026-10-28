@@ -20,3 +20,4 @@ export { default as userService } from "../features/user/userService";
 export { default as supportService } from "../features/support/supportService";
 export { default as wishlistService } from "../features/wishlist/wishlistService";
 export { default as staffService } from "../features/staff/staffService";
+export { default as shippingService } from "../features/checkout-orders/shippingService";

@@ -13,6 +13,7 @@ import logger from "../../utils/logger";
  * @returns {{
  *  createOrder: (data: {
  *    shippingAddress: string;
+ *    zone: string;
  *    paymentMethod: 'cod'|'stripe';
  *    otp?: string;
  *  }) => Promise<void>;
@@ -52,18 +53,23 @@ export const useOrderActions = () => {
    * For 'cod', it creates the order directly.
    * For 'stripe', it redirects to the payment page.
    */
-  const createOrder = async ({ shippingAddress, paymentMethod, otp }) => {
+  const createOrder = async ({ shippingAddress, zone, paymentMethod, otp }) => {
     setIsLoading(true);
     setError(null);
     try {
       if (paymentMethod === "cod") {
-        const order = await orderService.createCodOrder(shippingAddress, otp);
+        const order = await orderService.createCodOrder(
+          shippingAddress,
+          otp,
+          zone
+        );
         dispatch(clearCart());
         navigate("/order-confirmation", { state: { order }, replace: true });
       } else {
         const { url } = await orderService.createPaymentSession(
           paymentMethod,
-          shippingAddress
+          shippingAddress,
+          zone
         );
         window.location.href = url;
       }

@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
  * A component that displays the current cart's subtotal, estimated costs,
  * and a checkout button.
  */
-export default function CartSummary() {
+export default function CartSummary({ shippingFee, shippingLabel }) {
   const cartItems = useAppSelector((state) => state.cart.items);
   const { token } = useAppSelector((state) => state.auth);
   const location = useLocation();
@@ -18,7 +18,7 @@ export default function CartSummary() {
     0
   );
 
-  const shipping = subtotal > 0 ? 5.0 : 0;
+  const shipping = typeof shippingFee === "number" ? shippingFee : 0;
   const tax = subtotal * 0.05;
   const total = subtotal + shipping + tax;
 
@@ -77,7 +77,14 @@ export default function CartSummary() {
         </div>
         <div className="flex justify-between">
           <span>Shipping estimate</span>
-          <span className="font-medium">${shipping.toFixed(2)}</span>
+          <span className="font-medium">
+            {shippingLabel ||
+              (shippingFee === null
+                ? "Select delivery area"
+                : shippingFee === undefined
+                  ? "Calculated at checkout"
+                  : `$${shipping.toFixed(2)}`)}
+          </span>
         </div>
         <div className="flex justify-between">
           <span>Tax estimate</span>

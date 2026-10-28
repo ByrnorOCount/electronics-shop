@@ -45,6 +45,11 @@ export default function OrderDetails({ order }) {
         </div>
       </div>
 
+      <div className="flex justify-between text-sm mt-4">
+        <span>Shipping</span>
+        <span>${Number(order.shipping_fee || 0).toFixed(2)}</span>
+      </div>
+
       {/* Total */}
       <div className="flex justify-between font-bold text-lg my-4 pt-4 border-t">
         <span>Order Total</span>

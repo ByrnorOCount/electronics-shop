@@ -15,11 +15,12 @@ const generateOtp = async () => {
  * @param {string} otp The 6-digit OTP for verification.
  * @returns {Promise<object>} A promise that resolves to the newly created order details.
  */
-const createCodOrder = async (shippingAddress, otp) => {
+const createCodOrder = async (shippingAddress, otp, zone) => {
   const response = await api.post("/orders", {
     shippingAddress,
     paymentMethod: "cod",
     otp,
+    zone,
   });
   return response.data.data;
 };
@@ -29,10 +30,11 @@ const createCodOrder = async (shippingAddress, otp) => {
  * @param {'stripe'} paymentMethod The selected online payment method (e.g., 'stripe').
  * @returns {Promise<{url: string}>} A promise that resolves to an object containing the payment URL.
  */
-const createPaymentSession = async (paymentMethod, shippingAddress) => {
+const createPaymentSession = async (paymentMethod, shippingAddress, zone) => {
   const response = await api.post("/orders/create-payment-session", {
     paymentMethod,
     shippingAddress,
+    zone,
   });
   return response.data.data;
 };

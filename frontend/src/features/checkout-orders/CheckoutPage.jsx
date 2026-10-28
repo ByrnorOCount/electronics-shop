@@ -1,16 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CartSummary from "../cart/components/CartSummary";
 import Button from "../../components/ui/Button";
 import toast from "react-hot-toast";
 import Spinner from "../../components/ui/Spinner";
 import { useOrderActions } from "./useOrderActions";
+import { shippingService } from "../../api";
+import { useAppSelector } from "../../store/hooks";
 
-// Use stripe public key here?
+const deliveryZones = [
+  { id: "local", label: "Same city" },
+  { id: "nearby", label: "Nearby province" },
+  { id: "regional", label: "Other province" },
+  { id: "remote", label: "Remote area" },
+];
 
 export default function CheckoutPage() {
   const [shippingAddress, setShippingAddress] = useState("");
+  const [zone, setZone] = useState("local");
+  const [shippingQuote, setShippingQuote] = useState(null);
+  const [isQuoteLoading, setIsQuoteLoading] = useState(false);
+  const [quoteError, setQuoteError] = useState("");
+  const [quoteAttempt, setQuoteAttempt] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("cod"); // 'cod', 'stripe'
   const [otp, setOtp] = useState("");
+  const cartItems = useAppSelector((state) => state.cart.items);
 
   const {
     createOrder,
@@ -19,10 +32,41 @@ export default function CheckoutPage() {
     error,
   } = useOrderActions();
 
+  useEffect(() => {
+    let active = true;
+    setIsQuoteLoading(true);
+    setQuoteError("");
+    setShippingQuote(null);
+    shippingService
+      .getShippingQuote(zone)
+      .then((quote) => {
+        if (active) setShippingQuote(quote);
+      })
+      .catch((err) => {
+        if (active) {
+          setQuoteError(
+            err.response?.data?.message || "Unable to calculate shipping."
+          );
+        }
+      })
+      .finally(() => {
+        if (active) setIsQuoteLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [zone, cartItems, quoteAttempt]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!shippingAddress) {
       toast.error("Shipping address is required.");
+      return;
+    }
+
+    if (!shippingQuote || isQuoteLoading) {
+      toast.error("Wait for the shipping estimate before placing your order.");
       return;
     }
 
@@ -33,6 +77,7 @@ export default function CheckoutPage() {
 
     await createOrder({
       shippingAddress,
+      zone,
       paymentMethod,
       otp,
     });
@@ -62,9 +107,46 @@ export default function CheckoutPage() {
               value={shippingAddress}
               onChange={(e) => setShippingAddress(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              placeholder="123 Main St, Anytown, USA"
+              placeholder="12 Nguyen Trai Street, District 1, Ho Chi Minh City"
               required
             />
+          </div>
+
+          <div>
+            <label
+              htmlFor="delivery-zone"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Delivery area
+            </label>
+            <select
+              id="delivery-zone"
+              value={zone}
+              onChange={(e) => setZone(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            >
+              {deliveryZones.map((deliveryZone) => (
+                <option key={deliveryZone.id} value={deliveryZone.id}>
+                  {deliveryZone.label}
+                </option>
+              ))}
+            </select>
+            <p className="mt-2 text-sm text-gray-500" aria-live="polite">
+              {isQuoteLoading
+                ? "Calculating local shipping estimate…"
+                : shippingQuote
+                  ? `${shippingQuote.estimatedDelivery} · ${shippingQuote.chargeableWeightKg} kg chargeable weight. Simulated estimate, not a carrier quote.`
+                  : quoteError}
+            </p>
+            {quoteError && (
+              <button
+                type="button"
+                onClick={() => setQuoteAttempt((attempt) => attempt + 1)}
+                className="mt-1 text-sm text-indigo-600 underline"
+              >
+                Try again
+              </button>
+            )}
           </div>
 
           {/* Payment Method */}
@@ -142,7 +224,11 @@ export default function CheckoutPage() {
             </p>
           )}
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading || isQuoteLoading || !shippingQuote}
+          >
             {isLoading ? (
               <div className="flex items-center justify-center gap-2">
                 <Spinner size={4} className="text-white" />
@@ -157,7 +243,18 @@ export default function CheckoutPage() {
         </form>
 
         <div className="lg:col-span-1">
-          <CartSummary />
+          <CartSummary
+            shippingFee={shippingQuote ? shippingQuote.shippingFeeUSD : null}
+            shippingLabel={
+              shippingQuote
+                ? `$${shippingQuote.shippingFeeUSD.toFixed(2)}`
+                : isQuoteLoading
+                  ? "Calculating…"
+                  : quoteError
+                    ? "Unavailable"
+                    : undefined
+            }
+          />
         </div>
       </div>
     </main>
