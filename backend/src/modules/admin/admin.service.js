@@ -123,9 +123,19 @@ export const getAnalyticsData = async (queryOptions) => {
     endDate = new Date().toISOString(),
   } = queryOptions;
 
+  const inclusiveEndDate = new Date(endDate);
+  if (
+    inclusiveEndDate.getUTCHours() === 0 &&
+    inclusiveEndDate.getUTCMinutes() === 0 &&
+    inclusiveEndDate.getUTCSeconds() === 0 &&
+    inclusiveEndDate.getUTCMilliseconds() === 0
+  ) {
+    inclusiveEndDate.setUTCHours(23, 59, 59, 999);
+  }
+
   const analyticsData = await adminModel.fetchAnalyticsData({
     startDate,
-    endDate,
+    endDate: inclusiveEndDate.toISOString(),
   });
   return analyticsData;
 };

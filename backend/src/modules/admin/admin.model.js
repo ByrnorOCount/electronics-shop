@@ -111,19 +111,76 @@ export const fetchAnalyticsData = async ({ startDate, endDate }) => {
       db.raw("SUM(total_amount) as total")
     )
     .whereBetween("created_at", [startDate, endDate])
+    .whereNot("status", "Cancelled")
     .groupBy("date")
     .orderBy("date", "asc");
 
   const topProducts = await db("order_items")
     .join("products", "order_items.product_id", "products.id")
+    .join("orders", "order_items.order_id", "orders.id")
     .select(
       "products.id",
       "products.name",
-      db.raw("CAST(SUM(order_items.quantity) AS INTEGER) as total_quantity")
+      db.raw("CAST(SUM(order_items.quantity) AS INTEGER) as total_quantity"),
+      db.raw("SUM(order_items.quantity * order_items.price) as total_sales")
     )
+    .whereBetween("orders.created_at", [startDate, endDate])
+    .whereNot("orders.status", "Cancelled")
     .groupBy("products.id", "products.name")
     .orderBy("total_quantity", "desc")
     .limit(5);
+
+  const salesByCategory = await db("order_items")
+    .join("orders", "order_items.order_id", "orders.id")
+    .join("products", "order_items.product_id", "products.id")
+    .leftJoin("categories", "products.category_id", "categories.id")
+    .select(
+      "categories.id",
+      db.raw("COALESCE(categories.name, 'Uncategorized') as name"),
+      db.raw("CAST(SUM(order_items.quantity) AS INTEGER) as total_quantity"),
+      db.raw("SUM(order_items.quantity * order_items.price) as total_sales")
+    )
+    .whereBetween("orders.created_at", [startDate, endDate])
+    .whereNot("orders.status", "Cancelled")
+    .groupBy("categories.id", "categories.name")
+    .orderBy("total_sales", "desc");
+
+  const customerPurchases = () =>
+    db("orders")
+      .join("users", "orders.user_id", "users.id")
+      .select(
+        "users.id",
+        "users.first_name",
+        "users.last_name",
+        "users.email",
+        db.raw("CAST(COUNT(orders.id) AS INTEGER) as order_count"),
+        db.raw("SUM(orders.total_amount) as total_spent"),
+        db.raw("AVG(orders.total_amount) as average_order_value")
+      )
+      .whereBetween("orders.created_at", [startDate, endDate])
+      .whereNot("orders.status", "Cancelled")
+      .whereRaw("LOWER(users.role) = ?", ["customer"])
+      .groupBy("users.id");
+
+  const topCustomers = await customerPurchases()
+    .orderBy("total_spent", "desc")
+    .limit(10);
+
+  const customerSegments = await db
+    .from(customerPurchases().as("customer_purchases"))
+    .select(
+      db.raw(`
+        CASE
+          WHEN order_count = 1 THEN 'One-time'
+          WHEN order_count BETWEEN 2 AND 4 THEN 'Repeat'
+          ELSE 'Loyal'
+        END as segment
+      `),
+      db.raw("CAST(COUNT(*) AS INTEGER) as customer_count"),
+      db.raw("SUM(total_spent) as total_spent")
+    )
+    .groupBy("segment")
+    .orderBy("segment", "asc");
 
   const newUserSignups = await db("users")
     .select(db.raw("DATE(created_at) as date"), db.raw("COUNT(id) as count"))
@@ -151,6 +208,9 @@ export const fetchAnalyticsData = async ({ startDate, endDate }) => {
   return {
     salesByDay,
     topProducts,
+    salesByCategory,
+    topCustomers,
+    customerSegments,
     newUserSignups,
     orderStatusDistribution,
   };
