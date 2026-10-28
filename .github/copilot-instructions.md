@@ -1,3 +1,4 @@
 - This project is developed and run directly on Windows, outside containers.
 - Give Windows-native commands and setup steps.
 - Do not suggest Docker or container workflows unless explicitly requested.
+- Refer to CHECKLIST.md, README.md, test_info.txt, and notes.txt for overviews

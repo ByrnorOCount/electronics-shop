@@ -1,7 +1,0 @@
-Stripe sandbox
-Visa: 4242424242424242 | date: 12/34 | code: 567
-
-Accounts
-admin@example.com | Password123!
-staff@example.com | Password123!
-john.doe@example.com | Password123!
