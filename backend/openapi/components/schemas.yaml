@@ -157,6 +157,12 @@ Order:
       type: integer
     total_amount:
       type: number
+    shipping_fee:
+      type: number
+      description: Server-calculated simulated shipping fee in USD.
+    delivery_zone:
+      type: string
+      enum: [local, nearby, regional, remote]
     status:
       type: string
     shipping_address:
@@ -176,6 +182,11 @@ CreateOrderRequest:
     shippingAddress:
       type: string
       description: The full shipping address for the order.
+    zone:
+      type: string
+      enum: [local, nearby, regional, remote]
+      default: local
+      description: Local simulated delivery area; fee is recalculated by the server.
     paymentMethod:
       type: string
       description: The chosen payment method.
@@ -187,13 +198,21 @@ CreateOrderRequest:
 
 CreatePaymentSessionRequest:
   type: object
-  required: [paymentMethod]
+  required: [paymentMethod, shippingAddress]
   properties:
     paymentMethod:
       type: string
       description: The online payment provider to use.
       enum: [stripe]
       example: stripe
+    shippingAddress:
+      type: string
+      description: The full shipping address for the order.
+    zone:
+      type: string
+      enum: [local, nearby, regional, remote]
+      default: local
+      description: Local simulated delivery area; fee is recalculated by the server.
 
 SupportTicket:
   type: object

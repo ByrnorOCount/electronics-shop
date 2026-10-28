@@ -65,6 +65,8 @@ paths:
   /orders/generate-otp: { $ref: "./paths/orders.yaml#/orders~1generate-otp" }
   /orders/create-payment-session:
     { $ref: "./paths/orders.yaml#/orders~1create-payment-session" }
+  /shipping/calculate-fee:
+    { $ref: "./paths/shipping.yaml#/shipping~1calculate-fee" }
   # Notifications
   /notifications: { $ref: "./paths/notifications.yaml#/" }
   /notifications/unread-count:

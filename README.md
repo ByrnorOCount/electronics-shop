@@ -225,7 +225,7 @@ The assistant can answer general electronics questions and uses the public produ
 
 The following features are identified for future development cycles to enhance the platform's capabilities:
 
-- **Shipping API Integration:** Integrate with a logistics provider (e.g., Giao Hàng Nhanh) to calculate real-time shipping fees and provide delivery tracking.
+- **Shipping:** Checkout uses a local simulated quote based on delivery zone and chargeable parcel weight. It does not call an external carrier or provide live tracking.
 - **Alternative Payment Methods:** Integrate local payment gateways like MoMo or ZaloPay to cater to a wider user base.
 - **Customer Reviews & Ratings:** Allow verified customers to submit product reviews and ratings.
 - **Advanced Recommendation System:** Develop a system to provide personalized product suggestions based on user browsing history and purchase patterns.

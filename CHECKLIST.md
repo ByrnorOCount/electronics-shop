@@ -285,9 +285,9 @@ This section lists tasks for future development cycles, based on the expanded re
 
 ### **Advanced E-Commerce Features**
 
-- [ ] **Shipping API Integration:**
-  - [ ] Backend service to get shipping rates from a provider like Giao Hàng Nhanh. (Update: Fake this shit, the real ones are annoying)
-  - [ ] Display shipping options and costs in the frontend checkout flow.
+- [x] **Local Shipping Simulator:**
+  - [x] Calculate realistic zone- and chargeable-weight-based quotes without an external carrier.
+  - [x] Display the estimated fee and delivery window in checkout and include the server-calculated fee in orders.
 
 ### **Advanced Admin Dashboard**
 

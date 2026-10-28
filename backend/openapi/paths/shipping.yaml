@@ -1,0 +1,38 @@
+"shipping/calculate-fee":
+  post:
+    summary: Calculate a local simulated shipping quote
+    description: Calculates a deterministic estimate from the selected delivery zone and chargeable parcel weight. No external carrier is contacted.
+    operationId: calculateLocalShippingQuote
+    tags:
+      - Orders
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [zone]
+            properties:
+              zone:
+                type: string
+                enum: [local, nearby, regional, remote]
+    responses:
+      "200":
+        description: Simulated shipping fee and delivery estimate.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shippingFeeUSD:
+                  type: number
+                shippingFeeVND:
+                  type: number
+                chargeableWeightKg:
+                  type: number
+                estimatedDelivery:
+                  type: string
+      "400":
+        description: Invalid zone or empty cart.
