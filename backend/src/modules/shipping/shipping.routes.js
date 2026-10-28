@@ -1,4 +1,3 @@
-// Old GHN shit, planned to be replaced with GHTK
 import express from "express";
 import { calculateFee } from "./shipping.controller.js";
 import {

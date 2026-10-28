@@ -4,16 +4,11 @@ vi.mock("../../src/modules/cart/cart.model.js", () => ({
   findByUserId: vi.fn(),
 }));
 
-vi.mock("../../src/core/integrations/shipping.service.js", () => ({
-  calculateShippingFee: vi.fn(),
-}));
-
 vi.mock("../../src/core/utils/currency.js", () => ({
   convertUSDtoVND: vi.fn(),
 }));
 
 import * as cartModel from "../../src/modules/cart/cart.model.js";
-import * as shippingIntegration from "../../src/core/integrations/shipping.service.js";
 import { convertUSDtoVND } from "../../src/core/utils/currency.js";
 import { getCartShippingFee } from "../../src/modules/shipping/shipping.service.js";
 
@@ -26,13 +21,12 @@ describe("shipping service", () => {
     cartModel.findByUserId.mockResolvedValue([]);
 
     await expect(
-      getCartShippingFee(7, { districtId: 12, wardCode: "WARD-1" })
+      getCartShippingFee(7, "local")
     ).rejects.toMatchObject({ statusCode: 400 });
     expect(convertUSDtoVND).not.toHaveBeenCalled();
-    expect(shippingIntegration.calculateShippingFee).not.toHaveBeenCalled();
   });
 
-  it("calculates shipping from cart weight, value, and package dimensions", async () => {
+  it("calculates a local quote using chargeable weight and delivery zone", async () => {
     cartModel.findByUserId.mockResolvedValue([
       {
         product_id: 1,
@@ -45,35 +39,41 @@ describe("shipping service", () => {
       },
     ]);
     convertUSDtoVND.mockImplementation(async (amount) => amount * 25_000);
-    shippingIntegration.calculateShippingFee.mockResolvedValue(30_000);
 
     await expect(
-      getCartShippingFee(7, { districtId: 12, wardCode: "WARD-1" })
-    ).resolves.toEqual({ shippingFeeVND: 30_000, shippingFeeUSD: 1.2 });
-    expect(shippingIntegration.calculateShippingFee).toHaveBeenCalledWith({
-      toDistrictId: 12,
-      toWardCode: "WARD-1",
-      totalWeightGrams: 1_000,
-      totalValueVND: 500_000,
-      packageDimensions: { height: 16, length: 20, width: 12 },
+      getCartShippingFee(7, "nearby")
+    ).resolves.toMatchObject({
+      zone: "nearby",
+      zoneName: "Nearby province",
+      shippingFeeVND: 28_000,
+      shippingFeeUSD: 1.12,
+      estimatedDelivery: "2–3 business days",
+      chargeableWeightKg: 1,
     });
   });
 
-  it("uses default package measurements when products omit dimensions", async () => {
+  it("uses realistic default parcel measurements when product data is absent", async () => {
     cartModel.findByUserId.mockResolvedValue([
       { product_id: 2, quantity: 1, price: 5 },
     ]);
     convertUSDtoVND.mockImplementation(async (amount) => amount * 25_000);
-    shippingIntegration.calculateShippingFee.mockResolvedValue(10_000);
 
-    await getCartShippingFee(7, { districtId: 12, wardCode: "WARD-1" });
+    await expect(getCartShippingFee(7, "local")).resolves.toMatchObject({
+      shippingFeeVND: 20_000,
+      chargeableWeightKg: 0.6,
+    });
+  });
 
-    expect(shippingIntegration.calculateShippingFee).toHaveBeenCalledWith(
-      expect.objectContaining({
-        totalWeightGrams: 500,
-        totalValueVND: 125_000,
-        packageDimensions: { height: 10, length: 10, width: 10 },
-      })
-    );
+  it("uses volumetric chargeable weight and rounds surcharges by 500 grams", async () => {
+    cartModel.findByUserId.mockResolvedValue([
+      { product_id: 3, quantity: 3, price: 5 },
+    ]);
+    convertUSDtoVND.mockImplementation(async (amount) => amount * 25_000);
+
+    await expect(getCartShippingFee(7, "local")).resolves.toMatchObject({
+      shippingFeeVND: 32_000,
+      shippingFeeUSD: 1.28,
+      chargeableWeightKg: 1.8,
+    });
   });
 });

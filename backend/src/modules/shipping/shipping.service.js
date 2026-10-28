@@ -1,19 +1,15 @@
-// Old GHN shit, planned to be replaced with GHTK
 import * as cartModel from "../cart/cart.model.js";
-import * as shippingIntegration from "../../core/integrations/shipping.service.js";
+import * as localShippingProvider from "./local-shipping.provider.js";
 import { convertUSDtoVND } from "../../core/utils/currency.js";
 import ApiError from "../../core/utils/ApiError.js";
 import httpStatus from "http-status";
 
 /**
- * Get shipping fee for the user's current cart.
+ * Get a local simulated shipping quote for the user's current cart.
  * @param {number} userId - The ID of the user.
- * @param {object} destination - The destination address details.
- * @param {number} destination.districtId - The destination district ID from GHN.
- * @param {string} destination.wardCode - The destination ward code from GHN.
- * @returns {Promise<{shippingFeeVND: number, shippingFeeUSD: number}>}
+ * @param {string} zone - A supported local delivery zone.
  */
-export const getCartShippingFee = async (userId, destination) => {
+export const getCartShippingFee = async (userId, zone = "local") => {
   const cartItems = await cartModel.findByUserId(userId);
   if (cartItems.length === 0) {
     throw new ApiError(
@@ -22,43 +18,36 @@ export const getCartShippingFee = async (userId, destination) => {
     );
   }
 
-  // Calculate total weight and value from cart items
+  // Products without package data use a small electronics parcel estimate.
   const totals = cartItems.reduce(
     (acc, item) => {
       const quantity = item.quantity;
-      // Sum weights
-      acc.weightGrams += (item.weight_kg || 0.5) * quantity * 1000;
-      // Sum value
-      acc.valueUSD += item.price * item.quantity;
-      // Estimate package dimensions: stack items vertically, take max length/width
-      acc.totalHeightCm += (item.height_cm || 10) * quantity;
-      acc.maxLengthCm = Math.max(acc.maxLengthCm, item.length_cm || 10);
-      acc.maxWidthCm = Math.max(acc.maxWidthCm, item.width_cm || 10);
+      acc.actualWeightGrams += (item.weight_kg || 0.5) * quantity * 1000;
+      acc.packageVolumeCm3 +=
+        (item.length_cm || 20) *
+        (item.width_cm || 15) *
+        (item.height_cm || 10) *
+        quantity;
       return acc;
     },
-    {
-      weightGrams: 0,
-      valueUSD: 0,
-      totalHeightCm: 0,
-      maxLengthCm: 0,
-      maxWidthCm: 0,
-    }
+    { actualWeightGrams: 0, packageVolumeCm3: 0 }
   );
 
-  const totalValueVND = await convertUSDtoVND(totals.valueUSD);
-
-  const feeVND = await shippingIntegration.calculateShippingFee({
-    toDistrictId: destination.districtId,
-    toWardCode: destination.wardCode,
-    totalWeightGrams: totals.weightGrams,
-    totalValueVND,
-    packageDimensions: {
-      height: totals.totalHeightCm,
-      length: totals.maxLengthCm,
-      width: totals.maxWidthCm,
-    },
+  const volumetricWeightGrams = (totals.packageVolumeCm3 / 5_000) * 1_000;
+  const chargeableWeightGrams = Math.max(
+    totals.actualWeightGrams,
+    volumetricWeightGrams
+  );
+  const quote = localShippingProvider.calculateLocalShippingQuote({
+    zone,
+    chargeableWeightGrams,
   });
-
   const rate = await convertUSDtoVND(1);
-  return { shippingFeeVND: feeVND, shippingFeeUSD: feeVND / rate };
+  const shippingFeeUSD =
+    Math.round((quote.shippingFeeVND / rate) * 100) / 100;
+  return {
+    ...quote,
+    shippingFeeUSD,
+    chargeableWeightKg: Math.round((chargeableWeightGrams / 1_000) * 100) / 100,
+  };
 };

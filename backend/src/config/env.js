@@ -48,9 +48,10 @@ const envVarsSchema = Joi.object()
     OLLAMA_MODEL: Joi.string().default("llama3.2").description("Ollama model"),
 
     // Shipping & Currency
-    // USD_TO_VND_RATE: Joi.number()
-    //   .required()
-    //   .description("USD to VND exchange rate"),
+    USD_TO_VND_RATE: Joi.number()
+      .positive()
+      .default(25_000)
+      .description("VND conversion rate used to display simulated shipping fees"),
   })
   .unknown();
 
