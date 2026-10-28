@@ -36,33 +36,27 @@ const DashboardLayout = () => {
       <aside
         className={`${isCollapsed ? "w-20 p-3" : "w-60 p-4"} fixed inset-y-0 left-0 z-30 flex flex-col overflow-y-auto bg-gray-800 text-white transition-[width,padding] duration-200`}
       >
-        <div
-          className={`mb-4 flex h-10 items-center ${isCollapsed ? "justify-center" : "justify-between"}`}
+        <button
+          type="button"
+          onClick={() => setIsCollapsed((collapsed) => !collapsed)}
+          aria-label={
+            isCollapsed ? "Expand control panel" : "Collapse control panel"
+          }
+          aria-expanded={!isCollapsed}
+          title={
+            isCollapsed ? "Expand control panel" : "Collapse control panel"
+          }
+          className={`mb-4 flex h-10 w-full shrink-0 items-center rounded-md text-gray-100 transition-colors hover:bg-gray-700 hover:text-white focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-white ${isCollapsed ? "justify-center gap-2 px-1" : "justify-between px-3"}`}
         >
-          {!isCollapsed && (
-            <div className="flex min-w-0 items-center gap-2 pl-3">
-              <Icon name="staff-panel" className="h-5 w-5 shrink-0" />
-              <h2 className="truncate text-lg font-semibold">Control</h2>
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={() => setIsCollapsed((collapsed) => !collapsed)}
-            aria-label={
-              isCollapsed ? "Expand control panel" : "Collapse control panel"
-            }
-            aria-expanded={!isCollapsed}
-            title={
-              isCollapsed ? "Expand control panel" : "Collapse control panel"
-            }
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-gray-200 transition-colors hover:bg-gray-700 hover:text-white focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-white"
-          >
-            <Icon
-              name={isCollapsed ? "chevron-right" : "chevron-left"}
-              className="h-5 w-5"
-            />
-          </button>
-        </div>
+          <span className="flex min-w-0 items-center gap-2">
+            <Icon name="menu" className="h-5 w-5 shrink-0" />
+            {!isCollapsed && (
+              <span className="truncate text-lg font-semibold">
+                Control Panel
+              </span>
+            )}
+          </span>
+        </button>
         <nav className="space-y-3">
           <section
             className={`${isCollapsed ? "-mx-3 px-3" : "-mx-4 px-4"} border-t-2 border-gray-600 pt-3 first:border-t-0 first:pt-0`}

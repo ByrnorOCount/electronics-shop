@@ -124,6 +124,13 @@ const icons = {
       d="M20.25 14.15v4.07a2.25 2.25 0 01-2.25 2.25h-12a2.25 2.25 0 01-2.25-2.25v-4.07m16.5 0v-3.875a2.25 2.25 0 00-2.25-2.25h-12a2.25 2.25 0 00-2.25 2.25v3.875m16.5 0h-16.5"
     />
   ),
+  menu: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M3 6h18M3 12h18M3 18h18"
+    />
+  ),
   dashboard: (
     <path
       strokeLinecap="round"
@@ -206,6 +213,13 @@ const icons = {
       strokeLinecap="round"
       strokeLinejoin="round"
       d="M8.25 4.5l7.5 7.5-7.5 7.5"
+    />
+  ),
+  "chevron-left": (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M15.75 4.5l-7.5 7.5 7.5 7.5"
     />
   ),
   "chevron-down": (
