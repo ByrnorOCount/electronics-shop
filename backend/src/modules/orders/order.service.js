@@ -5,10 +5,12 @@ import Stripe from "stripe";
 import * as orderModel from "./order.model.js";
 import * as productModel from "../products/product.model.js";
 import * as cartModel from "../cart/cart.model.js";
+import * as shippingService from "../shipping/shipping.service.js";
 import {
   sendOrderConfirmationEmail,
   sendOtpEmail,
 } from "../../core/integrations/email.service.js";
+import logger from "../../config/logger.js";
 import ApiError from "../../core/utils/ApiError.js";
 import env from "../../config/env.js";
 
@@ -37,7 +39,13 @@ export const generateAndSendOtp = async (user) => {
  * @param {number} userId - The ID of the user.
  * @returns {Promise<object>} An object containing the session URL.
  */
-const createStripeSession = async (cartItems, userId, shippingAddress) => {
+const createStripeSession = async (
+  cartItems,
+  userId,
+  shippingAddress,
+  zone,
+  shippingQuote
+) => {
   // --- Preliminary Stock Check ---
   // This provides a better UX by failing early if something is out of stock.
   // The real atomic check happens in the webhook after payment.
@@ -62,18 +70,35 @@ const createStripeSession = async (cartItems, userId, shippingAddress) => {
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
-    line_items: cartItems.map((item) => ({
-      price_data: {
-        currency: "usd",
-        product_data: { name: item.name },
-        unit_amount: Math.round(item.price * 100),
+    line_items: [
+      ...cartItems.map((item) => ({
+        price_data: {
+          currency: "usd",
+          product_data: { name: item.name },
+          unit_amount: Math.round(item.price * 100),
+        },
+        quantity: item.quantity,
+      })),
+      {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: `Simulated shipping - ${shippingQuote.zoneName}`,
+          },
+          unit_amount: Math.round(shippingQuote.shippingFeeUSD * 100),
+        },
+        quantity: 1,
       },
-      quantity: item.quantity,
-    })),
+    ],
     mode: "payment",
     success_url: `${env.FRONTEND_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${env.FRONTEND_URL}/checkout`,
-    metadata: { userId, shippingAddress }, // Add shippingAddress to metadata
+    metadata: {
+      userId: String(userId),
+      shippingAddress,
+      zone,
+      shippingFeeUSD: String(shippingQuote.shippingFeeUSD),
+    },
   });
   return { url: session.url };
 };
@@ -86,13 +111,15 @@ const paymentStrategies = {
  * Create a payment session for online payments (e.g., Stripe).
  * @param {string} paymentMethod - 'stripe'.
  * @param {number} userId
- * @param {string} ipAddr
+ * @param {string} shippingAddress
+ * @param {string} zone
  * @returns {Promise<object>}
  */
 export const createOnlinePaymentSession = async (
   paymentMethod,
   userId,
-  shippingAddress
+  shippingAddress,
+  zone = "local"
 ) => {
   const cartItems = await cartModel.findByUserId(userId);
   if (cartItems.length === 0) {
@@ -110,7 +137,14 @@ export const createOnlinePaymentSession = async (
     );
   }
 
-  const paymentData = await paymentHandler(cartItems, userId, shippingAddress);
+  const shippingQuote = await shippingService.getCartShippingFee(userId, zone);
+  const paymentData = await paymentHandler(
+    cartItems,
+    userId,
+    shippingAddress,
+    zone,
+    shippingQuote
+  );
   return { ...paymentData, paymentMethod };
 };
 
@@ -121,7 +155,12 @@ export const createOnlinePaymentSession = async (
  * @param {string} otp
  * @returns {Promise<object>}
  */
-export const createCodOrder = async (userId, shippingAddress, otp) => {
+export const createCodOrder = async (
+  userId,
+  shippingAddress,
+  otp,
+  zone = "local"
+) => {
   const user = await orderModel.findUserById(userId);
   const isOtpValid =
     user.otp_hash && (await bcrypt.compare(otp, user.otp_hash));
@@ -131,11 +170,14 @@ export const createCodOrder = async (userId, shippingAddress, otp) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid or expired OTP.");
   }
 
-  // Delegate order creation and transaction handling to the model layer.
+  const shippingQuote = await shippingService.getCartShippingFee(userId, zone);
   const newOrder = await orderModel.createOrderFromCartInTransaction(
     userId,
     shippingAddress,
-    "cod"
+    "cod",
+    {},
+    zone,
+    shippingQuote.shippingFeeUSD
   );
 
   await orderModel.clearUserOtp(userId);
@@ -157,14 +199,18 @@ export const createOrderInTransaction = (
   userId,
   shippingAddress,
   paymentMethod,
-  paymentDetails = {}
+  paymentDetails = {},
+  zone = "local",
+  shippingFeeUSD = 0
 ) => {
   // Simply delegate to the model, which now handles the transaction.
   return orderModel.createOrderFromCartInTransaction(
     userId,
     shippingAddress,
     paymentMethod,
-    paymentDetails
+    paymentDetails,
+    zone,
+    shippingFeeUSD
   );
 };
 

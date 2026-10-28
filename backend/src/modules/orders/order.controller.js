@@ -36,14 +36,15 @@ export const generateCheckoutOtp = async (req, res) => {
  */
 export const createPaymentSession = async (req, res, next) => {
   // 'stripe'
-  const { paymentMethod, shippingAddress } = req.body;
+  const { paymentMethod, shippingAddress, zone } = req.body;
   const userId = req.user.id;
 
   try {
     const paymentData = await orderService.createOnlinePaymentSession(
       paymentMethod,
       userId,
-      shippingAddress
+      shippingAddress,
+      zone
     );
     res.status(httpStatus.OK).json(new ApiResponse(httpStatus.OK, paymentData));
   } catch (error) {
@@ -57,14 +58,15 @@ export const createPaymentSession = async (req, res, next) => {
  * @access Private
  */
 export const createOrder = async (req, res, next) => {
-  const { shippingAddress, paymentMethod, otp } = req.body;
+  const { shippingAddress, paymentMethod, otp, zone } = req.body;
   const userId = req.user.id;
 
   try {
     const finalOrder = await orderService.createCodOrder(
       userId,
       shippingAddress,
-      otp
+      otp,
+      zone
     );
     res
       .status(httpStatus.CREATED)
@@ -161,7 +163,8 @@ export const handlePaymentWebhook = async (req, res) => {
         paymentIntent: session.payment_intent,
       });
       // Retrieve userId and shippingAddress from the metadata we set earlier.
-      const { userId, shippingAddress } = session.metadata;
+      const { userId, shippingAddress, zone, shippingFeeUSD } =
+        session.metadata;
 
       try {
         // Create the order and get the new order's ID
@@ -172,7 +175,9 @@ export const handlePaymentWebhook = async (req, res) => {
           {
             transactionId: session.payment_intent,
             sessionId: session.id, // Pass the session ID here
-          }
+          },
+          zone,
+          Number(shippingFeeUSD)
         );
 
         // After successful creation, trigger the confirmation email.

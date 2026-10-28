@@ -103,13 +103,17 @@ export const clearUserOtp = (userId) => {
  * @param {string} shippingAddress
  * @param {string} paymentMethod
  * @param {object} [paymentDetails={}]
+ * @param {string|null} [deliveryZone]
+ * @param {number} [shippingFeeUSD=0]
  * @returns {Promise<object>} The newly created order.
  */
 export const createOrderFromCartInTransaction = (
   userId,
   shippingAddress,
   paymentMethod,
-  paymentDetails = {}
+  paymentDetails = {},
+  deliveryZone = null,
+  shippingFeeUSD = 0
 ) => {
   return db.transaction(async (trx) => {
     // 1. Get cart items for the user within the transaction.
@@ -142,6 +146,8 @@ export const createOrderFromCartInTransaction = (
       shippingAddress,
       paymentMethod,
       paymentDetails,
+      deliveryZone,
+      shippingFeeUSD,
       trx
     );
 

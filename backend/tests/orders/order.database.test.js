@@ -69,7 +69,10 @@ describe("order transactions with PostgreSQL", () => {
     const order = await createOrderInTransaction(
       userId,
       "123 Test Street",
-      "cod"
+      "cod",
+      {},
+      "nearby",
+      1.12
     );
 
     const orderItems = await db("order_items").where({ order_id: order.id });
@@ -81,7 +84,9 @@ describe("order transactions with PostgreSQL", () => {
       .where({ user_id: userId })
       .first();
 
-    expect(Number(order.total_amount)).toBe(51);
+    expect(Number(order.total_amount)).toBe(52.12);
+    expect(Number(order.shipping_fee)).toBe(1.12);
+    expect(order.delivery_zone).toBe("nearby");
     expect(orderItems).toHaveLength(1);
     expect(Number(orderItems[0].price)).toBe(25.5);
     expect(orderItems[0].quantity).toBe(2);

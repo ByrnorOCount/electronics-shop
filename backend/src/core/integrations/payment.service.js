@@ -12,6 +12,8 @@ import httpStatus from "http-status";
  * @param {string} shippingAddress - The shipping address for the order.
  * @param {string} paymentMethod - The payment method used (e.g., 'cod', 'stripe').
  * @param {object} paymentDetails - Additional details from the payment gateway (e.g., transaction ID).
+ * @param {string|null} deliveryZone - The local simulated delivery zone.
+ * @param {number} shippingFeeUSD - Server-calculated shipping fee.
  * @param {import("knex").Knex.Transaction} trx - The Knex transaction object.
  * @returns {Promise<object>} The newly created order object.
  */
@@ -20,6 +22,8 @@ export const createOrderFromCart = async (
   shippingAddress,
   paymentMethod,
   paymentDetails = {},
+  deliveryZone = null,
+  shippingFeeUSD = 0,
   trx
 ) => {
   logger.info("Attempting to create order from cart within transaction.", {
@@ -50,7 +54,7 @@ export const createOrderFromCart = async (
     );
   }
 
-  let totalAmount = 0;
+  let totalAmount = shippingFeeUSD;
   const stockUpdates = [];
 
   for (const item of cartItems) {
@@ -84,6 +88,8 @@ export const createOrderFromCart = async (
       shipping_address: shippingAddress,
       payment_method: paymentMethod,
       payment_details: JSON.stringify(paymentDetails),
+      shipping_fee: shippingFeeUSD,
+      delivery_zone: deliveryZone,
       status: "Pending",
     })
     .returning("*");

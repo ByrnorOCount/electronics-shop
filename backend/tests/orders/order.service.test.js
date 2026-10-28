@@ -12,8 +12,13 @@ vi.mock("../../src/modules/cart/cart.model.js", () => ({
   findByUserId: vi.fn(),
 }));
 
+vi.mock("../../src/modules/shipping/shipping.service.js", () => ({
+  getCartShippingFee: vi.fn(),
+}));
+
 import * as cartModel from "../../src/modules/cart/cart.model.js";
 import * as orderModel from "../../src/modules/orders/order.model.js";
+import * as shippingService from "../../src/modules/shipping/shipping.service.js";
 import * as orderService from "../../src/modules/orders/order.service.js";
 
 describe("order service", () => {
@@ -53,6 +58,9 @@ describe("order service", () => {
       otp_hash: otpHash,
       otp_expires: new Date(Date.now() + 60_000),
     });
+    shippingService.getCartShippingFee.mockResolvedValue({
+      shippingFeeUSD: 1.12,
+    });
     orderModel.createOrderFromCartInTransaction.mockResolvedValue(createdOrder);
     orderModel.findOrderByIdWithItems.mockResolvedValue(completedOrder);
 
@@ -62,7 +70,10 @@ describe("order service", () => {
     expect(orderModel.createOrderFromCartInTransaction).toHaveBeenCalledWith(
       10,
       "123 Main St",
-      "cod"
+      "cod",
+      {},
+      "local",
+      1.12
     );
     expect(orderModel.clearUserOtp).toHaveBeenCalledWith(10);
     expect(orderModel.findOrderByIdWithItems).toHaveBeenCalledWith(8);
