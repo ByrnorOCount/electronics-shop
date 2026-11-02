@@ -5,7 +5,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 1. Project Setup & Core Infrastructure
+## 1. Project Setup & Core Infrastructure (Phase 1)
 
 - [x] **Initialize Backend:** Set up the Node.js + Express backend in `backend/`.
 - [x] **Initialize Frontend:** Set up the React frontend in `frontend/`.
@@ -26,7 +26,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 2. Backend Development (Node.js / Express / PostgreSQL)
+## 2. Backend Development (Node.js / Express / PostgreSQL) (Phase 1)
 
 ### **User Management (FR1–FR4, FR15–FR17)**
 
@@ -106,7 +106,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 3. Staff Features (FR18–FR21)
+## 3. Staff Features (FR18–FR21) (Phase 1)
 
 ### **Staff Authentication**
 
@@ -134,7 +134,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 4. Administrator Features (FR22–FR25)
+## 4. Administrator Features (FR22–FR25) (Phase 1)
 
 ### **Authentication**
 
@@ -159,7 +159,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 5. Frontend Development (React)
+## 5. Frontend Development (React) (Phase 1)
 
 ### **Core Setup**
 
@@ -204,7 +204,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 6. Functionality Implementation
+## 6. Functionality Implementation (Phase 1)
 
 - [x] **User Auth Flow:** Connect frontend with `/api/users` endpoints.
 - [x] **Product Display:** Fetch and render paginated products.
@@ -219,7 +219,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 7. Non-Functional Requirements (NFR1–NFR7)
+## 7. Non-Functional Requirements (NFR1–NFR7) (Phase 1)
 
 ### **Performance**
 
@@ -271,7 +271,7 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 
 ---
 
-## 8. Future Scope / Advanced Features
+## 8. Future Scope / Advanced Features (Phase 2)
 
 This section lists tasks for future development cycles, based on the expanded requirements.
 
@@ -332,3 +332,19 @@ This section lists tasks for future development cycles, based on the expanded re
   - [x] Guide customers toward suitable products based on their stated needs.
   - [x] Clearly say when the available information cannot answer a question.
   - [x] Offer a way to contact customer support when the chatbot cannot help.
+
+## 9. Quality-of-Life Improvements (Phase 2)
+
+### Customer Experience
+
+- [ ] **Recently Viewed Products:** Track and display a customer's recently viewed products.
+- [ ] **Reorder from Order History:** Add available items from a previous order to the cart and identify unavailable items.
+- [ ] **Order Status Timeline:** Show customers the current order status and its progression.
+- [ ] **Product Comparison:** Compare selected products side by side using their key specifications.
+- [ ] **Remember Product-List Preferences:** Preserve selected filters and sort order when customers navigate between product lists and product details.
+- [ ] **Wishlist Stock Labels:** Show current stock availability for products in a customer's wishlist.
+- [ ] **Support Ticket Status and Reply Indicators:** Show ticket status and whether staff has responded.
+
+### Staff Workflow
+
+- [ ] **Staff Order Filters:** Filter orders by status and date, and preserve the staff member's selected filters.
