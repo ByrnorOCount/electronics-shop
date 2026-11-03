@@ -292,8 +292,8 @@ This section lists tasks for future development cycles, based on the expanded re
   - [x] Sales reports by product/category.
   - [x] User purchase history and segmentation (e.g., top customers).
 - [ ] **User Loyalty System:**
-  - [ ] Backend logic to assign user tiers (e.g., 'premium') based on purchase history.
-  - [ ] Display user status in the frontend account page and admin user list.
+  - [x] Backend logic to assign user tiers (e.g., 'premium') based on purchase history.
+  - [x] Display user status in the frontend account page and admin user list.
 
 ### **Product Discovery & Engagement**
 
