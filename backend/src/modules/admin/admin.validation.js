@@ -62,7 +62,7 @@ export const getSystemLogs = {
     startDate: Joi.date().iso(),
     endDate: Joi.date().iso().greater(Joi.ref("startDate")),
     level: Joi.string().valid("info", "warn", "error", "debug"),
-    limit: Joi.number().integer().min(1).max(100).default(20),
+    limit: Joi.number().integer().min(1).max(100).default(100),
     offset: Joi.number().integer().min(0).default(0),
   }),
 };

@@ -225,24 +225,50 @@ export const fetchSystemLogs = async (options) => {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
   const logDir = path.resolve(__dirname, "../../../logs");
+  const limit = Math.min(Math.max(Number(options?.limit) || 100, 1), 100);
+  const offset = Math.max(Number(options?.offset) || 0, 0);
 
   const readLogFile = async (fileName) => {
+    let lines;
     try {
       const filePath = path.join(logDir, fileName);
       const data = await fs.readFile(filePath, "utf8");
-      // Return the last 100 lines to avoid sending huge files
-      return data.split("\n").slice(-100);
+      lines = data.split(/\r?\n/).filter((line) => line.length > 0);
     } catch (error) {
       if (error.code === "ENOENT") {
-        return [`Log file not found: ${fileName}`];
+        lines = [`Log file not found: ${fileName}`];
+      } else {
+        console.error(`Error reading log file ${fileName}:`, error);
+        lines = [`Error reading log file: ${fileName}`];
       }
-      console.error(`Error reading log file ${fileName}:`, error);
-      return [`Error reading log file: ${fileName}`];
     }
+
+    const endIndex = Math.max(lines.length - offset, 0);
+    const startIndex = Math.max(endIndex - limit, 0);
+    const entries = lines.slice(startIndex, endIndex);
+
+    return {
+      entries,
+      pagination: {
+        total: lines.length,
+        limit,
+        offset,
+        returned: entries.length,
+        hasMore: startIndex > 0,
+        nextOffset: offset + entries.length,
+      },
+    };
   };
 
   const allLogs = await readLogFile("all.log");
   const errorLogs = await readLogFile("error.log");
 
-  return { all: allLogs, error: errorLogs };
+  return {
+    all: allLogs.entries,
+    error: errorLogs.entries,
+    pagination: {
+      all: allLogs.pagination,
+      error: errorLogs.pagination,
+    },
+  };
 };

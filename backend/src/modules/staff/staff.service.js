@@ -131,6 +131,12 @@ export const updateOrderStatus = async (orderId, status) => {
     throw new ApiError(httpStatus.NOT_FOUND, "Order not found");
   }
 
+  logger.info("Order status updated by staff.", {
+    orderId: Number(orderId),
+    status,
+    userId: updatedOrderRecord.user_id,
+  });
+
   // Notify the user about the order status update
   await createNotification(
     updatedOrderRecord.user_id,
