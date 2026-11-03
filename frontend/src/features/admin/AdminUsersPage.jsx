@@ -36,6 +36,23 @@ const UserRow = ({ user, onEdit, onDelete, currentAdminId }) => {
         </span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+        {user.role.toLowerCase() === "customer" ? (
+          <span
+            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+              {
+                Standard: "bg-gray-100 text-gray-800",
+                Silver: "bg-blue-100 text-blue-800",
+                Premium: "bg-amber-100 text-amber-800",
+              }[user.loyalty_tier] || "bg-gray-100 text-gray-800"
+            }`}
+          >
+            {user.loyalty_tier || "Standard"}
+          </span>
+        ) : (
+          <span className="text-gray-400">N/A</span>
+        )}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
         {new Date(user.created_at).toLocaleDateString()}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
@@ -108,7 +125,9 @@ export default function AdminUsersPage() {
         role: selectedRole,
       });
       setUsers((prev) =>
-        prev.map((u) => (u.id === updatedUser.id ? updatedUser : u))
+        prev.map((u) =>
+          u.id === updatedUser.id ? { ...u, ...updatedUser } : u
+        )
       );
       toast.success(`Role for ${editingUser.email} updated successfully!`);
     } catch (err) {
@@ -175,6 +194,9 @@ export default function AdminUsersPage() {
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Role
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Loyalty Tier
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Joined

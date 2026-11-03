@@ -1,6 +1,7 @@
 import * as adminModel from "./admin.model.js";
 import ApiError from "../../core/utils/ApiError.js";
 import httpStatus from "http-status";
+import { addLoyaltyInfo } from "../loyalty/loyalty.service.js";
 
 /**
  * Get dashboard analytics data
@@ -19,7 +20,7 @@ export const getDashboardMetrics = async () => {
 export const getAllUsers = async (filters) => {
   // The model function doesn't currently use filters, but we pass it for future-proofing
   const users = await adminModel.findAllUsers(filters);
-  return users;
+  return addLoyaltyInfo(users);
 };
 
 /**
