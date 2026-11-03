@@ -5,8 +5,300 @@
  * @returns { Promise<void> }
  */
 export async function seed(knex) {
+  const productSpecifications = {
+    1: {
+      manufacturer: "Raspberry Pi",
+      processor: "Broadcom BCM2711, quad-core Cortex-A72, 1.5 GHz",
+      memory: "4 GB LPDDR4",
+      connectivity: "Dual-band Wi-Fi, Bluetooth 5.0, Gigabit Ethernet",
+      ports: "2x USB 3.0, 2x USB 2.0, 2x micro-HDMI, USB-C power",
+    },
+    2: {
+      microcontroller: "ESP32-WROOM-32",
+      processor: "Dual-core Xtensa LX6, up to 240 MHz",
+      connectivity: "2.4 GHz Wi-Fi, Bluetooth 4.2 LE",
+      logicVoltage: "3.3 V",
+    },
+    3: {
+      cellFormat: "18650",
+      chemistry: "Lithium-ion",
+      nominalVoltage: "3.6-3.7 V",
+    },
+    4: {
+      connector: "USB-C",
+      chargingStandard: "USB Power Delivery",
+      maximumPower: "65 W",
+      use: "Laptop and phone charging",
+    },
+    5: {
+      manufacturer: "Raspberry Pi",
+      processor: "Quad-core 64-bit Arm Cortex-A53, 1 GHz",
+      memory: "512 MB LPDDR2",
+      connectivity: "2.4 GHz Wi-Fi, Bluetooth 4.2",
+      ports: "Mini-HDMI, micro-USB OTG, micro-USB power",
+    },
+    6: {
+      microcontroller: "Renesas RA4M1 with ESP32-S3 connectivity module",
+      processor: "Arm Cortex-M4, 48 MHz",
+      connectivity: "Wi-Fi, Bluetooth LE",
+      ports: "USB-C",
+      io: "14 digital pins, 6 analog inputs",
+    },
+    7: {
+      outputVoltage: "5 V DC",
+      outputCurrent: "3 A",
+      maximumPower: "15 W",
+    },
+    8: {
+      type: "Solderless breadboard",
+      tiePoints: "830",
+      pinSpacing: "2.54 mm",
+    },
+    9: {
+      processor: "Quad-core Arm Cortex-A57, 1.43 GHz",
+      memory: "4 GB LPDDR4",
+      gpu: "128-core NVIDIA Maxwell",
+      connectivity: "Gigabit Ethernet, USB 3.0, USB 2.0",
+    },
+    10: {
+      microcontroller: "NXP i.MX RT1062",
+      processor: "Arm Cortex-M7, 600 MHz",
+      flash: "8 MB",
+      digitalIo: "55 pins",
+    },
+    11: {
+      chargerIc: "TP4056",
+      batteryChemistry: "Single-cell lithium-ion / lithium-polymer",
+      chargeVoltage: "4.2 V",
+      inputConnector: "Micro-USB",
+    },
+    12: {
+      quantity: "40 wires",
+      connectorTypes: "Male-to-male, male-to-female, female-to-female",
+      type: "Jumper wires",
+    },
+    13: {
+      processor: "Texas Instruments Sitara AM335x, 1 GHz",
+      memory: "512 MB DDR3L",
+      storage: "4 GB eMMC",
+      ports: "USB, Ethernet, micro-HDMI",
+    },
+    14: {
+      microcontroller: "Espressif ESP32-C3",
+      processor: "32-bit RISC-V, up to 160 MHz",
+      connectivity: "2.4 GHz Wi-Fi, Bluetooth 5 LE",
+      logicVoltage: "3.3 V",
+      dimensions: "21 x 17.8 mm",
+    },
+    15: {
+      converterType: "Adjustable step-down (buck)",
+      inputVoltage: "4-40 V",
+      outputVoltage: "1.25-37 V adjustable",
+      maximumCurrent: "3 A",
+      controller: "LM2596",
+    },
+    16: {
+      capacity: "16 GB",
+      cardFormat: "microSD",
+      speedClass: "Class 10",
+      includedAccessory: "Full-size SD adapter",
+    },
+    17: {
+      manufacturer: "Raspberry Pi",
+      microcontroller: "RP2040",
+      processor: "Dual-core Arm Cortex-M0+, up to 133 MHz",
+      memory: "264 KB SRAM",
+      connectivity: "2.4 GHz Wi-Fi",
+      flash: "2 MB",
+    },
+    18: {
+      type: "Solar panel",
+      nominalVoltage: "6 V",
+      maximumPower: "1 W",
+    },
+    19: {
+      sensorType: "Ultrasonic distance sensor",
+      model: "HC-SR04",
+      measurementRange: "2-400 cm",
+      operatingVoltage: "5 V",
+      operatingFrequency: "40 kHz",
+    },
+    20: {
+      motorType: "Micro servo",
+      model: "SG90",
+      operatingVoltage: "4.8 V",
+      rotation: "Up to 180 degrees",
+      gearMaterial: "Plastic",
+    },
+    21: {
+      displayType: "Character LCD",
+      resolution: "16 characters x 2 lines",
+      interface: "I2C",
+      displayColor: "Blue",
+      operatingVoltage: "5 V",
+    },
+    22: {
+      moduleType: "Electromechanical relay",
+      channels: "2",
+      coilVoltage: "5 V",
+      control: "Digital input",
+    },
+    23: {
+      componentType: "Through-hole resistors",
+      assortment: "Common resistor values",
+    },
+    24: {
+      componentType: "LED",
+      packageSize: "5 mm",
+      colors: "Red, green, blue, yellow, white",
+    },
+    25: {
+      moduleType: "Bidirectional logic level shifter",
+      channels: "4",
+      logicLevels: "3.3 V and 5 V",
+    },
+    26: {
+      connectorType: "9 V battery snap",
+      leads: "Wire leads",
+    },
+    27: {
+      cableType: "HDMI video cable",
+      connectorA: "HDMI Type A",
+      connectorB: "Micro-HDMI Type D",
+    },
+    28: {
+      adapterType: "USB-to-TTL serial",
+      interface: "USB",
+      use: "Serial debugging and programming",
+    },
+    29: {
+      manufacturer: "Adafruit",
+      microcontroller: "ATSAMD51J19",
+      processor: "Arm Cortex-M4, 120 MHz",
+      flash: "512 KB",
+      ram: "192 KB",
+      softwareSupport: "CircuitPython",
+    },
+    30: {
+      manufacturer: "Raspberry Pi",
+      processor: "Broadcom BCM2712, quad-core Cortex-A76, 2.4 GHz",
+      memory: "8 GB LPDDR4X",
+      connectivity: "Dual-band Wi-Fi 6, Bluetooth 5.0, Gigabit Ethernet",
+      ports: "2x USB 3.0, 2x USB 2.0, 2x micro-HDMI, USB-C power",
+    },
+    31: {
+      manufacturer: "Raspberry Pi",
+      sensor: "Sony IMX708",
+      resolution: "12 MP",
+      focus: "Autofocus",
+      interface: "MIPI CSI-2",
+    },
+    32: {
+      microcontroller: "RP2040",
+      processor: "Dual-core Arm Cortex-M0+, up to 133 MHz",
+      memory: "264 KB SRAM",
+      flash: "2 MB",
+      connector: "USB-C",
+    },
+    33: {
+      microcontroller: "STM32F103C8T6",
+      processor: "Arm Cortex-M3, 72 MHz",
+      flash: "64 KB",
+      ram: "20 KB",
+      logicVoltage: "3.3 V",
+    },
+    34: {
+      moduleType: "USB-C Power Delivery trigger",
+      inputConnector: "USB-C",
+      selectableOutputVoltages: "5 V, 9 V, 12 V, 15 V, 20 V",
+    },
+    35: {
+      instrumentType: "USB logic analyzer",
+      channels: "8",
+      signalType: "Digital logic",
+    },
+    36: {
+      sensorIc: "INA219",
+      measurements: "Bus voltage, current, and power",
+      busVoltageRange: "Up to 26 V",
+      interface: "I2C",
+    },
+    37: {
+      displayType: "TFT color LCD",
+      diagonalSize: "2.4 in",
+      use: "Microcontroller display module",
+    },
+    38: {
+      adapterType: "Regulated DC power adapter",
+      outputVoltage: "12 V DC",
+      outputCurrent: "2 A",
+      maximumPower: "24 W",
+      connector: "5.5 mm barrel plug",
+    },
+    39: {
+      expansionType: "Raspberry Pi HAT",
+      interface: "PCIe",
+      storageSupport: "M.2 NVMe SSD",
+    },
+    40: {
+      storageType: "NVMe solid-state drive",
+      capacity: "256 GB",
+      formFactor: "M.2",
+    },
+    41: {
+      cableType: "USB-C data and power cable",
+      length: "1 m",
+      connectorA: "USB-C",
+      connectorB: "USB-C",
+    },
+    42: {
+      cableType: "HDMI video cable",
+      connectorA: "Micro-HDMI Type D",
+      connectorB: "HDMI Type A",
+    },
+    43: {
+      moduleType: "MOSFET driver",
+      channels: "2",
+      applications: "Motors and LED strips",
+    },
+    44: {
+      componentType: "Addressable RGB LED strip",
+      length: "1 m",
+      control: "Individually addressable LEDs",
+    },
+    45: {
+      componentType: "Solderless mini breadboard",
+      quantity: "2 breadboards",
+    },
+    46: {
+      sensorType: "Digital temperature sensor",
+      interface: "I2C",
+      formFactor: "Breakout board",
+    },
+    47: {
+      componentType: "Adhesive heatsink set",
+      material: "Aluminum",
+      application: "Board and component cooling",
+    },
+    48: {
+      fanType: "Brushless cooling fan",
+      voltage: "5 V DC",
+      frameSize: "30 mm",
+    },
+    49: {
+      adapterType: "USB-to-RS485 serial adapter",
+      interface: "USB",
+      serialStandard: "RS485",
+    },
+    50: {
+      moduleType: "Adjustable buck converter",
+      display: "Voltage and current",
+      application: "DC bench power supply",
+    },
+  };
+
   // Inserts seed entries for featured products
-  await knex("products").insert([
+  const products = [
     {
       id: 1,
       name: "Raspberry Pi 4 Model B 4GB",
@@ -517,7 +809,14 @@ export async function seed(knex) {
       stock: 22,
       is_featured: true,
     },
-  ]);
+  ];
+
+  await knex("products").insert(
+    products.map((product) => ({
+      ...product,
+      specifications: productSpecifications[product.id],
+    })),
+  );
 
   // After seeding, we need to reset the primary key sequence to the max id,
   // so that new entries don't cause a primary key conflict.

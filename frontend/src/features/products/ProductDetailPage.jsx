@@ -12,6 +12,17 @@ import ChatbotWidget from "../chatbot/ChatbotWidget";
 
 const RECENTLY_VIEWED_STORAGE_KEY = "electronics-shop:recently-viewed";
 
+const formatSpecificationLabel = (key) =>
+  key
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/^./, (character) => character.toUpperCase());
+
+const formatSpecificationValue = (value) => {
+  if (Array.isArray(value)) return value.join(", ");
+  if (value && typeof value === "object") return JSON.stringify(value);
+  return String(value);
+};
+
 const ProductDetailPage = () => {
   const { id } = useParams();
   const [recentlyViewedProducts, setRecentlyViewedProducts] = useState([]);
@@ -170,6 +181,15 @@ const ProductDetailPage = () => {
   // Don't render the component until the product has been fetched.
   if (!product) return null;
 
+  const specificationEntries =
+    product.specifications &&
+    typeof product.specifications === "object" &&
+    !Array.isArray(product.specifications)
+      ? Object.entries(product.specifications).filter(
+          ([, value]) => value !== null && value !== undefined && value !== "",
+        )
+      : [];
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 w-full">
       <div className="bg-white p-8 rounded-lg shadow-md">
@@ -257,6 +277,42 @@ const ProductDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {specificationEntries.length > 0 && (
+        <section
+          className="mt-10"
+          aria-labelledby="product-specifications-heading"
+        >
+          <div className="mb-4">
+            <h2
+              id="product-specifications-heading"
+              className="text-2xl font-bold"
+            >
+              Technical specifications
+            </h2>
+            <p className="mt-1 text-gray-600">
+              Core hardware and connection details.
+            </p>
+          </div>
+          <dl className="divide-y divide-gray-200 border-y border-gray-300">
+            {specificationEntries.map(([key, value], index) => (
+              <div
+                key={key}
+                className={`grid gap-1 px-3 py-3 sm:grid-cols-[minmax(12rem,1fr)_2fr] sm:gap-6 ${
+                  index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                }`}
+              >
+                <dt className="text-sm font-semibold text-gray-800">
+                  {formatSpecificationLabel(key)}
+                </dt>
+                <dd className="break-words text-sm font-medium text-gray-950">
+                  {formatSpecificationValue(value)}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
 
       <section aria-labelledby="product-guide-heading" className="mt-10">
         <div className="mb-4">
