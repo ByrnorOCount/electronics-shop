@@ -334,7 +334,7 @@ This section lists tasks for future development cycles, based on the expanded re
 
 ### Customer Experience
 
-- [ ] **Recently Viewed Products:** Track and display a customer's recently viewed products.
+- [x] **Recently Viewed Products:** Track and display a customer's recently viewed products.
 - [ ] **Reorder from Order History:** Add available items from a previous order to the cart and identify unavailable items.
 - [ ] **Order Status Timeline:** Show customers the current order status and its progression.
 - [ ] **Product Comparison:** Compare selected products side by side using their key specifications.

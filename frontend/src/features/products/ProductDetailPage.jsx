@@ -10,8 +10,11 @@ import ProductCard from "./components/ProductCard";
 import Spinner from "../../components/ui/Spinner";
 import ChatbotWidget from "../chatbot/ChatbotWidget";
 
+const RECENTLY_VIEWED_STORAGE_KEY = "electronics-shop:recently-viewed";
+
 const ProductDetailPage = () => {
   const { id } = useParams();
+  const [recentlyViewedProducts, setRecentlyViewedProducts] = useState([]);
   const {
     data: product,
     isLoading,
@@ -33,21 +36,69 @@ const ProductDetailPage = () => {
   const similarProducts = similarProductsData?.products;
 
   useEffect(() => {
-    if (id) {
-      fetchProduct(id)
-        .then((p) => {
-          if (p && p.category_name) {
-            // Fetch 5 products to ensure we have 4 recommendations
-            // even if the current product is in the result set.
-            const limit = 5;
-            fetchSimilarProducts({ category: p.category_name, limit });
+    let isCurrentPage = true;
+
+    const loadProductContext = async () => {
+      if (!id) return;
+
+      try {
+        const viewedProduct = await fetchProduct(id);
+        if (!isCurrentPage || !viewedProduct) return;
+
+        if (viewedProduct.category_name) {
+          fetchSimilarProducts({
+            category: viewedProduct.category_name,
+            limit: 5,
+          }).catch(() => {});
+        }
+
+        let previousProductIds = [];
+        try {
+          const storedIds = JSON.parse(
+            window.localStorage.getItem(RECENTLY_VIEWED_STORAGE_KEY) || "[]",
+          );
+          if (Array.isArray(storedIds)) {
+            previousProductIds = storedIds
+              .map(Number)
+              .filter(
+                (productId) =>
+                  Number.isInteger(productId) &&
+                  productId > 0 &&
+                  productId !== Number(viewedProduct.id),
+              )
+              .slice(0, 5);
           }
-        })
-        .catch(() => {
-          // The useApi hook already logs the error, so we can just let it fail silently here
-          // from the component's perspective, or add more specific UI feedback if needed.
-        });
-    }
+          window.localStorage.setItem(
+            RECENTLY_VIEWED_STORAGE_KEY,
+            JSON.stringify([Number(viewedProduct.id), ...previousProductIds]),
+          );
+        } catch {
+          previousProductIds = [];
+        }
+
+        const products = await Promise.all(
+          previousProductIds.map(async (productId) => {
+            try {
+              return await productService.getProductById(productId);
+            } catch {
+              return null;
+            }
+          }),
+        );
+
+        if (isCurrentPage) {
+          setRecentlyViewedProducts(products.filter(Boolean));
+        }
+      } catch {
+        setRecentlyViewedProducts([]);
+      }
+    };
+
+    loadProductContext();
+
+    return () => {
+      isCurrentPage = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]); // Rerun when the product ID in the URL changes
 
@@ -237,6 +288,19 @@ const ProductDetailPage = () => {
               ))}
           </div>
         </div>
+      )}
+
+      {recentlyViewedProducts.length > 0 && (
+        <section className="mt-12" aria-labelledby="recently-viewed-heading">
+          <h2 id="recently-viewed-heading" className="mb-6 text-2xl font-bold">
+            Recently viewed
+          </h2>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {recentlyViewedProducts.map((recentProduct) => (
+              <ProductCard key={recentProduct.id} product={recentProduct} />
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );

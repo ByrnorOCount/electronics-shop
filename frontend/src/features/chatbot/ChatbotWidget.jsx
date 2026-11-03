@@ -98,8 +98,8 @@ export default function ChatbotWidget({ product }) {
   }, [messages, isSending]);
 
   useEffect(() => {
-    if (isOpen) inputRef.current?.focus();
-  }, [isOpen]);
+    if (isOpen && !isEmbedded) inputRef.current?.focus();
+  }, [isOpen, isEmbedded]);
 
   const sendMessage = async (event) => {
     event.preventDefault();
