@@ -5,6 +5,14 @@
 export async function seed(knex) {
   // --- Generate a large number of orders for analytics ---
   const users = await knex("users").where("role", "customer");
+  const john = users.find((user) => user.email === "john.doe@example.com");
+  const johnOrderStatuses = [
+    "Delivered",
+    "Delivered",
+    "Processing",
+    "Shipped",
+    "Delivered",
+  ];
   const products = await knex("products").select("id", "price", "stock");
   const statuses = [
     "Pending",
@@ -20,9 +28,14 @@ export async function seed(knex) {
   ];
 
   for (let i = 0; i < 150; i++) {
-    const user = users[Math.floor(Math.random() * users.length)];
+    const isJohnSeedOrder = john && i < johnOrderStatuses.length;
+    const user = isJohnSeedOrder
+      ? john
+      : users[Math.floor(Math.random() * users.length)];
     const daysAgo = Math.floor(Math.random() * 30);
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
+    const status = isJohnSeedOrder
+      ? johnOrderStatuses[i]
+      : statuses[Math.floor(Math.random() * statuses.length)];
 
     // --- Create items for a temporary order ---
     const numItems = Math.floor(Math.random() * 5) + 1; // 1 to 5 items per order
