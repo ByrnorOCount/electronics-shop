@@ -48,6 +48,11 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
   - [x] Implement `/api/auth/me` for updating user info.
 - [x] **Notifications (FR14):**
   - [x] Send notifications via email and store them in DB.
+- [x] **Social Login:**
+  - [x] Implement backend routes for Google OAuth (`/api/auth/google`).
+  - [x] Add Google login button to the frontend `LoginPage`.
+  - [x] Implement backend routes for Facebook OAuth (`/api/auth/facebook`).
+  - [x] Add Facebook login button to the frontend `LoginPage`.
 
 ---
 
@@ -274,14 +279,6 @@ It excludes **future scope features** (e.g., 2FA, online payments, reviews, coup
 ## 8. Future Scope / Advanced Features (Phase 2)
 
 This section lists tasks for future development cycles, based on the expanded requirements.
-
-### **Enhanced Authentication**
-
-- [x] **Social Login:**
-  - [x] Implement backend routes for Google OAuth (`/api/auth/google`).
-  - [x] Add Google login button to the frontend `LoginPage`.
-  - [x] Implement backend routes for Facebook OAuth (`/api/auth/facebook`).
-  - [x] Add Facebook login button to the frontend `LoginPage`.
 
 ### **Advanced E-Commerce Features**
 
