@@ -3,16 +3,18 @@ import bcrypt from "bcrypt";
 import * as authModel from "./auth.model.js";
 import ApiError from "../../core/utils/ApiError.js";
 import generateToken from "../../core/utils/generateToken.js";
+import { addLoyaltyInfo } from "../loyalty/loyalty.service.js";
 
 /**
  * Generates a token and returns the user object without the password hash.
  * @param {object} user - The user object.
  * @returns {{user: object, token: string}}
  */
-const generateAuthTokens = (user) => {
+const generateAuthTokens = async (user) => {
   const token = generateToken(user.id, user.role);
+  const [userWithLoyalty] = await addLoyaltyInfo([user]);
   // Omit password from the returned user object
-  const { password_hash: _, ...userWithoutPassword } = user;
+  const { password_hash: _, ...userWithoutPassword } = userWithLoyalty;
   return { user: userWithoutPassword, token };
 };
 
