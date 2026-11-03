@@ -1,6 +1,7 @@
 import * as userService from "./user.service.js";
 import httpStatus from "http-status";
 import ApiResponse from "../../core/utils/ApiResponse.js";
+import { addLoyaltyInfo } from "../loyalty/loyalty.service.js";
 
 /**
  * Get user profile.
@@ -8,16 +9,16 @@ import ApiResponse from "../../core/utils/ApiResponse.js";
  * @access Private
  */
 export const getUserProfile = async (req, res, next) => {
-  // The user object is attached to the request by the `authenticate` middleware
-  res
-    .status(httpStatus.OK)
-    .json(
-      new ApiResponse(
-        httpStatus.OK,
-        req.user,
-        "Profile retrieved successfully."
-      )
-    );
+  try {
+    const [user] = await addLoyaltyInfo([req.user]);
+    res
+      .status(httpStatus.OK)
+      .json(
+        new ApiResponse(httpStatus.OK, user, "Profile retrieved successfully."),
+      );
+  } catch (error) {
+    next(error);
+  }
 };
 
 /**
@@ -34,8 +35,8 @@ export const updateUserProfile = async (req, res, next) => {
         new ApiResponse(
           httpStatus.OK,
           updatedUser,
-          "Profile updated successfully."
-        )
+          "Profile updated successfully.",
+        ),
       );
   } catch (error) {
     next(error);
@@ -53,12 +54,12 @@ export const changePassword = async (req, res, next) => {
     await userService.changeUserPassword(
       req.user.id,
       currentPassword,
-      newPassword
+      newPassword,
     );
     res
       .status(httpStatus.OK)
       .json(
-        new ApiResponse(httpStatus.OK, null, "Password changed successfully.")
+        new ApiResponse(httpStatus.OK, null, "Password changed successfully."),
       );
   } catch (error) {
     next(error);
@@ -79,8 +80,8 @@ export const forgotPassword = async (req, res, next) => {
         new ApiResponse(
           httpStatus.OK,
           null,
-          "If a user with that email exists, a reset link has been sent."
-        )
+          "If a user with that email exists, a reset link has been sent.",
+        ),
       );
   } catch (error) {
     next(error);
@@ -98,7 +99,7 @@ export const verifyEmail = async (req, res, next) => {
     res
       .status(httpStatus.OK)
       .json(
-        new ApiResponse(httpStatus.OK, null, "Email verified successfully.")
+        new ApiResponse(httpStatus.OK, null, "Email verified successfully."),
       );
   } catch (error) {
     next(error);
@@ -120,8 +121,8 @@ export const resetPassword = async (req, res, next) => {
         new ApiResponse(
           httpStatus.OK,
           null,
-          "Password has been reset successfully."
-        )
+          "Password has been reset successfully.",
+        ),
       );
   } catch (error) {
     next(error);

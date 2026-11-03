@@ -79,6 +79,26 @@ export default function ProfilePage() {
         </p>
       </div>
 
+      {user?.role?.toLowerCase() === "customer" && user.loyalty_tier && (
+        <section className="mb-8 flex flex-wrap items-center justify-between gap-4 border-l-4 border-blue-600 bg-white px-5 py-4 shadow-sm">
+          <div>
+            <p className="text-sm font-medium text-gray-500">Loyalty tier</p>
+            <p className="text-xl font-semibold text-gray-900">
+              {user.loyalty_tier}
+            </p>
+            <p className="text-sm text-gray-600">
+              {user.loyalty_order_count} eligible{" "}
+              {user.loyalty_order_count === 1 ? "order" : "orders"}
+            </p>
+          </div>
+          <p className="text-sm text-gray-700">
+            {user.loyalty_next_tier
+              ? `${user.orders_to_next_tier} more eligible ${user.orders_to_next_tier === 1 ? "order" : "orders"} to ${user.loyalty_next_tier}`
+              : "Highest tier reached"}
+          </p>
+        </section>
+      )}
+
       {/* Account Navigation Links */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {profileLinks.map((link) => (
