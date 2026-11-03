@@ -5,6 +5,11 @@ vi.mock("../../src/modules/auth/auth.model.js", () => ({
   create: vi.fn(),
   findByEmail: vi.fn(),
 }));
+vi.mock("../../src/modules/loyalty/loyalty.service.js", () => ({
+  addLoyaltyInfo: vi.fn(async (users) =>
+    users.map((user) => ({ ...user, loyalty_tier: "Standard" }))
+  ),
+}));
 
 import * as authModel from "../../src/modules/auth/auth.model.js";
 import { login, register } from "../../src/modules/auth/auth.service.js";
@@ -68,6 +73,7 @@ describe("authentication service", () => {
       id: 8,
       email: "customer@example.test",
       role: "customer",
+      loyalty_tier: "Standard",
     });
     expect(result.user.password_hash).toBeUndefined();
   });

@@ -3,13 +3,19 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("../../src/modules/admin/admin.model.js", () => ({
   deleteUser: vi.fn(),
   fetchAnalyticsData: vi.fn(),
+  findAllUsers: vi.fn(),
   updateUserRole: vi.fn(),
+}));
+vi.mock("../../src/modules/loyalty/loyalty.service.js", () => ({
+  addLoyaltyInfo: vi.fn(async (users) => users),
 }));
 
 import * as adminModel from "../../src/modules/admin/admin.model.js";
+import * as loyaltyService from "../../src/modules/loyalty/loyalty.service.js";
 import {
   deleteUser,
   getAnalyticsData,
+  getAllUsers,
   updateUserRole,
 } from "../../src/modules/admin/admin.service.js";
 
@@ -39,6 +45,16 @@ describe("admin service account protections", () => {
       statusCode: 404,
     });
     expect(adminModel.updateUserRole).toHaveBeenCalledWith(20, "staff");
+  });
+
+  it("adds loyalty status to the admin user list", async () => {
+    const users = [{ id: 3, role: "customer" }];
+    const usersWithLoyalty = [{ ...users[0], loyalty_tier: "Silver" }];
+    adminModel.findAllUsers.mockResolvedValue(users);
+    loyaltyService.addLoyaltyInfo.mockResolvedValue(usersWithLoyalty);
+
+    await expect(getAllUsers({})).resolves.toEqual(usersWithLoyalty);
+    expect(loyaltyService.addLoyaltyInfo).toHaveBeenCalledWith(users);
   });
 
   it("includes the full end date in analytics queries", async () => {
