@@ -72,6 +72,20 @@ User:
     created_at:
       type: string
       format: date-time
+    loyalty_tier:
+      type: string
+      enum: [Standard, Silver, Premium]
+      nullable: true
+    loyalty_order_count:
+      type: integer
+      nullable: true
+    loyalty_next_tier:
+      type: string
+      enum: [Silver, Premium]
+      nullable: true
+    orders_to_next_tier:
+      type: integer
+      nullable: true
 
 LoginCredentials:
   type: object
